@@ -34,7 +34,10 @@ If deploying manually or the automatic configuration doesn't work:
 ### Local Development
 
 ```bash
-# Install dependencies
+# Option 1: Install from root (recommended)
+npm run setup
+
+# Option 2: Install directly in subdirectory
 cd nuclear-nextjs
 npm install --legacy-peer-deps
 
