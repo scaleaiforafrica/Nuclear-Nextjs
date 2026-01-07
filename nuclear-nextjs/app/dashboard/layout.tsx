@@ -14,7 +14,9 @@ import {
   Bell, 
   HelpCircle, 
   ChevronLeft,
-  LogOut
+  LogOut,
+  Menu,
+  X
 } from 'lucide-react'
 import type { NavigationItem, DashboardPage } from '@/models'
 import { useAuth } from '@/contexts'
@@ -35,6 +37,7 @@ const navigationItems: NavigationItem[] = [
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [notificationCount] = useState(3)
   const pathname = usePathname()
   const router = useRouter()
@@ -74,18 +77,36 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <ProtectedRoute>
       <div className="flex h-screen bg-gray-50">
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
         <aside 
           className={`${
             sidebarCollapsed ? 'w-[72px]' : 'w-[280px]'
-          } bg-white border-r border-gray-200 flex flex-col transition-all duration-300 relative`}
+          } bg-white border-r border-gray-200 flex flex-col transition-all duration-300 relative
+          fixed lg:static inset-y-0 left-0 z-50 lg:z-auto
+          ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          `}
         >
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-gray-200">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-1">
             <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex-shrink-0"></div>
             {!sidebarCollapsed && <span className="font-semibold">NuclearFlow</span>}
           </div>
+          {/* Close button for mobile */}
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -152,10 +173,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           )}
         </div>
 
-        {/* Collapse Toggle */}
+        {/* Collapse Toggle - Hidden on mobile */}
         <button
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="absolute top-20 -right-3 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+          className="hidden lg:flex absolute top-20 -right-3 w-6 h-6 bg-white border border-gray-200 rounded-full items-center justify-center hover:bg-gray-50 transition-colors z-10"
         >
           <ChevronLeft className={`w-4 h-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
         </button>
@@ -164,13 +185,21 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header Bar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8">
-          {/* Page Title */}
-          <h1 className="text-2xl capitalize">{getPageTitle()}</h1>
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Mobile Menu Button & Page Title */}
+          <div className="flex items-center gap-3 min-w-0 flex-1 lg:flex-initial">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="lg:hidden p-2 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h1 className="text-lg sm:text-xl lg:text-2xl capitalize truncate">{getPageTitle()}</h1>
+          </div>
 
-          {/* Search Bar */}
-          <div className="flex-1 max-w-md mx-8">
-            <div className="relative">
+          {/* Search Bar - Hidden on mobile, shown on tablet+ */}
+          <div className="hidden md:flex flex-1 max-w-md mx-4 lg:mx-8">
+            <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
@@ -181,7 +210,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+            {/* Search button for mobile */}
+            <button className="md:hidden p-2 hover:bg-gray-50 rounded-lg transition-colors">
+              <Search className="w-5 h-5 text-gray-600" />
+            </button>
             <button className="relative p-2 hover:bg-gray-50 rounded-lg transition-colors">
               <Bell className="w-5 h-5 text-gray-600" />
               {notificationCount > 0 && (
@@ -190,7 +223,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </span>
               )}
             </button>
-            <button className="p-2 hover:bg-gray-50 rounded-lg transition-colors">
+            <button className="hidden sm:block p-2 hover:bg-gray-50 rounded-lg transition-colors">
               <HelpCircle className="w-5 h-5 text-gray-600" />
             </button>
             <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white text-sm cursor-pointer">
@@ -201,7 +234,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {/* Content Area */}
         <main className="flex-1 overflow-auto bg-gray-50">
-          <div className="max-w-[1400px] mx-auto p-8">
+          <div className="max-w-[1400px] mx-auto p-4 sm:p-6 lg:p-8">
             {children}
           </div>
         </main>

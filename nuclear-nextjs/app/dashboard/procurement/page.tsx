@@ -77,20 +77,20 @@ export default function ProcurementPage() {
   if (view === 'quotes') {
     return (
       <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
           <div>
-            <h2 className="text-2xl mb-1">Quote Comparison</h2>
-            <p className="text-gray-600">Request #PR-2847 - Tc-99m</p>
+            <h2 className="text-xl sm:text-2xl mb-1">Quote Comparison</h2>
+            <p className="text-sm sm:text-base text-gray-600">Request #PR-2847 - Tc-99m</p>
           </div>
           <button 
             onClick={() => setView('list')}
-            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors self-start"
           >
             Back to List
           </button>
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {quotes.map((quote, index) => {
             const total = quote.price.product + quote.price.shipping + quote.price.insurance;
             return (
@@ -172,27 +172,27 @@ export default function ProcurementPage() {
   if (view === 'form') {
     return (
       <div className="max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl">New Procurement Request</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+          <h2 className="text-xl sm:text-2xl">New Procurement Request</h2>
           <button 
             onClick={() => setView('list')}
-            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors self-start"
           >
             Cancel
           </button>
         </div>
 
         {/* Progress Indicator */}
-        <div className="flex items-center mb-8">
+        <div className="flex items-center mb-8 overflow-x-auto pb-2">
           {[
             { num: 1, label: 'Isotope Details' },
             { num: 2, label: 'Delivery' },
             { num: 3, label: 'Review' }
           ].map((step, index) => (
-            <div key={step.num} className="flex items-center flex-1">
+            <div key={step.num} className="flex items-center flex-1 min-w-[120px]">
               <div className="flex items-center">
                 <div 
-                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base ${
                     formStep >= step.num 
                       ? 'bg-purple-600 text-white' 
                       : 'bg-gray-200 text-gray-600'
@@ -200,18 +200,18 @@ export default function ProcurementPage() {
                 >
                   {step.num}
                 </div>
-                <span className={`ml-3 text-sm ${formStep >= step.num ? 'text-gray-900' : 'text-gray-500'}`}>
+                <span className={`ml-2 sm:ml-3 text-xs sm:text-sm whitespace-nowrap ${formStep >= step.num ? 'text-gray-900' : 'text-gray-500'}`}>
                   {step.label}
                 </span>
               </div>
               {index < 2 && (
-                <div className={`flex-1 h-0.5 mx-4 ${formStep > step.num ? 'bg-purple-600' : 'bg-gray-200'}`}></div>
+                <div className={`flex-1 h-0.5 mx-2 sm:mx-4 ${formStep > step.num ? 'bg-purple-600' : 'bg-gray-200'}`}></div>
               )}
             </div>
           ))}
         </div>
 
-        <div className="bg-white rounded-xl p-8 border border-gray-200">
+        <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-gray-200">
           {formStep === 1 && (
             <div className="space-y-6">
               <div>
@@ -228,7 +228,7 @@ export default function ProcurementPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm mb-2">Activity Required</label>
                   <input 
@@ -277,7 +277,7 @@ export default function ProcurementPage() {
 
               <div>
                 <label className="block text-sm mb-2">Preferred Time Window</label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {['Morning', 'Afternoon', 'Evening'].map((time) => (
                     <button 
                       key={time}
@@ -345,11 +345,11 @@ export default function ProcurementPage() {
             </div>
           )}
 
-          <div className="flex gap-3 mt-8">
+          <div className="flex flex-col sm:flex-row gap-3 mt-8">
             {formStep > 1 && (
               <button 
                 onClick={() => setFormStep(formStep - 1)}
-                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors order-2 sm:order-1"
               >
                 Back
               </button>
@@ -362,12 +362,12 @@ export default function ProcurementPage() {
                   setView('list');
                 }
               }}
-              className="flex-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors"
+              className="flex-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors order-1 sm:order-2"
             >
               {formStep === 3 ? 'Submit Request' : 'Continue'}
             </button>
             {formStep === 3 && (
-              <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors order-3">
                 Save as Draft
               </button>
             )}
@@ -380,20 +380,20 @@ export default function ProcurementPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl">Procurement Requests</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+        <h2 className="text-xl sm:text-2xl">Procurement Requests</h2>
         <button 
           onClick={() => setView('form')}
-          className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+          className="bg-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 self-start"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           New Request
         </button>
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200 flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
+      <div className="bg-white rounded-lg p-3 sm:p-4 mb-6 border border-gray-200 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        <div className="relative flex-1 max-w-full sm:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input 
             type="text" 
@@ -401,55 +401,58 @@ export default function ProcurementPage() {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
           />
         </div>
-        <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-          <option>All Statuses</option>
-          <option>Draft</option>
-          <option>Pending Quotes</option>
-          <option>Quotes Received</option>
-          <option>PO Approved</option>
-        </select>
-        <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-          <option>All Isotopes</option>
-          <option>Tc-99m</option>
-          <option>F-18 FDG</option>
-          <option>I-131</option>
-        </select>
-        <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
-          <Filter className="w-4 h-4" />
-          More Filters
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <option>All Statuses</option>
+            <option>Draft</option>
+            <option>Pending Quotes</option>
+            <option>Quotes Received</option>
+            <option>PO Approved</option>
+          </select>
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <option>All Isotopes</option>
+            <option>Tc-99m</option>
+            <option>F-18 FDG</option>
+            <option>I-131</option>
+          </select>
+          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+            <Filter className="w-4 h-4" />
+            More Filters
+          </button>
+        </div>
       </div>
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Request ID</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quantity</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Delivery Date</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Manufacturers</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Request ID</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quantity</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Delivery Date</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Manufacturers</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {procurementRequests.map((request) => (
               <tr key={request.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">{request.id}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">{request.isotope}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">{request.quantity}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{request.id}</td>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.isotope}</td>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.quantity}</td>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
                   {new Date(request.deliveryDate).toLocaleDateString()}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-3 py-1 rounded-full text-xs ${request.statusColor}`}>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                  <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${request.statusColor}`}>
                     {request.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">{request.matchedManufacturers}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.matchedManufacturers}</td>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
                   <div className="flex items-center gap-2">
                     <button 
                       onClick={() => request.status === 'Quotes Received' && setView('quotes')}
@@ -472,12 +475,12 @@ export default function ProcurementPage() {
         </table>
 
         {/* Pagination */}
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-sm text-gray-600">Showing 1-4 of 4</div>
           <div className="flex items-center gap-2">
-            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors">Previous</button>
-            <button className="px-3 py-1 bg-purple-600 text-white rounded">1</button>
-            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors">Next</button>
+            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm">Previous</button>
+            <button className="px-3 py-1 bg-purple-600 text-white rounded text-sm">1</button>
+            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm">Next</button>
           </div>
         </div>
       </div>

@@ -86,56 +86,56 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 lg:space-y-8">
       {/* Welcome Banner + Quick Actions */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-8 text-white">
-        <div className="flex items-center justify-between">
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-4 sm:p-6 lg:p-8 text-white">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h2 className="text-3xl mb-2">Good morning, Dr. Sarah Johnson</h2>
-            <p className="text-purple-100">{currentDate}</p>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl mb-2">Good morning, Dr. Sarah Johnson</h2>
+            <p className="text-purple-100 text-sm sm:text-base">{currentDate}</p>
           </div>
-          <div className="flex gap-3">
-            <button className="bg-white text-purple-600 px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors flex items-center gap-2">
-              <Plus className="w-5 h-5" />
-              New Procurement
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <button className="bg-white text-purple-600 px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="whitespace-nowrap">New Procurement</span>
             </button>
-            <button className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl hover:bg-white/30 transition-colors flex items-center gap-2">
-              <Search className="w-5 h-5" />
-              Track Shipment
+            <button className="bg-white/20 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-white/30 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="whitespace-nowrap">Track Shipment</span>
             </button>
-            <button className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl hover:bg-white/30 transition-colors flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              Generate Report
+            <button className="bg-white/20 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-white/30 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="whitespace-nowrap">Generate Report</span>
             </button>
           </div>
         </div>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         {stats.map((stat, index) => {
           const Icon = stat.icon
           return (
-            <div key={index} className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+            <div key={index} className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-lg transition-shadow">
               <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center`}>
-                  <Icon className="w-6 h-6 text-white" />
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center`}>
+                  <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
               </div>
-              <div className="text-3xl mb-1">{stat.value}</div>
-              <div className="text-sm text-gray-500 mb-2">{stat.label}</div>
-              <div className={`text-sm ${stat.textColor}`}>{stat.subtext}</div>
+              <div className="text-2xl sm:text-3xl mb-1">{stat.value}</div>
+              <div className="text-xs sm:text-sm text-gray-500 mb-2">{stat.label}</div>
+              <div className={`text-xs sm:text-sm ${stat.textColor}`}>{stat.subtext}</div>
             </div>
           )
         })}
       </div>
 
       {/* Live Shipment Map + Recent Activity */}
-      <div className="grid grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
         {/* Live Shipment Map */}
-        <div className="col-span-3 bg-white rounded-xl p-6 border border-gray-200">
-          <h3 className="text-xl mb-4">Live Shipment Tracking</h3>
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl h-96 flex items-center justify-center relative overflow-hidden">
+        <div className="lg:col-span-3 bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+          <h3 className="text-lg sm:text-xl mb-4">Live Shipment Tracking</h3>
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl h-64 sm:h-80 lg:h-96 flex items-center justify-center relative overflow-hidden">
             {/* Simplified Map Visualization */}
             <div className="absolute inset-0 opacity-20">
               <svg viewBox="0 0 800 400" className="w-full h-full">
@@ -176,8 +176,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Activity Feed */}
-        <div className="col-span-2 bg-white rounded-xl p-6 border border-gray-200">
-          <h3 className="text-xl mb-4">Recent Activity</h3>
+        <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+          <h3 className="text-lg sm:text-xl mb-4">Recent Activity</h3>
           <div className="space-y-4">
             {recentActivity.map((activity) => (
               <div key={activity.id} className="flex gap-3">
@@ -194,38 +194,38 @@ export default function DashboardPage() {
 
       {/* Active Shipments Table Preview */}
       <div className="bg-white rounded-xl border border-gray-200">
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-xl">Active Shipments</h3>
-          <button className="text-purple-600 hover:text-purple-700 flex items-center gap-1 text-sm">
+        <div className="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h3 className="text-lg sm:text-xl">Active Shipments</h3>
+          <button className="text-purple-600 hover:text-purple-700 flex items-center gap-1 text-sm self-start sm:self-auto">
             View All Shipments
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[640px]">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ID</th>
-                <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
-                <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
-                <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ID</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {activeShipments.slice(0, 5).map((shipment) => (
                 <tr key={shipment.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">{shipment.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">{shipment.isotope}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{shipment.id}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.isotope}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
                     {shipment.origin} → {shipment.destination}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(shipment.status)}`}>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${getStatusColor(shipment.status)}`}>
                       {shipment.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">{shipment.eta}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.eta}</td>
                 </tr>
               ))}
             </tbody>
@@ -234,10 +234,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Compliance Alerts + Upcoming Deliveries */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Compliance Alerts */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200">
-          <h3 className="text-xl mb-4">Compliance Alerts</h3>
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+          <h3 className="text-lg sm:text-xl mb-4">Compliance Alerts</h3>
           <div className="space-y-3">
             {complianceAlerts.length > 0 ? (
               complianceAlerts.map((alert) => (
@@ -277,8 +277,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Upcoming Deliveries */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200">
-          <h3 className="text-xl mb-4">Upcoming Deliveries</h3>
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+          <h3 className="text-lg sm:text-xl mb-4">Upcoming Deliveries</h3>
           <div className="space-y-3">
             {upcomingDeliveries.map((delivery, index) => (
               <div key={index} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
