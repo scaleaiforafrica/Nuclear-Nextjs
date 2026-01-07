@@ -1,0 +1,10 @@
+# Ignore the old Vite-based project
+NuClear/
+
+# Ignore IDE and config directories
+.vscode/
+.kiro/
+
+# Standard ignores
+node_modules/
+.git/
