@@ -11,6 +11,11 @@
     "test": "cd nuclear-nextjs && npm run test",
     "setup": "cd nuclear-nextjs && npm install --legacy-peer-deps"
   },
+  "devDependencies": {
+    "next": "^16.0.10",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
   "engines": {
     "node": ">=20.9.0"
   }
