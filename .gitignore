@@ -46,6 +46,4 @@ Thumbs.db
 # package-lock.json
 # yarn.lock
 # bun.lockb
-
-# Original project folder
-.NuClear
+bun.lock

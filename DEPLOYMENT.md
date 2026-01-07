@@ -1,96 +1,31 @@
 # Vercel Deployment Configuration Guide
 
-## Problem Statement
+## Deployment
 
-When deploying this repository to Vercel, you may encounter a `404: NOT_FOUND` error with a code like:
-```
-404: NOT_FOUND
-Code: NOT_FOUND
-ID: cpt1::j5kxl-1767786255320-d3731dbd73e3
-```
+This Next.js application is configured for seamless Vercel deployment.
 
-This error occurs because the Next.js application is located in the `nuclear-nextjs` subdirectory, not at the repository root.
+### Configuration
 
-## Solution
-
-This repository has been configured with the following files to fix the deployment issue:
-
-### 1. `vercel.json`
-Located at the repository root, this file tells Vercel how to build and deploy the application from the subdirectory:
+The repository includes a `vercel.json` configuration file:
 
 ```json
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd nuclear-nextjs && npm install --legacy-peer-deps",
-  "buildCommand": "cd nuclear-nextjs && npm run build",
-  "devCommand": "cd nuclear-nextjs && npm run dev",
-  "framework": "nextjs",
-  "outputDirectory": "nuclear-nextjs/.next"
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs"
 }
 ```
 
-### 2. `package.json` (Root)
-A minimal package.json at the root that provides convenience scripts for accessing the subdirectory application:
-
-```json
-{
-  "name": "nuclear-nextjs-monorepo",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "cd nuclear-nextjs && npm run dev",
-    "build": "cd nuclear-nextjs && npm run build",
-    "start": "cd nuclear-nextjs && npm run start"
-  }
-}
-```
-
-**Note**: The root `package.json` does NOT include dependencies. All dependencies are installed in the `nuclear-nextjs` subdirectory where the actual Next.js application resides.
-
-### 3. `.vercelignore`
-Excludes unnecessary directories from the deployment:
-
-```
-NuClear/
-.vscode/
-.kiro/
-```
-
-## Deployment Steps
-
-### Automatic Deployment (Recommended)
-
-With the configuration files in place, simply:
+### Deployment Steps
 
 1. Connect your GitHub repository to Vercel
-2. Vercel will automatically detect the configuration
+2. Vercel will automatically detect the Next.js configuration
 3. Deploy!
 
-### Manual Configuration (Alternative)
+### Important Notes
 
-If you prefer to configure manually in the Vercel dashboard:
-
-1. Go to your project settings in Vercel
-2. Navigate to **Settings** > **General**
-3. Set **Root Directory** to `nuclear-nextjs`
-4. Set **Framework Preset** to `Next.js`
-5. Under **Build & Development Settings**:
-   - Build Command: `npm run build`
-   - Install Command: `npm install --legacy-peer-deps`
-   - Output Directory: `.next` (default)
-6. Deploy
-
-## Important Notes
-
-### Legacy Peer Dependencies
+#### Legacy Peer Dependencies
 The `--legacy-peer-deps` flag is required because the project uses React 19, which has peer dependency conflicts with some packages (notably `react-day-picker@8.10.1` which expects React 18).
-
-### Monorepo Structure
-This repository contains:
-- `NuClear/` - Original Vite-based React app (deprecated)
-- `nuclear-nextjs/` - Current Next.js application (active)
-
-Only the `nuclear-nextjs` directory is deployed to production.
 
 ## Verification
 
@@ -101,13 +36,6 @@ After deployment, verify that:
 4. Static assets load properly
 
 ## Troubleshooting
-
-### If you still get 404 errors:
-
-1. **Check Build Logs**: Ensure the build completed successfully
-2. **Verify Root Directory**: In Vercel settings, confirm the root directory is set to `nuclear-nextjs`
-3. **Check Framework Detection**: Ensure Vercel detected it as a Next.js project
-4. **Review Output Directory**: Should be `nuclear-nextjs/.next`
 
 ### If build fails:
 
@@ -120,7 +48,6 @@ After deployment, verify that:
 To develop locally:
 
 ```bash
-cd nuclear-nextjs
 npm install --legacy-peer-deps
 npm run dev
 ```
@@ -129,6 +56,6 @@ Visit `http://localhost:3000` to view the application.
 
 ## Additional Resources
 
-- [Vercel Documentation - Monorepos](https://vercel.com/docs/monorepos)
+- [Vercel Documentation](https://vercel.com/docs)
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Vercel Build Configuration](https://vercel.com/docs/build-step)
