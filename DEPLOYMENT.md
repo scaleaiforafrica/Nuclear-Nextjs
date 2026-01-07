@@ -30,7 +30,7 @@ Located at the repository root, this file tells Vercel how to build and deploy t
 ```
 
 ### 2. `package.json` (Root)
-A monorepo-style package.json at the root that provides workspace configuration:
+A monorepo-style package.json at the root that provides workspace configuration and includes Next.js as a devDependency so Vercel can detect the framework:
 
 ```json
 {
@@ -38,6 +38,9 @@ A monorepo-style package.json at the root that provides workspace configuration:
   "version": "0.1.0",
   "private": true,
   "workspaces": ["nuclear-nextjs"],
+  "devDependencies": {
+    "next": "^16.0.10"
+  },
   "scripts": {
     "dev": "cd nuclear-nextjs && npm run dev",
     "build": "cd nuclear-nextjs && npm run build",
@@ -45,6 +48,8 @@ A monorepo-style package.json at the root that provides workspace configuration:
   }
 }
 ```
+
+**Important**: The root `package.json` includes `"next"` in `devDependencies` to allow Vercel to detect this as a Next.js project during deployment.
 
 ### 3. `.vercelignore`
 Excludes unnecessary directories from the deployment:
