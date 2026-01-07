@@ -8,12 +8,13 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <h2 className="text-2xl mb-6">Settings</h2>
+      <h2 className="text-xl sm:text-2xl mb-6">Settings</h2>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
         {/* Sidebar Navigation */}
-        <div className="col-span-1">
+        <div className="lg:col-span-1">
           <div className="bg-white rounded-xl border border-gray-200 p-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
             {[
               { id: 'profile', label: 'Profile', icon: User },
               { id: 'organization', label: 'Organization', icon: Building },
@@ -46,23 +47,23 @@ export default function SettingsPage() {
           {activeTab === 'profile' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl mb-4">Profile Settings</h3>
-                <p className="text-gray-600">Manage your personal information and preferences</p>
+                <h3 className="text-lg sm:text-xl mb-4">Profile Settings</h3>
+                <p className="text-sm sm:text-base text-gray-600">Manage your personal information and preferences</p>
               </div>
 
-              <div className="flex items-center gap-6">
-                <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white text-3xl">
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl">
                   SJ
                 </div>
-                <div>
-                  <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors mb-2">
+                <div className="text-center sm:text-left">
+                  <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors mb-2 text-sm">
                     Change Photo
                   </button>
-                  <p className="text-sm text-gray-500">JPG, PNG or GIF (max. 5MB)</p>
+                  <p className="text-xs sm:text-sm text-gray-500">JPG, PNG or GIF (max. 5MB)</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm mb-2">First Name</label>
                   <input 
@@ -101,7 +102,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="pt-4">
-                <button className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                <button className="w-full sm:w-auto px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm">
                   Save Changes
                 </button>
               </div>
@@ -112,8 +113,8 @@ export default function SettingsPage() {
           {activeTab === 'organization' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl mb-4">Organization Settings</h3>
-                <p className="text-gray-600">Manage your organization details and preferences</p>
+                <h3 className="text-lg sm:text-xl mb-4">Organization Settings</h3>
+                <p className="text-sm sm:text-base text-gray-600">Manage your organization details and preferences</p>
               </div>
 
               <div>
@@ -134,7 +135,7 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm mb-2">Phone Number</label>
                   <input 
@@ -154,7 +155,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="pt-4">
-                <button className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                <button className="w-full sm:w-auto px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm">
                   Update Organization
                 </button>
               </div>
@@ -164,8 +165,8 @@ export default function SettingsPage() {
           {activeTab === 'notifications' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl mb-4">Notification Preferences</h3>
-                <p className="text-gray-600">Control how you receive notifications</p>
+                <h3 className="text-lg sm:text-xl mb-4">Notification Preferences</h3>
+                <p className="text-sm sm:text-base text-gray-600">Control how you receive notifications</p>
               </div>
 
               <div className="space-y-4">
@@ -193,8 +194,8 @@ export default function SettingsPage() {
           {activeTab === 'security' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl mb-4">Security Settings</h3>
-                <p className="text-gray-600">Manage your account security and authentication</p>
+                <h3 className="text-lg sm:text-xl mb-4">Security Settings</h3>
+                <p className="text-sm sm:text-base text-gray-600">Manage your account security and authentication</p>
               </div>
 
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
@@ -235,14 +236,14 @@ export default function SettingsPage() {
           {activeTab === 'billing' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl mb-4">Billing & Subscription</h3>
-                <p className="text-gray-600">Manage your subscription and payment methods</p>
+                <h3 className="text-lg sm:text-xl mb-4">Billing & Subscription</h3>
+                <p className="text-sm sm:text-base text-gray-600">Manage your subscription and payment methods</p>
               </div>
 
-              <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl p-6">
-                <div className="text-sm mb-2">Current Plan</div>
-                <div className="text-3xl mb-4">Enterprise</div>
-                <div className="text-purple-100">Unlimited shipments • Advanced compliance • Priority support</div>
+              <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl p-4 sm:p-6">
+                <div className="text-xs sm:text-sm mb-2">Current Plan</div>
+                <div className="text-2xl sm:text-3xl mb-4">Enterprise</div>
+                <div className="text-xs sm:text-sm text-purple-100">Unlimited shipments • Advanced compliance • Priority support</div>
               </div>
 
               <div>
@@ -263,12 +264,12 @@ export default function SettingsPage() {
 
           {activeTab === 'team' && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-xl mb-1">Team Members</h3>
-                  <p className="text-gray-600">Manage your team and permissions</p>
+                  <h3 className="text-lg sm:text-xl mb-1">Team Members</h3>
+                  <p className="text-sm sm:text-base text-gray-600">Manage your team and permissions</p>
                 </div>
-                <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm self-start">
                   Invite Member
                 </button>
               </div>
@@ -280,17 +281,17 @@ export default function SettingsPage() {
                   { name: 'Emily Rodriguez', email: 'emily.r@cityhospital.com', role: 'User', status: 'Active' },
                   { name: 'David Kim', email: 'david.kim@cityhospital.com', role: 'User', status: 'Pending' },
                 ].map((member, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white">
+                      <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
                         {member.name.split(' ').map(n => n[0]).join('')}
                       </div>
-                      <div>
-                        <div className="font-medium">{member.name}</div>
-                        <div className="text-sm text-gray-600">{member.email}</div>
+                      <div className="min-w-0">
+                        <div className="font-medium text-sm sm:text-base">{member.name}</div>
+                        <div className="text-xs sm:text-sm text-gray-600 truncate">{member.email}</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4">
                       <select className="px-3 py-1 border border-gray-300 rounded text-sm">
                         <option>{member.role}</option>
                         <option>Admin</option>

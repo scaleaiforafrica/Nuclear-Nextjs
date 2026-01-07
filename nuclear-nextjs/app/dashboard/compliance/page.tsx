@@ -66,18 +66,18 @@ export default function CompliancePage() {
 
   return (
     <div>
-      <h2 className="text-2xl mb-6">Compliance & Regulatory</h2>
+      <h2 className="text-xl sm:text-2xl mb-6">Compliance & Regulatory</h2>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-3 gap-6 mb-6">
-        <div className="bg-white rounded-xl p-6 border border-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-xl flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
             </div>
             <div>
-              <div className="text-3xl">87%</div>
-              <div className="text-sm text-gray-600">Documents Compliant</div>
+              <div className="text-2xl sm:text-3xl">87%</div>
+              <div className="text-xs sm:text-sm text-gray-600">Documents Compliant</div>
             </div>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -85,37 +85,37 @@ export default function CompliancePage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 border border-gray-200">
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-              <AlertTriangle className="w-6 h-6 text-amber-600" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
             </div>
             <div>
-              <div className="text-3xl">5</div>
-              <div className="text-sm text-gray-600">Expiring Soon</div>
+              <div className="text-2xl sm:text-3xl">5</div>
+              <div className="text-xs sm:text-sm text-gray-600">Expiring Soon</div>
             </div>
           </div>
-          <p className="text-sm text-amber-600">Review within 7 days</p>
+          <p className="text-xs sm:text-sm text-amber-600">Review within 7 days</p>
         </div>
 
-        <div className="bg-white rounded-xl p-6 border border-gray-200">
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-              <Shield className="w-6 h-6 text-red-600" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-xl flex items-center justify-center">
+              <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
             </div>
             <div>
-              <div className="text-3xl">2</div>
-              <div className="text-sm text-gray-600">Action Required</div>
+              <div className="text-2xl sm:text-3xl">2</div>
+              <div className="text-xs sm:text-sm text-gray-600">Action Required</div>
             </div>
           </div>
-          <p className="text-sm text-red-600">Immediate attention needed</p>
+          <p className="text-xs sm:text-sm text-red-600">Immediate attention needed</p>
         </div>
       </div>
 
       {/* Jurisdiction Map */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
-        <h3 className="text-xl mb-4">Compliance by Jurisdiction</h3>
-        <div className="grid grid-cols-4 gap-4">
+      <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-6">
+        <h3 className="text-lg sm:text-xl mb-4">Compliance by Jurisdiction</h3>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { country: 'South Africa', status: 'compliant', color: 'bg-green-100 text-green-700' },
             { country: 'Kenya', status: 'compliant', color: 'bg-green-100 text-green-700' },
@@ -131,8 +131,8 @@ export default function CompliancePage() {
       </div>
 
       {/* Alerts Panel */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
-        <h3 className="text-xl mb-4">Urgent Alerts</h3>
+      <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-6">
+        <h3 className="text-lg sm:text-xl mb-4">Urgent Alerts</h3>
         <div className="space-y-3">
           <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
             <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -160,12 +160,12 @@ export default function CompliancePage() {
 
       {/* Document Checklist */}
       <div className="bg-white rounded-xl border border-gray-200">
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="text-xl mb-1">Document Checklist</h3>
-            <p className="text-sm text-gray-600">Shipment #SH-2851</p>
+            <h3 className="text-lg sm:text-xl mb-1">Document Checklist</h3>
+            <p className="text-xs sm:text-sm text-gray-600">Shipment #SH-2851</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <select 
               value={selectedShipment}
               onChange={(e) => setSelectedShipment(e.target.value)}
@@ -175,30 +175,30 @@ export default function CompliancePage() {
               <option value="SH-2850">SH-2850</option>
               <option value="SH-2849">SH-2849</option>
             </select>
-            <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+            <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm">
               Generate All Missing
             </button>
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <div className="space-y-4">
             {documents.map((doc, index) => {
               const Icon = doc.icon;
               return (
                 <div 
                   key={index}
-                  className={`${doc.statusBg} border ${doc.statusColor.replace('text-', 'border-')} rounded-xl p-6`}
+                  className={`${doc.statusBg} border ${doc.statusColor.replace('text-', 'border-')} rounded-xl p-4 sm:p-6`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-4 flex-1">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                    <div className="flex items-start gap-3 sm:gap-4 flex-1">
                       <div className={`w-12 h-12 ${doc.statusBg} rounded-xl flex items-center justify-center flex-shrink-0`}>
                         <Icon className={`w-6 h-6 ${doc.statusColor}`} />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-medium mb-1">{doc.name}</h4>
-                        <p className="text-sm text-gray-600 mb-2">{doc.description}</p>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <h4 className="text-sm sm:text-base font-medium mb-1">{doc.name}</h4>
+                        <p className="text-xs sm:text-sm text-gray-600 mb-2">{doc.description}</p>
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                           <span>Required for:</span>
                           {doc.required.map((jurisdiction, i) => (
                             <span key={i} className="px-2 py-1 bg-white rounded border border-gray-200">
@@ -209,7 +209,7 @@ export default function CompliancePage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 ml-4">
+                    <div className="flex flex-wrap items-center gap-2 ml-0 lg:ml-4">
                       {doc.status === 'complete' && (
                         <>
                           <button className="p-2 hover:bg-white rounded-lg transition-colors" title="View">
@@ -221,17 +221,17 @@ export default function CompliancePage() {
                         </>
                       )}
                       {doc.status === 'in-progress' && (
-                        <button className="px-4 py-2 bg-white border border-amber-600 text-amber-700 rounded-lg hover:bg-amber-50 transition-colors">
+                        <button className="px-4 py-2 bg-white border border-amber-600 text-amber-700 rounded-lg hover:bg-amber-50 transition-colors text-sm">
                           Upload Document
                         </button>
                       )}
                       {doc.status === 'expired' && (
-                        <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">
                           Renew Now
                         </button>
                       )}
                       {doc.status === 'not-started' && (
-                        <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                        <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm">
                           Generate
                         </button>
                       )}
