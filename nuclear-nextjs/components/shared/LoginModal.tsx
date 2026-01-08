@@ -64,9 +64,7 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
             {isSignUp ? 'Create your account' : 'Welcome back'}
           </h2>
           <p className="text-gray-600">
-            {isSignUp
-              ? 'Start your 30-day free trial today'
-              : 'Sign in to access your dashboard'}
+            {isSignUp ? 'Sign up to access your dashboard' : 'Sign in to access your dashboard'}
           </p>
         </div>
 
