@@ -15,13 +15,10 @@ export default function UpcomingDeliveries({
   onDeliveryCompleted 
 }: UpcomingDeliveriesProps) {
   const [deliveries, setDeliveries] = useState<Delivery[]>(initialDeliveries)
-  const [currentTime, setCurrentTime] = useState(new Date())
 
   useEffect(() => {
-    // Update time every minute (60000ms)
+    // Update time every minute (60000ms) to check for completed deliveries
     const interval = setInterval(() => {
-      setCurrentTime(new Date())
-      
       // Check for completed deliveries
       setDeliveries(prevDeliveries => {
         const stillUpcoming: Delivery[] = []

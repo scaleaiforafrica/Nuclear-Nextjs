@@ -25,8 +25,8 @@ export function formatDeliveryDateTime(date: string | Date, time: string): strin
   } else if (diffDays === 1) {
     return `Tomorrow, ${timeWithoutSeconds}`
   } else {
-    // Return day name for other days
-    const dayName = deliveryDate.toLocaleDateString('en-US', { weekday: 'long' })
+    // Return day name for other days (using UTC to be consistent)
+    const dayName = deliveryDate.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })
     return `${dayName}, ${timeWithoutSeconds}`
   }
 }
@@ -49,7 +49,8 @@ export function isDeliveryPast(date: string | Date, time: string): boolean {
  * @returns Date object representing the scheduled date/time
  */
 export function combineDateAndTime(date: string | Date, time: string): Date {
-  const deliveryDate = typeof date === 'string' ? new Date(date) : date
+  // Parse date string as UTC to maintain consistency with formatDeliveryDateTime
+  const deliveryDate = typeof date === 'string' ? new Date(date + 'T00:00:00Z') : date
   const [hours, minutes] = time.split(':').map(Number)
   
   return new Date(

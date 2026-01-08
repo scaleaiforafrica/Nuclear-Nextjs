@@ -28,13 +28,16 @@ export default function RecentActivity({
   useEffect(() => {
     // Add completed deliveries to activities
     if (completedDeliveries.length > 0) {
-      const newActivities = completedDeliveries.map((delivery, index) => ({
-        // Generate stable ID from delivery properties and timestamp
-        id: delivery.id || `delivery-${delivery.date}-${delivery.time}-${delivery.isotope}-${index}`,
-        time: delivery.scheduled_datetime?.toISOString() || new Date().toISOString(),
-        event: `Delivery completed: ${delivery.isotope} to ${delivery.destination}`,
-        type: 'delivery' as const
-      }))
+      const newActivities = completedDeliveries.map((delivery) => {
+        // Generate stable ID from delivery properties only (no index for stability)
+        const stableId = delivery.id || `delivery-${delivery.date}-${delivery.time}-${delivery.isotope.replace(/\s+/g, '-')}`
+        return {
+          id: stableId,
+          time: delivery.scheduled_datetime?.toISOString() || new Date().toISOString(),
+          event: `Delivery completed: ${delivery.isotope} to ${delivery.destination}`,
+          type: 'delivery' as const
+        }
+      })
       
       setActivities(prev => {
         // Combine and sort by time (most recent first)
