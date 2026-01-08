@@ -1,74 +1,127 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import type { AuthState, User, LoginCredentials, AuthResult } from '@/models'
-import { 
-  login as authLogin, 
-  logout as authLogout, 
-  getAuthState, 
-  setAuthState as setControllerAuthState 
-} from '@/controllers/auth.controller'
+import { createClient } from '@/lib/supabase/client'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
+import type { User, AuthResult, UserRole } from '@/models'
 
 interface AuthContextValue {
   isAuthenticated: boolean
   user: User | null
+  supabaseUser: SupabaseUser | null
   isLoading: boolean
-  login: (credentials: LoginCredentials) => Promise<AuthResult>
-  logout: () => void
+  login: (email: string, password: string) => Promise<AuthResult>
+  signUp: (email: string, password: string) => Promise<AuthResult>
+  logout: () => Promise<void>
+  resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
+
+function generateInitials(name: string): string {
+  return name
+    .split(' ')
+    .map(part => part.charAt(0).toUpperCase())
+    .slice(0, 2)
+    .join('')
+}
+
+function mapSupabaseUser(supabaseUser: SupabaseUser): User {
+  const email = supabaseUser.email || ''
+  const name = supabaseUser.user_metadata?.full_name || 
+    email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  
+  return {
+    id: supabaseUser.id,
+    name,
+    role: (supabaseUser.user_metadata?.role as UserRole) || 'Hospital Administrator',
+    initials: generateInitials(name)
+  }
+}
 
 interface AuthProviderProps {
   children: ReactNode
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [authState, setAuthState] = useState<AuthState>({
-    isAuthenticated: false,
-    user: null
-  })
+  const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  
+  const supabase = createClient()
 
-  // Initialize auth state from storage on mount
   useEffect(() => {
-    const storedState = getAuthState()
-    setAuthState(storedState)
-    setIsLoading(false)
-  }, [])
-
-  const login = useCallback(async (credentials: LoginCredentials): Promise<AuthResult> => {
-    const result = await authLogin(credentials)
-    
-    if (result.success && result.user) {
-      const newState: AuthState = {
-        isAuthenticated: true,
-        user: result.user
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        setSupabaseUser(session.user)
+        setUser(mapSupabaseUser(session.user))
       }
-      setAuthState(newState)
+      setIsLoading(false)
     }
     
-    return result
-  }, [])
+    getSession()
 
-  const logout = useCallback(() => {
-    authLogout()
-    setAuthState({
-      isAuthenticated: false,
-      user: null
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          setSupabaseUser(session.user)
+          setUser(mapSupabaseUser(session.user))
+        } else {
+          setSupabaseUser(null)
+          setUser(null)
+        }
+        setIsLoading(false)
+      }
+    )
+
+    return () => subscription.unsubscribe()
+  }, [supabase.auth])
+
+  const login = useCallback(async (email: string, password: string): Promise<AuthResult> => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    
+    if (error) return { success: false, error: error.message }
+    if (data.user) return { success: true, user: mapSupabaseUser(data.user) }
+    return { success: false, error: 'Login failed' }
+  }, [supabase.auth])
+
+  const signUp = useCallback(async (email: string, password: string): Promise<AuthResult> => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` }
     })
-  }, [])
+    
+    if (error) return { success: false, error: error.message }
+    if (data.user) return { success: true, user: mapSupabaseUser(data.user) }
+    return { success: false, error: 'Sign up failed' }
+  }, [supabase.auth])
 
-  const value: AuthContextValue = {
-    isAuthenticated: authState.isAuthenticated,
-    user: authState.user,
-    isLoading,
-    login,
-    logout
-  }
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut()
+    setSupabaseUser(null)
+    setUser(null)
+  }, [supabase.auth])
+
+  const resetPassword = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+    return error ? { success: false, error: error.message } : { success: true }
+  }, [supabase.auth])
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{
+      isAuthenticated: !!supabaseUser,
+      user,
+      supabaseUser,
+      isLoading,
+      login,
+      signUp,
+      logout,
+      resetPassword,
+    }}>
       {children}
     </AuthContext.Provider>
   )
@@ -76,11 +129,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
+  if (context === undefined) throw new Error('useAuth must be used within an AuthProvider')
   return context
 }
 
-// Export for testing purposes
 export { AuthContext }

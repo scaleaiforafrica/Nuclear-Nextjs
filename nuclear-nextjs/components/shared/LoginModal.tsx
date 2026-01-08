@@ -24,10 +24,10 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
-    
+
     try {
-      const result = await login({ email, password });
-      
+      const result = await login(email, password);
+
       if (result.success) {
         setEmail('');
         setPassword('');
@@ -64,8 +64,8 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
             {isSignUp ? 'Create your account' : 'Welcome back'}
           </h2>
           <p className="text-gray-600">
-            {isSignUp 
-              ? 'Start your 30-day free trial today' 
+            {isSignUp
+              ? 'Start your 30-day free trial today'
               : 'Sign in to access your dashboard'}
           </p>
         </div>
