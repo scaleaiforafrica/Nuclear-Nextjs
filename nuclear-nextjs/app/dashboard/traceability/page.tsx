@@ -67,41 +67,41 @@ export default function TraceabilityPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl">Blockchain Traceability</h2>
-        <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 cursor-pointer">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+        <h2 className="text-xl sm:text-2xl">Blockchain Traceability</h2>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <label className="flex items-center gap-2 cursor-pointer self-start">
             <input 
               type="checkbox" 
               checked={isRegulatorView}
               onChange={(e) => setIsRegulatorView(e.target.checked)}
               className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
             />
-            <span className="text-sm">Regulator View</span>
+            <span className="text-xs sm:text-sm">Regulator View</span>
           </label>
-          <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2">
+          <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm">
             <Download className="w-4 h-4" />
-            Export Audit Report
+            <span className="whitespace-nowrap">Export Audit Report</span>
           </button>
         </div>
       </div>
 
       {isRegulatorView && (
-        <div className="bg-blue-900 text-white rounded-xl p-6 mb-6 border-2 border-blue-700">
+        <div className="bg-blue-900 text-white rounded-xl p-4 sm:p-6 mb-6 border-2 border-blue-700">
           <div className="flex items-center gap-3 mb-2">
-            <Database className="w-6 h-6" />
-            <h3 className="text-xl">Regulatory Portal - Read-Only Access</h3>
+            <Database className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+            <h3 className="text-base sm:text-xl">Regulatory Portal - Read-Only Access</h3>
           </div>
-          <p className="text-blue-200 text-sm">
+          <p className="text-blue-200 text-xs sm:text-sm">
             This view provides blockchain-verified audit trails and compliance documentation. Pricing and PII are hidden in regulatory mode.
           </p>
         </div>
       )}
 
       {/* Search Interface */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
-        <h3 className="text-lg mb-4">Search Shipments</h3>
-        <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-6">
+        <h3 className="text-base sm:text-lg mb-4">Search Shipments</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="block text-sm mb-2 text-gray-700">Shipment ID or Batch Number</label>
             <div className="relative">
@@ -123,7 +123,7 @@ export default function TraceabilityPage() {
             />
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm mb-2 text-gray-700">Origin Country</label>
             <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
@@ -157,25 +157,25 @@ export default function TraceabilityPage() {
       </div>
 
       {/* Shipment Info Card */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl p-6 mb-6">
-        <div className="grid grid-cols-4 gap-6">
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl p-4 sm:p-6 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           <div>
-            <div className="text-sm text-purple-100 mb-1">Shipment ID</div>
-            <div className="text-2xl font-mono">{selectedShipment}</div>
+            <div className="text-xs sm:text-sm text-purple-100 mb-1">Shipment ID</div>
+            <div className="text-lg sm:text-2xl font-mono">{selectedShipment}</div>
           </div>
           <div>
-            <div className="text-sm text-purple-100 mb-1">Isotope</div>
-            <div className="text-xl">Tc-99m</div>
+            <div className="text-xs sm:text-sm text-purple-100 mb-1">Isotope</div>
+            <div className="text-base sm:text-xl">Tc-99m</div>
           </div>
           <div>
-            <div className="text-sm text-purple-100 mb-1">Batch Number</div>
-            <div className="text-xl font-mono">TC-2026-001</div>
+            <div className="text-xs sm:text-sm text-purple-100 mb-1">Batch Number</div>
+            <div className="text-base sm:text-xl font-mono">TC-2026-001</div>
           </div>
           <div>
-            <div className="text-sm text-purple-100 mb-1">Compliance Status</div>
+            <div className="text-xs sm:text-sm text-purple-100 mb-1">Compliance Status</div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-xl">Verified</span>
+              <span className="text-base sm:text-xl">Verified</span>
             </div>
           </div>
         </div>
@@ -184,63 +184,63 @@ export default function TraceabilityPage() {
 
       {/* Audit Trail Timeline */}
       <div className="bg-white rounded-xl border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-xl">Immutable Audit Trail</h3>
-          <p className="text-sm text-gray-600 mt-1">All events are recorded on Hyperledger Fabric blockchain</p>
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <h3 className="text-lg sm:text-xl">Immutable Audit Trail</h3>
+          <p className="text-xs sm:text-sm text-gray-600 mt-1">All events are recorded on Hyperledger Fabric blockchain</p>
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+            {/* Timeline Line - Hidden on mobile, shown on tablet+ */}
+            <div className="hidden md:block absolute left-8 top-0 bottom-0 w-0.5 bg-gray-200"></div>
 
             {/* Events */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {auditEvents.map((event, index) => {
                 const Icon = event.icon;
                 return (
-                  <div key={index} className="relative pl-20">
+                  <div key={index} className="relative md:pl-20">
                     {/* Icon */}
-                    <div className="absolute left-0 w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center border-4 border-white">
-                      <Icon className="w-7 h-7 text-purple-600" />
+                    <div className="md:absolute md:left-0 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-purple-100 rounded-xl flex items-center justify-center border-4 border-white mb-3 md:mb-0">
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-purple-600" />
                     </div>
 
                     {/* Content */}
-                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h4 className="font-medium text-lg mb-1">{event.description}</h4>
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                      <div className="flex flex-col lg:flex-row lg:items-start justify-between mb-3 gap-3">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-sm sm:text-base lg:text-lg mb-2">{event.description}</h4>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                             <span className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              {event.timestamp}
+                              <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                              <span className="break-all">{event.timestamp}</span>
                             </span>
                             <span className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {event.location}
+                              <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                              <span>{event.location}</span>
                             </span>
                           </div>
                         </div>
-                        <div className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs capitalize">
+                        <div className="px-2 sm:px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs capitalize whitespace-nowrap">
                           {event.type}
                         </div>
                       </div>
 
                       <div className="bg-white rounded-lg p-3 mb-3 border border-gray-200">
-                        <div className="text-sm text-gray-600 mb-1">Actor</div>
-                        <div className="text-sm font-medium">{event.actor}</div>
+                        <div className="text-xs sm:text-sm text-gray-600 mb-1">Actor</div>
+                        <div className="text-xs sm:text-sm font-medium break-words">{event.actor}</div>
                       </div>
 
-                      <div className="bg-gray-900 rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
+                      <div className="bg-gray-900 rounded-lg p-3 sm:p-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
                           <span className="text-xs text-gray-400">Blockchain Transaction Hash</span>
-                          <button className="text-xs text-purple-400 hover:text-purple-300 transition-colors">
+                          <button className="text-xs text-purple-400 hover:text-purple-300 transition-colors self-start">
                             Verify on Chain →
                           </button>
                         </div>
-                        <code className="text-xs text-green-400 font-mono break-all">
+                        <div className="text-xs text-green-400 font-mono break-all">
                           {event.hash}
-                        </code>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -251,18 +251,18 @@ export default function TraceabilityPage() {
         </div>
 
         {/* Export Footer */}
-        <div className="p-6 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+        <div className="p-4 sm:p-6 border-t border-gray-200 bg-gray-50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <p className="text-xs sm:text-sm text-gray-600">
               <strong>{auditEvents.length}</strong> blockchain-verified events recorded
             </p>
-            <div className="flex gap-3">
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white transition-colors text-sm">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white transition-colors text-xs sm:text-sm">
                 Download JSON
               </button>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm flex items-center gap-2">
+              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-xs sm:text-sm flex items-center justify-center gap-2">
                 <Download className="w-4 h-4" />
-                Generate Signed PDF Report
+                <span className="whitespace-nowrap">Generate Signed PDF Report</span>
               </button>
             </div>
           </div>

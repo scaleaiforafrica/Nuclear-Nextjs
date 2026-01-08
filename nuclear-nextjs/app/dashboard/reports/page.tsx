@@ -5,17 +5,17 @@ import { TrendingUp, Download } from 'lucide-react';
 export default function ReportsPage() {
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl">Reports & Analytics</h2>
-        <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+        <h2 className="text-xl sm:text-2xl">Reports & Analytics</h2>
+        <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 self-start text-sm">
           <Download className="w-4 h-4" />
           Export Report
         </button>
       </div>
 
       {/* Report Filters */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
-        <div className="grid grid-cols-4 gap-4">
+      <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm mb-2">Report Type</label>
             <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
@@ -52,17 +52,17 @@ export default function ReportsPage() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
         {[
           { label: 'Total Shipments', value: '142', change: '+12%', color: 'blue' },
           { label: 'On-Time Delivery', value: '98.7%', change: '+2.3%', color: 'green' },
           { label: 'Avg Transit Time', value: '18.5h', change: '-1.2h', color: 'purple' },
           { label: 'Compliance Rate', value: '100%', change: '0%', color: 'green' },
         ].map((metric, index) => (
-          <div key={index} className="bg-white rounded-xl p-6 border border-gray-200">
-            <div className="text-sm text-gray-600 mb-2">{metric.label}</div>
-            <div className="text-3xl mb-2">{metric.value}</div>
-            <div className={`text-sm ${metric.change.startsWith('+') ? 'text-green-600' : metric.change.startsWith('-') && metric.label === 'Avg Transit Time' ? 'text-green-600' : 'text-gray-600'} flex items-center gap-1`}>
+          <div key={index} className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+            <div className="text-xs sm:text-sm text-gray-600 mb-2">{metric.label}</div>
+            <div className="text-2xl sm:text-3xl mb-2">{metric.value}</div>
+            <div className={`text-xs sm:text-sm ${metric.change.startsWith('+') ? 'text-green-600' : metric.change.startsWith('-') && metric.label === 'Avg Transit Time' ? 'text-green-600' : 'text-gray-600'} flex items-center gap-1`}>
               <TrendingUp className="w-4 h-4" />
               {metric.change} from last period
             </div>
@@ -72,9 +72,9 @@ export default function ReportsPage() {
 
 
       {/* Charts */}
-      <div className="grid grid-cols-2 gap-6 mb-6">
-        <div className="bg-white rounded-xl p-6 border border-gray-200">
-          <h3 className="text-lg mb-4">Shipments by Status</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+          <h3 className="text-base sm:text-lg mb-4">Shipments by Status</h3>
           <div className="h-64 flex items-end justify-around gap-2">
             {[
               { label: 'Delivered', value: 85, color: 'bg-green-600' },
@@ -94,10 +94,10 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 border border-gray-200">
-          <h3 className="text-lg mb-4">Isotope Distribution</h3>
-          <div className="flex items-center justify-center h-64">
-            <div className="relative w-48 h-48">
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+          <h3 className="text-base sm:text-lg mb-4">Isotope Distribution</h3>
+          <div className="flex items-center justify-center h-48 sm:h-56 lg:h-64">
+            <div className="relative w-40 h-40 sm:w-48 sm:h-48">
               {/* Donut Chart Visualization */}
               <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                 <circle cx="50" cy="50" r="40" fill="none" stroke="#E5E7EB" strokeWidth="20" />
@@ -118,7 +118,7 @@ export default function ReportsPage() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
             {[
               { label: 'Tc-99m', color: 'bg-purple-600', percent: '42%' },
               { label: 'F-18 FDG', color: 'bg-blue-600', percent: '28%' },
@@ -136,9 +136,9 @@ export default function ReportsPage() {
       </div>
 
       {/* Activity Trends */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200">
-        <h3 className="text-lg mb-4">Shipment Activity Trends (Last 30 Days)</h3>
-        <div className="h-64 flex items-end gap-1">
+      <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+        <h3 className="text-base sm:text-lg mb-4">Shipment Activity Trends (Last 30 Days)</h3>
+        <div className="h-48 sm:h-56 lg:h-64 flex items-end gap-1">
           {Array.from({ length: 30 }).map((_, i) => {
             const height = 30 + Math.random() * 70;
             return (

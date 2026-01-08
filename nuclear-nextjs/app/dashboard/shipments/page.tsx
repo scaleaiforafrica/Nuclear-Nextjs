@@ -82,27 +82,27 @@ export default function ShipmentsPage() {
         </button>
 
         {/* Header Section */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
-          <div className="flex items-start justify-between">
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-mono mb-2">{shipment.id}</h2>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+              <h2 className="text-2xl sm:text-3xl font-mono mb-2">{shipment.id}</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
                 <span><strong>Isotope:</strong> {shipment.isotope}</span>
                 <span><strong>Batch:</strong> {shipment.batch}</span>
-                <span className={`px-3 py-1 rounded-full ${shipment.statusColor}`}>
+                <span className={`px-3 py-1 rounded-full ${shipment.statusColor} self-start`}>
                   {shipment.status}
                 </span>
               </div>
             </div>
-            <div className="flex gap-2">
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <div className="flex flex-col sm:flex-row gap-2">
+              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
                 Re-route
               </button>
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
+              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm">
                 <Phone className="w-4 h-4" />
                 Contact Carrier
               </button>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2">
+              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm">
                 <Download className="w-4 h-4" />
                 Documents
               </button>
@@ -112,8 +112,8 @@ export default function ShipmentsPage() {
 
         {/* Tabs */}
         <div className="bg-white rounded-xl border border-gray-200">
-          <div className="border-b border-gray-200 px-6">
-            <div className="flex gap-6">
+          <div className="border-b border-gray-200 px-4 sm:px-6 overflow-x-auto">
+            <div className="flex gap-4 sm:gap-6 min-w-max">
               {[
                 { id: 'tracking', label: 'Tracking' },
                 { id: 'decay', label: 'Decay Curve' },
@@ -136,11 +136,11 @@ export default function ShipmentsPage() {
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {activeTab === 'tracking' && (
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Map */}
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl h-96 flex items-center justify-center relative overflow-hidden">
+                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl h-64 sm:h-80 lg:h-96 flex items-center justify-center relative overflow-hidden">
                   <div className="absolute inset-0 opacity-20">
                     <svg viewBox="0 0 400 400" className="w-full h-full">
                       <path 
@@ -230,7 +230,7 @@ export default function ShipmentsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
                     <div className="text-sm text-gray-600 mb-1">Initial Activity</div>
                     <div className="text-2xl">500 mCi</div>
@@ -276,7 +276,7 @@ export default function ShipmentsPage() {
 
 
             {activeTab === 'sensors' && (
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white border border-gray-200 rounded-xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg">Temperature</h3>
@@ -364,8 +364,8 @@ export default function ShipmentsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl">Shipments & Logistics</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+        <h2 className="text-xl sm:text-2xl">Shipments & Logistics</h2>
         <div className="flex items-center gap-2">
           <button 
             onClick={() => setViewType('list')}
@@ -395,8 +395,8 @@ export default function ShipmentsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200 flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
+      <div className="bg-white rounded-lg p-3 sm:p-4 mb-6 border border-gray-200 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        <div className="relative flex-1 max-w-full sm:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input 
             type="text" 
@@ -404,35 +404,38 @@ export default function ShipmentsPage() {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
           />
         </div>
-        <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-          <option>All Statuses</option>
-          <option>Dispatched</option>
-          <option>In Transit</option>
-          <option>At Customs</option>
-          <option>Delivered</option>
-        </select>
-        <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-          <option>All Isotopes</option>
-        </select>
-        <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
-          <Filter className="w-4 h-4" />
-          More Filters
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <option>All Statuses</option>
+            <option>Dispatched</option>
+            <option>In Transit</option>
+            <option>At Customs</option>
+            <option>Delivered</option>
+          </select>
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <option>All Isotopes</option>
+          </select>
+          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+            <Filter className="w-4 h-4" />
+            More Filters
+          </button>
+        </div>
       </div>
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[800px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Shipment ID</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Batch #</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Carrier</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Activity</th>
-              <th className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Shipment ID</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Batch #</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Carrier</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Activity</th>
+              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -442,23 +445,23 @@ export default function ShipmentsPage() {
                 className="hover:bg-gray-50 transition-colors cursor-pointer"
                 onClick={() => setSelectedShipment(shipment.id)}
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-purple-600">
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono text-purple-600">
                   {shipment.id}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">{shipment.isotope}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">{shipment.batch}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.isotope}</td>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{shipment.batch}</td>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
                   {shipment.origin} → {shipment.destination}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">{shipment.carrier}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-3 py-1 rounded-full text-xs ${shipment.statusColor}`}>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.carrier}</td>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                  <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${shipment.statusColor}`}>
                     {shipment.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[80px]">
+                    <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[60px] sm:max-w-[80px]">
                       <div 
                         className={`h-2 rounded-full ${
                           shipment.activity >= 90 ? 'bg-green-600' :
@@ -468,14 +471,15 @@ export default function ShipmentsPage() {
                         style={{ width: `${shipment.activity}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm">{shipment.activity}%</span>
+                    <span className="text-xs sm:text-sm">{shipment.activity}%</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">{shipment.eta}</td>
+                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.eta}</td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
