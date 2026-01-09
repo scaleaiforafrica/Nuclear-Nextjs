@@ -2,6 +2,7 @@
 
 import { Plus, Filter, Search, Eye, Edit, X, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/components/responsive';
 
 export default function ProcurementPage() {
   const [view, setView] = useState<'list' | 'form' | 'quotes'>('list');
@@ -424,64 +425,129 @@ export default function ProcurementPage() {
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px]">
-            <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Request ID</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quantity</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Delivery Date</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Manufacturers</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {procurementRequests.map((request) => (
-              <tr key={request.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{request.id}</td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.isotope}</td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.quantity}</td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                  {new Date(request.deliveryDate).toLocaleDateString()}
-                </td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                  <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${request.statusColor}`}>
-                    {request.status}
-                  </span>
-                </td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.matchedManufacturers}</td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={() => request.status === 'Quotes Received' && setView('quotes')}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                      title="View"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-red-600" title="Cancel">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
+        {/* Desktop Table View */}
+        <DesktopOnly>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px]">
+              <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Request ID</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quantity</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Delivery Date</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Manufacturers</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {procurementRequests.map((request) => (
+                <tr key={request.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{request.id}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.isotope}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.quantity}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                    {new Date(request.deliveryDate).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${request.statusColor}`}>
+                      {request.status}
+                    </span>
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.matchedManufacturers}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => request.status === 'Quotes Received' && setView('quotes')}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        title="View"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-red-600" title="Cancel">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
+        </DesktopOnly>
+
+        {/* Mobile Card View */}
+        <MobileOnly>
+          <div className="p-4 space-y-3">
+            {procurementRequests.map((request) => (
+              <MobileTableCard key={request.id}>
+                <MobileTableCardRow 
+                  label="ID" 
+                  value={<span className="font-mono text-xs">{request.id}</span>} 
+                />
+                <MobileTableCardRow 
+                  label="Isotope" 
+                  value={request.isotope} 
+                />
+                <MobileTableCardRow 
+                  label="Quantity" 
+                  value={request.quantity} 
+                />
+                <MobileTableCardRow 
+                  label="Delivery" 
+                  value={new Date(request.deliveryDate).toLocaleDateString()} 
+                />
+                <MobileTableCardRow 
+                  label="Status" 
+                  value={
+                    <span className={`px-2 py-1 rounded-full text-xs ${request.statusColor}`}>
+                      {request.status}
+                    </span>
+                  } 
+                />
+                <MobileTableCardRow 
+                  label="Manufacturers" 
+                  value={request.matchedManufacturers} 
+                />
+                <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
+                  <button 
+                    type="button"
+                    onClick={() => request.status === 'Quotes Received' && setView('quotes')}
+                    className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm min-h-[44px]"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View
+                  </button>
+                  <button 
+                    type="button"
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm min-h-[44px]"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center min-h-[44px]"
+                    aria-label="Delete request"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </MobileTableCard>
             ))}
-          </tbody>
-        </table>
-        </div>
+          </div>
+        </MobileOnly>
 
         {/* Pagination */}
         <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-sm text-gray-600">Showing 1-4 of 4</div>
           <div className="flex items-center gap-2">
-            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm">Previous</button>
-            <button className="px-3 py-1 bg-purple-600 text-white rounded text-sm">1</button>
-            <button className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm">Next</button>
+            <button type="button" className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm min-h-[44px]">Previous</button>
+            <button type="button" className="px-3 py-1 bg-purple-600 text-white rounded text-sm min-h-[44px]">1</button>
+            <button type="button" className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm min-h-[44px]">Next</button>
           </div>
         </div>
       </div>

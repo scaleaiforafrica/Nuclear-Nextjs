@@ -2,6 +2,7 @@
 
 import { List, Map, LayoutGrid, Search, Filter, Download, Phone, MapPin, Clock, Activity } from 'lucide-react';
 import { useState } from 'react';
+import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/components/responsive';
 
 export default function ShipmentsPage() {
   const [viewType, setViewType] = useState<'list' | 'map' | 'kanban'>('list');
@@ -424,62 +425,132 @@ export default function ShipmentsPage() {
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[800px]">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Shipment ID</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Batch #</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Carrier</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Activity</th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
+        {/* Desktop Table View */}
+        <DesktopOnly>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[800px]">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Shipment ID</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Batch #</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Carrier</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Activity</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {shipments.map((shipment) => (
+                <tr 
+                  key={shipment.id} 
+                  className="hover:bg-gray-50 transition-colors cursor-pointer"
+                  onClick={() => setSelectedShipment(shipment.id)}
+                >
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono text-purple-600">
+                    {shipment.id}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.isotope}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{shipment.batch}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                    {shipment.origin} → {shipment.destination}
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.carrier}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${shipment.statusColor}`}>
+                      {shipment.status}
+                    </span>
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[60px] sm:max-w-[80px]">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            shipment.activity >= 90 ? 'bg-green-600' :
+                            shipment.activity >= 70 ? 'bg-yellow-600' :
+                            'bg-red-600'
+                          }`}
+                          style={{ width: `${shipment.activity}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs sm:text-sm">{shipment.activity}%</span>
+                    </div>
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.eta}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
+        </DesktopOnly>
+
+        {/* Mobile Card View */}
+        <MobileOnly>
+          <div className="p-4 space-y-3">
             {shipments.map((shipment) => (
-              <tr 
-                key={shipment.id} 
-                className="hover:bg-gray-50 transition-colors cursor-pointer"
+              <MobileTableCard 
+                key={shipment.id}
                 onClick={() => setSelectedShipment(shipment.id)}
               >
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono text-purple-600">
-                  {shipment.id}
-                </td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.isotope}</td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{shipment.batch}</td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                  {shipment.origin} → {shipment.destination}
-                </td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.carrier}</td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                  <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${shipment.statusColor}`}>
-                    {shipment.status}
-                  </span>
-                </td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[60px] sm:max-w-[80px]">
-                      <div 
-                        className={`h-2 rounded-full ${
-                          shipment.activity >= 90 ? 'bg-green-600' :
-                          shipment.activity >= 70 ? 'bg-yellow-600' :
-                          'bg-red-600'
-                        }`}
-                        style={{ width: `${shipment.activity}%` }}
-                      ></div>
+                <MobileTableCardRow 
+                  label="ID" 
+                  value={<span className="font-mono text-xs text-purple-600">{shipment.id}</span>} 
+                />
+                <MobileTableCardRow 
+                  label="Isotope" 
+                  value={shipment.isotope} 
+                />
+                <MobileTableCardRow 
+                  label="Batch" 
+                  value={<span className="font-mono text-xs">{shipment.batch}</span>} 
+                />
+                <MobileTableCardRow 
+                  label="Route" 
+                  value={
+                    <span className="text-xs">
+                      {shipment.origin} → {shipment.destination}
+                    </span>
+                  } 
+                />
+                <MobileTableCardRow 
+                  label="Carrier" 
+                  value={shipment.carrier} 
+                />
+                <MobileTableCardRow 
+                  label="Status" 
+                  value={
+                    <span className={`px-2 py-1 rounded-full text-xs ${shipment.statusColor}`}>
+                      {shipment.status}
+                    </span>
+                  } 
+                />
+                <MobileTableCardRow 
+                  label="Activity" 
+                  value={
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[60px]">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            shipment.activity >= 90 ? 'bg-green-600' :
+                            shipment.activity >= 70 ? 'bg-yellow-600' :
+                            'bg-red-600'
+                          }`}
+                          style={{ width: `${shipment.activity}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs">{shipment.activity}%</span>
                     </div>
-                    <span className="text-xs sm:text-sm">{shipment.activity}%</span>
-                  </div>
-                </td>
-                <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.eta}</td>
-              </tr>
+                  } 
+                />
+                <MobileTableCardRow 
+                  label="ETA" 
+                  value={shipment.eta} 
+                />
+              </MobileTableCard>
             ))}
-          </tbody>
-        </table>
-        </div>
+          </div>
+        </MobileOnly>
       </div>
     </div>
   );

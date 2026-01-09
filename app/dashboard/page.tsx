@@ -14,6 +14,12 @@ import {
   getActiveShipments
 } from '@/lib/api'
 import DashboardGreeting from '@/components/DashboardGreeting'
+import { 
+  MobileOnly, 
+  DesktopOnly, 
+  MobileTableCard, 
+  MobileTableCardRow 
+} from '@/components/responsive'
 
 export default async function DashboardPage() {
 
@@ -147,7 +153,7 @@ export default async function DashboardPage() {
         <div className="lg:col-span-2 bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
           <h3 className="text-lg sm:text-xl mb-4">Recent Activity</h3>
           <div className="space-y-4">
-            {recentActivity.map((activity) => (
+            {recentActivity.slice(0, 3).map((activity) => (
               <div key={activity.id} className="flex gap-3">
                 <div className="flex-shrink-0 w-2 h-2 bg-purple-600 rounded-full mt-2"></div>
                 <div className="flex-1 min-w-0">
@@ -156,6 +162,10 @@ export default async function DashboardPage() {
                 </div>
               </div>
             ))}
+            {/* Show more button on mobile */}
+            <button type="button" className="md:hidden w-full text-center text-sm text-purple-600 hover:text-purple-700 py-2">
+              View All Activity
+            </button>
           </div>
         </div>
       </div>
@@ -169,36 +179,78 @@ export default async function DashboardPage() {
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px]">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ID</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {activeShipments.slice(0, 5).map((shipment) => (
-                <tr key={shipment.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{shipment.id}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.isotope}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                    {shipment.origin} → {shipment.destination}
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${getStatusColor(shipment.status)}`}>
+        
+        {/* Desktop Table View */}
+        <DesktopOnly>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px]">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ID</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {activeShipments.slice(0, 5).map((shipment) => (
+                  <tr key={shipment.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{shipment.id}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.isotope}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                      {shipment.origin} → {shipment.destination}
+                    </td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                      <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${getStatusColor(shipment.status)}`}>
+                        {shipment.status}
+                      </span>
+                    </td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.eta}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </DesktopOnly>
+
+        {/* Mobile Card View */}
+        <MobileOnly>
+          <div className="p-4 space-y-3">
+            {activeShipments.slice(0, 5).map((shipment) => (
+              <MobileTableCard key={shipment.id}>
+                <MobileTableCardRow 
+                  label="ID" 
+                  value={<span className="font-mono text-xs">{shipment.id}</span>} 
+                />
+                <MobileTableCardRow 
+                  label="Isotope" 
+                  value={shipment.isotope} 
+                />
+                <MobileTableCardRow 
+                  label="Route" 
+                  value={
+                    <span className="text-xs">
+                      {shipment.origin} → {shipment.destination}
+                    </span>
+                  } 
+                />
+                <MobileTableCardRow 
+                  label="Status" 
+                  value={
+                    <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(shipment.status)}`}>
                       {shipment.status}
                     </span>
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.eta}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  } 
+                />
+                <MobileTableCardRow 
+                  label="ETA" 
+                  value={shipment.eta} 
+                />
+              </MobileTableCard>
+            ))}
+          </div>
+        </MobileOnly>
       </div>
 
       {/* Compliance Alerts + Upcoming Deliveries */}

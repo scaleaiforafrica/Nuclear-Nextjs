@@ -1,14 +1,17 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import '../styles/globals.css'
 import { Providers } from './providers'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'NuClear - Nuclear Supply Chain Management',
   description: 'Comprehensive nuclear supply chain management platform for radiopharmaceutical delivery',
   keywords: ['nuclear medicine', 'logistics', 'radiopharmaceutical', 'supply chain', 'compliance'],
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 3,
+    userScalable: true,
+  },
 }
 
 export default function RootLayout({
@@ -18,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className="font-sans antialiased">
         <Providers>
           {children}
         </Providers>
