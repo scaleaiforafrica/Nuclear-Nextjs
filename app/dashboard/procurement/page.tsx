@@ -524,7 +524,10 @@ export default function ProcurementPage() {
                     <Edit className="w-4 h-4" />
                     Edit
                   </button>
-                  <button className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center min-h-[44px]">
+                  <button
+                    className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center min-h-[44px]"
+                    aria-label="Delete request"
+                  >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
