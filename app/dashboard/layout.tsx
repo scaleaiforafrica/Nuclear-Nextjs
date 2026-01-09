@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { 
   LayoutGrid, 
   ShoppingCart, 
@@ -59,10 +60,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   const currentPage = getCurrentPage()
-
-  const handleNavigate = (href: string) => {
-    router.push(href)
-  }
 
   const getPageTitle = (): string => {
     if (currentPage === 'dashboard') return 'Dashboard'
@@ -122,8 +119,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               const isActive = currentPage === item.id
               return (
                 <li key={item.id}>
-                  <button
-                    onClick={() => handleNavigate(item.href)}
+                  <Link
+                    href={item.href}
+                    onClick={closeMobileMenu}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all relative ${
                       isActive
                         ? 'bg-blue-50 text-blue-600'
@@ -135,7 +133,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     )}
                     <Icon className="w-5 h-5 flex-shrink-0" />
                     {!sidebarCollapsed && <span>{item.label}</span>}
-                  </button>
+                  </Link>
                 </li>
               )
             })}
@@ -144,8 +142,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {/* Settings & User Profile */}
         <div className="border-t border-gray-200">
-          <button
-            onClick={() => handleNavigate('/dashboard/settings')}
+          <Link
+            href="/dashboard/settings"
+            onClick={closeMobileMenu}
             className={`w-full flex items-center gap-3 px-6 py-4 transition-all ${
               currentPage === 'settings'
                 ? 'bg-blue-50 text-blue-600'
@@ -154,7 +153,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           >
             <Settings className="w-5 h-5 flex-shrink-0" />
             {!sidebarCollapsed && <span>Settings</span>}
-          </button>
+          </Link>
 
           {!sidebarCollapsed && (
             <div className="p-4 border-t border-gray-200">
