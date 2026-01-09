@@ -6,4 +6,4 @@ supabase/.temp/
 build/
 dist/
 *.log
-package-lock.json
+*.tsbuildinfo
