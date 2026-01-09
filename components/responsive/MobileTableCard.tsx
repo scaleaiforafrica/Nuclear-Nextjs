@@ -18,18 +18,37 @@ export function MobileTableCard({
   className = '',
   onClick
 }: MobileTableCardProps) {
-  const baseClasses = `
-    bg-white rounded-lg p-4 border border-gray-200
-    space-y-3
-    ${onClick ? 'cursor-pointer hover:border-gray-300 hover:shadow-md active:scale-[0.99]' : ''}
-    transition-all touch-manipulation
-  `
+  // Helper function to generate card classes
+  const getCardClasses = () => {
+    const baseClasses = [
+      'bg-white',
+      'rounded-lg',
+      'p-4',
+      'border border-gray-200',
+      'space-y-3',
+      'transition-all',
+      'touch-manipulation'
+    ]
+    
+    if (onClick) {
+      baseClasses.push(
+        'cursor-pointer',
+        'hover:border-gray-300',
+        'hover:shadow-md',
+        'active:scale-[0.99]'
+      )
+    }
+    
+    return baseClasses.join(' ')
+  }
+  
+  const cardClasses = `${getCardClasses()} ${className}`
   
   if (onClick) {
     return (
       <button 
         onClick={onClick}
-        className={`${baseClasses} ${className} w-full text-left`}
+        className={`${cardClasses} w-full text-left`}
       >
         {children}
       </button>
@@ -37,7 +56,7 @@ export function MobileTableCard({
   }
   
   return (
-    <div className={`${baseClasses} ${className}`}>
+    <div className={cardClasses}>
       {children}
     </div>
   )

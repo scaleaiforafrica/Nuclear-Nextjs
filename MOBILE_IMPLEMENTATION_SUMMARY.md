@@ -17,10 +17,11 @@ January 9, 2026
 viewport: {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 3,
   userScalable: true,
 }
 ```
+**Note**: Maximum scale set to 3x for optimal balance between accessibility (exceeds WCAG 2x minimum) and usability.
 
 #### New Responsive Utility Components
 Created 6 new utility components in `components/responsive/`:
