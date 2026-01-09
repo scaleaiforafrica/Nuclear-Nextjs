@@ -6,3 +6,4 @@ supabase/.temp/
 build/
 dist/
 *.log
+*.tsbuildinfo
