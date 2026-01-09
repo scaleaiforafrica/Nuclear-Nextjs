@@ -46,20 +46,30 @@ export function isDeliveryPast(date: string | Date, time: string): boolean {
  * Combine date and time into a single Date object
  * @param date - Date string (YYYY-MM-DD) or Date object
  * @param time - Time string (HH:MM or HH:MM:SS)
- * @returns Date object representing the scheduled date/time
+ * @returns Date object representing the scheduled date/time in local timezone
  */
 export function combineDateAndTime(date: string | Date, time: string): Date {
-  // Parse date string as UTC to maintain consistency with formatDeliveryDateTime
-  const deliveryDate = typeof date === 'string' ? new Date(date + 'T00:00:00Z') : date
-  const [hours, minutes] = time.split(':').map(Number)
-  
-  return new Date(
-    deliveryDate.getFullYear(),
-    deliveryDate.getMonth(),
-    deliveryDate.getDate(),
-    hours,
-    minutes
-  )
+  // Treat the date as a local calendar date and combine with local time components
+  const [hoursStr, minutesStr] = time.split(':')
+  const hours = Number(hoursStr) || 0
+  const minutes = Number(minutesStr) || 0
+
+  let year: number
+  let month: number
+  let day: number
+
+  if (typeof date === 'string') {
+    const [yearStr, monthStr, dayStr] = date.split('-')
+    year = Number(yearStr)
+    month = Number(monthStr) - 1 // JS months are 0-based
+    day = Number(dayStr)
+  } else {
+    year = date.getFullYear()
+    month = date.getMonth()
+    day = date.getDate()
+  }
+
+  return new Date(year, month, day, hours, minutes)
 }
 
 /**

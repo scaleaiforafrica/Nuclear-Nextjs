@@ -83,14 +83,18 @@ const completedDeliveries = await getCompletedDeliveries(24)
 ```typescript
 import { formatDeliveryDateTime } from '@/lib/dateUtils'
 
+// Example (assuming today is 2026-01-08 for illustration purposes):
+
 // Today's delivery at 14:30
 formatDeliveryDateTime('2026-01-08', '14:30') // "Today, 14:30"
 
 // Tomorrow's delivery at 09:00
 formatDeliveryDateTime('2026-01-09', '09:00') // "Tomorrow, 09:00"
 
-// Future delivery
+// Future delivery (day after tomorrow would be Friday)
 formatDeliveryDateTime('2026-01-10', '16:45') // "Friday, 16:45"
+
+// Note: Dates are dynamic and relative to the current date when the function is called
 ```
 
 ### Checking Past Deliveries

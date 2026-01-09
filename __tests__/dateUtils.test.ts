@@ -1,4 +1,4 @@
-// Simple test script to verify date utility functions
+import { describe, it, expect } from 'vitest'
 import { 
   formatDeliveryDateTime, 
   isDeliveryPast, 
@@ -6,45 +6,98 @@ import {
   formatRelativeTime 
 } from '../lib/dateUtils'
 
-console.log('=== Testing Date Utilities ===\n')
+describe('dateUtils', () => {
+  describe('formatDeliveryDateTime', () => {
+    it('should format today\'s delivery as "Today, HH:MM"', () => {
+      const today = new Date().toISOString().split('T')[0]
+      const result = formatDeliveryDateTime(today, '14:30:00')
+      expect(result).toBe('Today, 14:30')
+    })
 
-// Test 1: Format dates
-const today = new Date()
-const tomorrow = new Date(today)
-tomorrow.setDate(today.getDate() + 1)
-const dayAfter = new Date(today)
-dayAfter.setDate(today.getDate() + 2)
+    it('should format tomorrow\'s delivery as "Tomorrow, HH:MM"', () => {
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      const tomorrowStr = tomorrow.toISOString().split('T')[0]
+      const result = formatDeliveryDateTime(tomorrowStr, '09:00:00')
+      expect(result).toBe('Tomorrow, 09:00')
+    })
 
-console.log('1. Testing formatDeliveryDateTime:')
-console.log('   Today at 14:30:', formatDeliveryDateTime(today.toISOString().split('T')[0], '14:30:00'))
-console.log('   Tomorrow at 09:00:', formatDeliveryDateTime(tomorrow.toISOString().split('T')[0], '09:00:00'))
-console.log('   Day after at 16:45:', formatDeliveryDateTime(dayAfter.toISOString().split('T')[0], '16:45:00'))
+    it('should format future delivery with day name', () => {
+      const dayAfter = new Date()
+      dayAfter.setDate(dayAfter.getDate() + 2)
+      const dayAfterStr = dayAfter.toISOString().split('T')[0]
+      const result = formatDeliveryDateTime(dayAfterStr, '16:45:00')
+      const expectedDay = dayAfter.toLocaleDateString('en-US', { weekday: 'long' })
+      expect(result).toBe(`${expectedDay}, 16:45`)
+    })
+  })
 
-// Test 2: Check if delivery is past
-console.log('\n2. Testing isDeliveryPast:')
-const pastTime = new Date(today)
-pastTime.setHours(today.getHours() - 2)
-const futureTime = new Date(today)
-futureTime.setHours(today.getHours() + 2)
+  describe('isDeliveryPast', () => {
+    it('should return true for past deliveries', () => {
+      const pastDate = new Date()
+      pastDate.setHours(pastDate.getHours() - 2)
+      const dateStr = pastDate.toISOString().split('T')[0]
+      const timeStr = `${String(pastDate.getHours()).padStart(2, '0')}:${String(pastDate.getMinutes()).padStart(2, '0')}`
+      
+      const result = isDeliveryPast(dateStr, timeStr)
+      expect(result).toBe(true)
+    })
 
-console.log('   Past delivery (2 hours ago):', isDeliveryPast(pastTime.toISOString().split('T')[0], `${pastTime.getHours()}:${pastTime.getMinutes()}`))
-console.log('   Future delivery (2 hours ahead):', isDeliveryPast(futureTime.toISOString().split('T')[0], `${futureTime.getHours()}:${futureTime.getMinutes()}`))
+    it('should return false for future deliveries', () => {
+      const futureDate = new Date()
+      futureDate.setHours(futureDate.getHours() + 2)
+      const dateStr = futureDate.toISOString().split('T')[0]
+      const timeStr = `${String(futureDate.getHours()).padStart(2, '0')}:${String(futureDate.getMinutes()).padStart(2, '0')}`
+      
+      const result = isDeliveryPast(dateStr, timeStr)
+      expect(result).toBe(false)
+    })
+  })
 
-// Test 3: Combine date and time
-console.log('\n3. Testing combineDateAndTime:')
-const combined = combineDateAndTime('2026-01-10', '14:30:00')
-console.log('   Combined date/time:', combined.toString())
+  describe('combineDateAndTime', () => {
+    it('should combine date and time strings correctly', () => {
+      const result = combineDateAndTime('2026-01-10', '14:30:00')
+      expect(result.getFullYear()).toBe(2026)
+      expect(result.getMonth()).toBe(0) // January is 0
+      expect(result.getDate()).toBe(10)
+      expect(result.getHours()).toBe(14)
+      expect(result.getMinutes()).toBe(30)
+    })
 
-// Test 4: Format relative time
-console.log('\n4. Testing formatRelativeTime:')
-const justNow = new Date()
-const minutesAgo = new Date(today.getTime() - 5 * 60 * 1000)
-const hoursAgo = new Date(today.getTime() - 3 * 60 * 60 * 1000)
-const daysAgo = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000)
+    it('should handle Date objects', () => {
+      const date = new Date(2026, 0, 10, 0, 0, 0)
+      const result = combineDateAndTime(date, '14:30')
+      expect(result.getFullYear()).toBe(2026)
+      expect(result.getMonth()).toBe(0)
+      expect(result.getDate()).toBe(10)
+      expect(result.getHours()).toBe(14)
+      expect(result.getMinutes()).toBe(30)
+    })
+  })
 
-console.log('   Just now:', formatRelativeTime(justNow))
-console.log('   5 minutes ago:', formatRelativeTime(minutesAgo))
-console.log('   3 hours ago:', formatRelativeTime(hoursAgo))
-console.log('   2 days ago:', formatRelativeTime(daysAgo))
+  describe('formatRelativeTime', () => {
+    it('should return "Just now" for very recent times', () => {
+      const now = new Date()
+      const result = formatRelativeTime(now)
+      expect(result).toBe('Just now')
+    })
 
-console.log('\n✓ All tests completed!')
+    it('should return minutes ago for recent times', () => {
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
+      const result = formatRelativeTime(fiveMinutesAgo)
+      expect(result).toBe('5 minutes ago')
+    })
+
+    it('should return hours ago for times within a day', () => {
+      const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000)
+      const result = formatRelativeTime(threeHoursAgo)
+      expect(result).toBe('3 hours ago')
+    })
+
+    it('should return days ago for times within a week', () => {
+      const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+      const result = formatRelativeTime(twoDaysAgo)
+      expect(result).toBe('2 days ago')
+    })
+  })
+})

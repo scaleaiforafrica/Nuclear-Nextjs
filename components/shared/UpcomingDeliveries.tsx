@@ -7,6 +7,10 @@ import { formatDeliveryDateTime, isDeliveryPast } from '@/lib/dateUtils'
 
 interface UpcomingDeliveriesProps {
   initialDeliveries: Delivery[]
+  /** 
+   * Optional callback when a delivery is completed.
+   * Note: Parent should memoize this callback with useCallback to prevent unnecessary effect re-runs.
+   */
   onDeliveryCompleted?: (delivery: Delivery) => void
 }
 
@@ -62,8 +66,10 @@ export default function UpcomingDeliveries({
       <div className="space-y-3">
         {deliveries.map((delivery) => {
           const formattedDateTime = formatDeliveryDateTime(delivery.date, delivery.time)
-          // Generate a stable key from delivery properties
-          const deliveryKey = delivery.id || `${delivery.date}-${delivery.time}-${delivery.isotope}-${delivery.destination}`
+          // Generate a stable key from delivery properties with sanitized strings
+          const deliveryKey =
+            delivery.id ||
+            `${delivery.date}-${delivery.time}-${delivery.isotope.replace(/\s+/g, '-')}-${delivery.destination.replace(/[^a-zA-Z0-9]/g, '-')}`
           
           return (
             <div 

@@ -14,12 +14,13 @@ export default function RecentActivity({
   completedDeliveries = []
 }: RecentActivityProps) {
   const [activities, setActivities] = useState<Activity[]>(initialActivities)
-  const [currentTime, setCurrentTime] = useState(new Date())
+  // Counter to force re-renders for relative time updates
+  const [, setUpdateTrigger] = useState(0)
 
   useEffect(() => {
-    // Update time every minute to refresh relative times
+    // Update every minute to refresh relative times display
     const interval = setInterval(() => {
-      setCurrentTime(new Date())
+      setUpdateTrigger(prev => prev + 1)
     }, 60000) // Update every minute
 
     return () => clearInterval(interval)
@@ -29,8 +30,13 @@ export default function RecentActivity({
     // Add completed deliveries to activities
     if (completedDeliveries.length > 0) {
       const newActivities = completedDeliveries.map((delivery) => {
-        // Generate stable ID from delivery properties only (no index for stability)
-        const stableId = delivery.id || `delivery-${delivery.date}-${delivery.time}-${delivery.isotope.replace(/\s+/g, '-')}`
+        // Generate stable ID from delivery properties only (no index for stability).
+        // Assumes the combination of scheduled_datetime (or date+time), isotope, and destination is unique.
+        const baseTime = delivery.scheduled_datetime?.toISOString() || `${delivery.date}T${delivery.time}`
+        const normalizedIsotope = delivery.isotope.replace(/[^A-Za-z0-9]+/g, '-')
+        const normalizedDestination = delivery.destination.replace(/[^A-Za-z0-9]+/g, '-')
+        const stableId = delivery.id || `delivery-${baseTime}-${normalizedIsotope}-${normalizedDestination}`
+        
         return {
           id: stableId,
           time: delivery.scheduled_datetime?.toISOString() || new Date().toISOString(),

@@ -125,12 +125,17 @@ export async function getUpcomingDeliveries(limit: number = 4): Promise<Delivery
     const now = new Date()
     
     // Get deliveries from today onwards
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('deliveries')
         .select('*')
         .gte('date', now.toISOString().split('T')[0]) // From today
         .order('date', { ascending: true })
         .order('time', { ascending: true })
+    
+    if (error) {
+        console.error('Failed to fetch upcoming deliveries:', error)
+        return []
+    }
     
     if (!data || data.length === 0) {
         return []
@@ -159,12 +164,17 @@ export async function getCompletedDeliveries(hoursBack: number = 24): Promise<De
     const cutoffDate = new Date(now.getTime() - (hoursBack * 60 * 60 * 1000))
     
     // Get deliveries from the past 24 hours
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('deliveries')
         .select('*')
         .gte('date', cutoffDate.toISOString().split('T')[0])
         .order('date', { ascending: false })
         .order('time', { ascending: false })
+    
+    if (error) {
+        console.error('Failed to fetch completed deliveries:', error)
+        return []
+    }
     
     if (!data || data.length === 0) {
         return []

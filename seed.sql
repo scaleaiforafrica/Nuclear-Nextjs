@@ -24,11 +24,12 @@ INSERT INTO public.activities (event, type, time) VALUES
 ('Quality inspection approved for batch B-2024-001', 'approval', NOW() - INTERVAL '3 days');
 
 -- 4. Deliveries (Upcoming and some completed for testing)
--- Some past deliveries (will show in recent activity)
+-- NOTE: These seed times are relative to when the script is run.
+-- Past deliveries (for testing "completed" status - will show in recent activity if run after these times)
 INSERT INTO public.deliveries (date, time, isotope, destination) VALUES 
-(CURRENT_DATE, '08:00', 'F-18', 'City General Hospital, LA'),
-(CURRENT_DATE, '09:30', 'Lu-177', 'Mount Sinai Hospital, NY'),
--- Upcoming today
+(CURRENT_DATE, '06:00', 'F-18', 'City General Hospital, LA'),
+(CURRENT_DATE, '07:30', 'Lu-177', 'Mount Sinai Hospital, NY'),
+-- Upcoming today (set for later in the day - adjust times as needed for your timezone)
 (CURRENT_DATE, '18:00', 'Tc-99m', 'Memorial Hospital, NYC'),
 (CURRENT_DATE, '20:30', 'Ga-68', 'UCLA Medical Center, CA'),
 -- Tomorrow
