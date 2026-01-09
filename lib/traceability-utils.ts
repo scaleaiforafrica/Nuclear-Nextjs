@@ -1,11 +1,25 @@
 // Utility functions for traceability operations
 
+interface AuditEvent {
+  type: string;
+  timestamp: string;
+  actor: string;
+  location: string;
+  description: string;
+  hash: string;
+}
+
+interface ShipmentMetadata {
+  isotope?: string;
+  batch?: string;
+}
+
 /**
  * Download audit trail as JSON
  */
 export async function downloadAuditTrailJSON(
   shipmentId: string,
-  events: any[]
+  events: AuditEvent[]
 ): Promise<void> {
   console.log('Downloading audit trail JSON for shipment:', shipmentId);
   
@@ -40,8 +54,8 @@ export async function downloadAuditTrailJSON(
  */
 export async function generateSignedPDFReport(
   shipmentId: string,
-  events: any[],
-  metadata: any
+  events: AuditEvent[],
+  metadata: ShipmentMetadata
 ): Promise<void> {
   console.log('Generating signed PDF report for shipment:', shipmentId);
   

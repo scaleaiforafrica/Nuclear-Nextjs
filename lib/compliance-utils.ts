@@ -1,12 +1,16 @@
 // Utility functions for compliance document operations
 
+interface DocumentData {
+  [key: string]: any;
+}
+
 /**
  * Download a compliance document as PDF
  */
 export async function downloadDocumentPDF(
   documentName: string,
   shipmentId: string,
-  documentData: any
+  documentData: DocumentData
 ): Promise<void> {
   // In a real app, this would generate a PDF using a library like jsPDF or pdfmake
   // For now, we'll simulate the download
@@ -39,7 +43,7 @@ export async function downloadDocumentPDF(
  */
 export async function generateComplianceDocument(
   documentType: string,
-  shipmentData: any
+  shipmentData: DocumentData
 ): Promise<{ success: boolean; documentId?: string; error?: string }> {
   // Simulate document generation
   await new Promise(resolve => setTimeout(resolve, 1000));
@@ -58,7 +62,7 @@ export async function generateComplianceDocument(
  */
 export async function downloadComplianceReport(
   shipmentId: string,
-  documents: any[]
+  documents: DocumentData[]
 ): Promise<void> {
   console.log('Downloading compliance report for shipment:', shipmentId);
   

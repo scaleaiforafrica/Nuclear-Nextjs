@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { MapPin } from 'lucide-react';
 
 // Note: This component uses a custom SVG-based map visualization.
-// For production, consider integrating react-leaflet (v4.2.1) for actual map tiles and GPS coordinates.
+// For production, consider integrating react-leaflet (v5.0.0) for actual map tiles and GPS coordinates.
 // Dependencies are included in package.json for future enhancement.
 
 interface Shipment {
