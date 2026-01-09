@@ -4,7 +4,7 @@ import { TrendingUp, Activity, Package } from 'lucide-react';
 
 export function Analytics() {
   return (
-    <section className="py-24 bg-white">
+    <section id="analytics" className="py-24 bg-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-5xl mb-4">Powerful Analytics Dashboard</h2>

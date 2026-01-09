@@ -2,7 +2,7 @@ import { Database, Zap, Shield } from 'lucide-react';
 
 export function ChainOfCustody() {
   return (
-    <section className="py-24 bg-gray-900 text-white overflow-hidden">
+    <section id="chain-of-custody" className="py-24 bg-gray-900 text-white overflow-hidden">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-5xl mb-4">Real-Time Chain of Custody</h2>

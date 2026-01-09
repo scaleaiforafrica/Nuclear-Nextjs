@@ -1,12 +1,22 @@
 'use client';
 
 import { Plus, Filter, Search, Eye, Edit, X, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/components/responsive';
 
 export default function ProcurementPage() {
+  const searchParams = useSearchParams();
+  const viewParam = searchParams?.get('view');
   const [view, setView] = useState<'list' | 'form' | 'quotes'>('list');
   const [formStep, setFormStep] = useState(1);
+
+  // Handle URL parameter on mount
+  useEffect(() => {
+    if (viewParam === 'form') {
+      setView('form');
+    }
+  }, [viewParam]);
 
   const procurementRequests = [
     { 
