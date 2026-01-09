@@ -4,9 +4,6 @@ import {
   CheckCircle,
   TrendingUp,
   MapPin,
-  Plus,
-  Search,
-  FileText,
   ArrowRight
 } from 'lucide-react'
 import {
@@ -16,14 +13,9 @@ import {
   getComplianceAlerts,
   getActiveShipments
 } from '@/lib/api'
+import DashboardGreeting from '@/components/DashboardGreeting'
 
 export default async function DashboardPage() {
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
 
   const dashboardStats = await getDashboardStats()
   const recentActivity = await getRecentActivity(5)
@@ -86,28 +78,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6 lg:space-y-8">
       {/* Welcome Banner + Quick Actions */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-4 sm:p-6 lg:p-8 text-white">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl mb-2">Good morning, Dr. Sarah Johnson</h2>
-            <p className="text-purple-100 text-sm sm:text-base">{currentDate}</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <button className="bg-white text-purple-600 px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
-              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">New Procurement</span>
-            </button>
-            <button className="bg-white/20 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-white/30 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
-              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">Track Shipment</span>
-            </button>
-            <button className="bg-white/20 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-white/30 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
-              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">Generate Report</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <DashboardGreeting />
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
