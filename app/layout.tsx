@@ -9,6 +9,12 @@ export const metadata: Metadata = {
   title: 'NuClear - Nuclear Supply Chain Management',
   description: 'Comprehensive nuclear supply chain management platform for radiopharmaceutical delivery',
   keywords: ['nuclear medicine', 'logistics', 'radiopharmaceutical', 'supply chain', 'compliance'],
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
 }
 
 export default function RootLayout({
