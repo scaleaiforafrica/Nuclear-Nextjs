@@ -14,6 +14,12 @@ import {
   getActiveShipments
 } from '@/lib/api'
 import DashboardGreeting from '@/components/DashboardGreeting'
+import { 
+  MobileOnly, 
+  DesktopOnly, 
+  MobileTableCard, 
+  MobileTableCardRow 
+} from '@/components/responsive'
 
 export default async function DashboardPage() {
 
