@@ -1,0 +1,5 @@
+export { ProfileSettings } from './ProfileSettings'
+export { AccountSettings } from './AccountSettings'
+export { ApplicationPreferences } from './ApplicationPreferences'
+export { SecurityPrivacy } from './SecurityPrivacy'
+export { NotificationsConfiguration } from './NotificationsConfiguration'
