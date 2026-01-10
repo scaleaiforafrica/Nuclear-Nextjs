@@ -3,7 +3,6 @@ import {
   Clock,
   CheckCircle,
   TrendingUp,
-  MapPin,
   ArrowRight
 } from 'lucide-react'
 import {
@@ -14,6 +13,7 @@ import {
   getActiveShipments
 } from '@/lib/api'
 import DashboardGreeting from '@/components/DashboardGreeting'
+import { LiveTrackingMap } from '@/components/dashboard'
 import { 
   MobileOnly, 
   DesktopOnly, 
@@ -110,42 +110,8 @@ export default async function DashboardPage() {
         {/* Live Shipment Map */}
         <div className="lg:col-span-3 bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
           <h3 className="text-lg sm:text-xl mb-4">Live Shipment Tracking</h3>
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl h-64 sm:h-80 lg:h-96 flex items-center justify-center relative overflow-hidden">
-            {/* Simplified Map Visualization */}
-            <div className="absolute inset-0 opacity-20">
-              <svg viewBox="0 0 800 400" className="w-full h-full">
-                {/* Africa outline simplified */}
-                <path
-                  d="M 400,50 L 450,80 L 480,120 L 490,180 L 480,250 L 450,320 L 400,360 L 350,350 L 320,300 L 310,240 L 320,180 L 350,120 L 380,80 Z"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-              </svg>
-            </div>
-            {/* Shipment Pins */}
-            <div className="relative w-full h-full">
-              {[
-                { top: '30%', left: '40%', status: 'active' },
-                { top: '50%', left: '35%', status: 'warning' },
-                { top: '60%', left: '45%', status: 'active' },
-                { top: '40%', left: '50%', status: 'success' },
-              ].map((pin, i) => (
-                <div
-                  key={i}
-                  className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{ top: pin.top, left: pin.left }}
-                >
-                  <MapPin
-                    className={`w-8 h-8 ${pin.status === 'active' ? 'text-blue-600' :
-                        pin.status === 'warning' ? 'text-amber-600' :
-                          'text-green-600'
-                      }`}
-                    fill="currentColor"
-                  />
-                </div>
-              ))}
-            </div>
+          <div className="h-64 sm:h-80 lg:h-96">
+            <LiveTrackingMap />
           </div>
         </div>
 

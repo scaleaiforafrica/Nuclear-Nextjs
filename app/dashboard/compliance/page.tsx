@@ -2,9 +2,19 @@
 
 import { Shield, AlertTriangle, CheckCircle, FileText, Download, Eye } from 'lucide-react';
 import { useState } from 'react';
+import { 
+  RenewDocumentDialog, 
+  ViewDocumentDialog, 
+  GenerateDocumentDialog 
+} from '@/components/compliance';
+import { downloadDocumentPDF } from '@/lib/compliance-utils';
 
 export default function CompliancePage() {
   const [selectedShipment, setSelectedShipment] = useState('SH-2851');
+  const [renewDialogOpen, setRenewDialogOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [generateDialogOpen, setGenerateDialogOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<any>(null);
 
   const documents = [
     { 
@@ -139,7 +149,16 @@ export default function CompliancePage() {
             <div className="flex-1">
               <div className="font-medium text-red-900 mb-1">Radiation Safety Certificate Expired</div>
               <p className="text-sm text-red-700">Shipment #SH-2851 - Renew immediately to avoid shipment delays</p>
-              <button className="text-sm text-red-600 hover:text-red-700 mt-2 underline">
+              <button 
+                onClick={() => {
+                  setSelectedDocument({ 
+                    name: 'Radiation Safety Certificate', 
+                    shipmentId: 'SH-2851' 
+                  });
+                  setRenewDialogOpen(true);
+                }}
+                className="text-sm text-red-600 hover:text-red-700 mt-2 underline"
+              >
                 Renew Now
               </button>
             </div>
@@ -212,10 +231,21 @@ export default function CompliancePage() {
                     <div className="flex flex-wrap items-center gap-2 ml-0 lg:ml-4">
                       {doc.status === 'complete' && (
                         <>
-                          <button className="p-2 hover:bg-white rounded-lg transition-colors" title="View">
+                          <button 
+                            onClick={() => {
+                              setSelectedDocument(doc);
+                              setViewDialogOpen(true);
+                            }}
+                            className="p-2 hover:bg-white rounded-lg transition-colors" 
+                            title="View"
+                          >
                             <Eye className="w-4 h-4 text-gray-600" />
                           </button>
-                          <button className="p-2 hover:bg-white rounded-lg transition-colors" title="Download">
+                          <button 
+                            onClick={() => downloadDocumentPDF(doc.name, selectedShipment, doc)}
+                            className="p-2 hover:bg-white rounded-lg transition-colors" 
+                            title="Download"
+                          >
                             <Download className="w-4 h-4 text-gray-600" />
                           </button>
                         </>
@@ -226,12 +256,24 @@ export default function CompliancePage() {
                         </button>
                       )}
                       {doc.status === 'expired' && (
-                        <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">
+                        <button 
+                          onClick={() => {
+                            setSelectedDocument({ name: doc.name, shipmentId: selectedShipment });
+                            setRenewDialogOpen(true);
+                          }}
+                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                        >
                           Renew Now
                         </button>
                       )}
                       {doc.status === 'not-started' && (
-                        <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm">
+                        <button 
+                          onClick={() => {
+                            setSelectedDocument({ name: doc.name, shipmentId: selectedShipment });
+                            setGenerateDialogOpen(true);
+                          }}
+                          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                        >
                           Generate
                         </button>
                       )}
@@ -250,6 +292,23 @@ export default function CompliancePage() {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <RenewDocumentDialog
+        isOpen={renewDialogOpen}
+        onClose={() => setRenewDialogOpen(false)}
+        document={selectedDocument}
+      />
+      <ViewDocumentDialog
+        isOpen={viewDialogOpen}
+        onClose={() => setViewDialogOpen(false)}
+        document={selectedDocument}
+      />
+      <GenerateDocumentDialog
+        isOpen={generateDialogOpen}
+        onClose={() => setGenerateDialogOpen(false)}
+        document={selectedDocument}
+      />
     </div>
   );
 }

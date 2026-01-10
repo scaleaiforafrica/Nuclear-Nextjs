@@ -7,3 +7,4 @@ export { QualityCompliance } from './QualityCompliance';
 export { FinalCTA } from './FinalCTA';
 export type { FinalCTAProps } from './FinalCTA';
 export { Footer } from './Footer';
+export { WatchDemoModal } from './WatchDemoModal';

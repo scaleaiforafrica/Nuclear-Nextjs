@@ -2,10 +2,13 @@
 
 import { Search, Download, FileText, Clock, MapPin, User, Database } from 'lucide-react';
 import { useState } from 'react';
+import { VerifyShipmentDialog } from '@/components/traceability';
+import { downloadAuditTrailJSON, generateSignedPDFReport } from '@/lib/traceability-utils';
 
 export default function TraceabilityPage() {
   const [selectedShipment, setSelectedShipment] = useState('SH-2851');
   const [isRegulatorView, setIsRegulatorView] = useState(false);
+  const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
 
   const auditEvents = [
     {
@@ -158,26 +161,34 @@ export default function TraceabilityPage() {
 
       {/* Shipment Info Card */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl p-4 sm:p-6 mb-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          <div>
-            <div className="text-xs sm:text-sm text-purple-100 mb-1">Shipment ID</div>
-            <div className="text-lg sm:text-2xl font-mono">{selectedShipment}</div>
-          </div>
-          <div>
-            <div className="text-xs sm:text-sm text-purple-100 mb-1">Isotope</div>
-            <div className="text-base sm:text-xl">Tc-99m</div>
-          </div>
-          <div>
-            <div className="text-xs sm:text-sm text-purple-100 mb-1">Batch Number</div>
-            <div className="text-base sm:text-xl font-mono">TC-2026-001</div>
-          </div>
-          <div>
-            <div className="text-xs sm:text-sm text-purple-100 mb-1">Compliance Status</div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-base sm:text-xl">Verified</span>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 flex-1">
+            <div>
+              <div className="text-xs sm:text-sm text-purple-100 mb-1">Shipment ID</div>
+              <div className="text-lg sm:text-2xl font-mono">{selectedShipment}</div>
+            </div>
+            <div>
+              <div className="text-xs sm:text-sm text-purple-100 mb-1">Isotope</div>
+              <div className="text-base sm:text-xl">Tc-99m</div>
+            </div>
+            <div>
+              <div className="text-xs sm:text-sm text-purple-100 mb-1">Batch Number</div>
+              <div className="text-base sm:text-xl font-mono">TC-2026-001</div>
+            </div>
+            <div>
+              <div className="text-xs sm:text-sm text-purple-100 mb-1">Compliance Status</div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-base sm:text-xl">Verified</span>
+              </div>
             </div>
           </div>
+          <button
+            onClick={() => setVerifyDialogOpen(true)}
+            className="px-4 py-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-lg transition-colors text-sm whitespace-nowrap"
+          >
+            Verify on Chain
+          </button>
         </div>
       </div>
 
@@ -257,10 +268,19 @@ export default function TraceabilityPage() {
               <strong>{auditEvents.length}</strong> blockchain-verified events recorded
             </p>
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white transition-colors text-xs sm:text-sm">
+              <button 
+                onClick={() => downloadAuditTrailJSON(selectedShipment, auditEvents)}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white transition-colors text-xs sm:text-sm"
+              >
                 Download JSON
               </button>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-xs sm:text-sm flex items-center justify-center gap-2">
+              <button 
+                onClick={() => generateSignedPDFReport(selectedShipment, auditEvents, {
+                  isotope: 'Tc-99m',
+                  batch: 'TC-2026-001'
+                })}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-xs sm:text-sm flex items-center justify-center gap-2"
+              >
                 <Download className="w-4 h-4" />
                 <span className="whitespace-nowrap">Generate Signed PDF Report</span>
               </button>
@@ -268,6 +288,13 @@ export default function TraceabilityPage() {
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <VerifyShipmentDialog
+        isOpen={verifyDialogOpen}
+        onClose={() => setVerifyDialogOpen(false)}
+        shipmentId={selectedShipment}
+      />
     </div>
   );
 }

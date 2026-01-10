@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { ArrowRight, Menu } from 'lucide-react';
 import { AnimatedLogo } from '@/components';
 
@@ -8,6 +9,9 @@ export interface HeroProps {
 }
 
 export function Hero({ onOpenLogin }: HeroProps) {
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
       {/* Navigation */}
@@ -61,6 +65,11 @@ export function Hero({ onOpenLogin }: HeroProps) {
             </button>
           </div>
         </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-1/4 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+        <div className="absolute top-1/3 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse animation-delay-2000"></div>
+        <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse animation-delay-4000"></div>
       </div>
 
       {/* Subtle Background Elements */}
