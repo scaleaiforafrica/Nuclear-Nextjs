@@ -149,18 +149,18 @@ export function Hero({ onOpenLogin }: HeroProps) {
       {/* Hero Content */}
       <div className="container mx-auto px-4 sm:px-6 pt-12 sm:pt-16 lg:pt-20 pb-16 sm:pb-24 lg:pb-32 text-center">
         <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
-          <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-card border border-primary/20 rounded-md">
-            <span className="text-primary font-medium text-sm sm:text-base">Professional Medical Logistics Platform</span>
+          <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-card border border-secondary/20 rounded-md">
+            <span className="text-secondary font-medium text-sm sm:text-base">Professional Medical Logistics Platform</span>
           </div>
           
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl tracking-tight text-foreground leading-tight">
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl tracking-tight text-foreground leading-tight font-semibold">
             Nuclear Medicine<br />
             <span className="text-primary">
               Supply Chain Management
             </span>
           </h1>
           
-          <p className="text-base sm:text-lg lg:text-xl text-secondary max-w-2xl mx-auto px-4 sm:px-0">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4 sm:px-0">
             Real-time tracking, automated compliance, and intelligent routing for radiopharmaceutical delivery
           </p>
           
@@ -172,21 +172,12 @@ export function Hero({ onOpenLogin }: HeroProps) {
               Get Started
               <ArrowRight className="w-5 h-5" />
             </button>
-            <button className="bg-card text-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-muted transition-colors border border-border text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <button className="bg-card text-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-muted transition-colors border border-secondary text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
               Schedule Demo
             </button>
           </div>
         </div>
-
-        {/* Decorative Elements - Hidden on small mobile for performance */}
-        <div className="hidden sm:block absolute top-1/4 left-10 w-48 md:w-72 h-48 md:h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="hidden sm:block absolute top-1/3 right-10 w-48 md:w-72 h-48 md:h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse animation-delay-2000"></div>
-        <div className="hidden sm:block absolute bottom-20 left-1/2 w-48 md:w-72 h-48 md:h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse animation-delay-4000"></div>
       </div>
-
-      {/* Subtle Background Elements */}
-      <div className="hidden sm:block absolute top-1/4 left-10 w-48 md:w-72 h-48 md:h-72 bg-primary/5 rounded-full filter blur-3xl opacity-50"></div>
-      <div className="hidden sm:block absolute bottom-20 right-10 w-48 md:w-72 h-48 md:h-72 bg-primary/5 rounded-full filter blur-3xl opacity-50"></div>
     </div>
   );
 }

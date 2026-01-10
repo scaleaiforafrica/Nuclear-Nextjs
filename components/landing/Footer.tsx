@@ -10,7 +10,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-secondary text-white pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10">
+    <footer className="bg-primary text-white pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10">
       <div className="container mx-auto px-4 sm:px-6">
         {/* Main Footer Content */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-6 gap-8 sm:gap-10 lg:gap-12 mb-10 sm:mb-12 lg:mb-16">
@@ -25,28 +25,28 @@ export function Footer() {
             <div className="flex gap-3 sm:gap-4">
               <a 
                 href="#" 
-                className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/20 rounded-md flex items-center justify-center hover:bg-primary transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 aria-label="Twitter"
               >
                 <Twitter className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
               <a 
                 href="#" 
-                className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/20 rounded-md flex items-center justify-center hover:bg-primary transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
               <a 
                 href="#" 
-                className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/20 rounded-md flex items-center justify-center hover:bg-primary transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 aria-label="GitHub"
               >
                 <Github className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
               <a 
                 href="#" 
-                className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/20 rounded-md flex items-center justify-center hover:bg-primary transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 aria-label="Email"
               >
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -63,7 +63,7 @@ export function Footer() {
                   <li key={link}>
                     <a 
                       href="#" 
-                      className="hover:text-white transition-colors text-white/70 text-xs sm:text-sm py-1 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
+                      className="hover:text-accent transition-colors text-white/70 text-xs sm:text-sm py-1 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
                     >
                       {link}
                     </a>
@@ -75,14 +75,14 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 sm:pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-          <p className="text-xs sm:text-sm text-gray-500 text-center sm:text-left">
+        <div className="pt-6 sm:pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+          <p className="text-xs sm:text-sm text-white/50 text-center sm:text-left">
             © 2026 ⚛ NUCLEAR. All rights reserved.
           </p>
           <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm">
-            <a href="#" className="hover:text-white transition-colors text-white/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors text-white/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">Terms</a>
-            <a href="#" className="hover:text-white transition-colors text-white/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">Cookies</a>
+            <a href="#" className="hover:text-accent transition-colors text-white/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">Privacy</a>
+            <a href="#" className="hover:text-accent transition-colors text-white/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">Terms</a>
+            <a href="#" className="hover:text-accent transition-colors text-white/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">Cookies</a>
           </div>
         </div>
       </div>

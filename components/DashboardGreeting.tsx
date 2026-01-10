@@ -67,32 +67,32 @@ export default function DashboardGreeting() {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-4 sm:p-6 lg:p-8 text-white">
+      <div className="bg-gradient-to-r from-primary to-secondary rounded-xl p-4 sm:p-6 lg:p-8 text-white">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h2 className="text-xl sm:text-2xl lg:text-3xl mb-2">
               {greeting}, {userName}
             </h2>
-            <p className="text-purple-100 text-sm sm:text-base">{currentDate}</p>
+            <p className="text-white/80 text-sm sm:text-base">{currentDate}</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <button 
               onClick={handleNewProcurement}
-              className="bg-white text-purple-600 px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="bg-white text-primary px-4 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-white/90 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base font-medium"
             >
               <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="whitespace-nowrap">New Procurement</span>
             </button>
             <button 
               onClick={handleTrackShipment}
-              className="bg-white/20 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-white/30 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="bg-white/10 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-white/20 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base border border-white/20"
             >
               <Search className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="whitespace-nowrap">Track Shipment</span>
             </button>
             <button 
               onClick={handleGenerateReport}
-              className="bg-white/20 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-white/30 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="bg-white/10 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-white/20 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base border border-white/20"
             >
               <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="whitespace-nowrap">Generate Report</span>

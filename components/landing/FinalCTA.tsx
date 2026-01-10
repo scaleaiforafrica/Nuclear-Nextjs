@@ -19,10 +19,10 @@ export function FinalCTA({ onOpenLogin }: FinalCTAProps) {
 
       <div className="container mx-auto px-4 sm:px-6 relative">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6">
+          <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6 font-semibold">
             Get Started with NuclearFlow
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl mb-8 sm:mb-10 lg:mb-12 text-purple-100 max-w-2xl mx-auto px-4 sm:px-0">
+          <p className="text-base sm:text-lg lg:text-xl mb-8 sm:mb-10 lg:mb-12 text-white/80 max-w-2xl mx-auto px-4 sm:px-0">
             Join leading medical facilities using ⚛ NUCLEAR to ensure safe, compliant, and efficient radiopharmaceutical delivery.
           </p>
 
@@ -44,7 +44,7 @@ export function FinalCTA({ onOpenLogin }: FinalCTAProps) {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-6 sm:mb-8 px-4 sm:px-0">
             <button 
               onClick={onOpenLogin}
-              className="bg-white text-primary px-8 sm:px-10 py-3 sm:py-4 rounded-md hover:bg-white/90 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base font-medium touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+              className="bg-card text-primary px-8 sm:px-10 py-3 sm:py-4 rounded-md hover:bg-card/90 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base font-medium touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
             >
               Request Demo
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
