@@ -11,12 +11,14 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: [
+          'Inter',
+          'Source Sans 3',
+          '"Helvetica Neue"',
           'system-ui',
           '-apple-system',
           'BlinkMacSystemFont',
           '"Segoe UI"',
           'Roboto',
-          '"Helvetica Neue"',
           'Arial',
           '"Noto Sans"',
           'sans-serif',
@@ -26,7 +28,8 @@ const config: Config = {
           '"Noto Color Emoji"',
         ],
         heading: [
-          '"Erotique Regular"',
+          '"Playfair Display"',
+          '"Libre Baskerville"',
           'Georgia',
           '"Times New Roman"',
           'serif',
