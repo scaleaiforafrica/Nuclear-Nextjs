@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Home, ArrowLeft } from 'lucide-react';
+import { AnimatedLogo } from '@/components';
 
 export default function NotFound() {
   return (
@@ -11,9 +12,8 @@ export default function NotFound() {
 
       <div className="text-center relative z-10 px-6">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg"></div>
-          <span className="text-xl font-medium">NuclearFlow</span>
+        <div className="flex items-center justify-center mb-8">
+          <AnimatedLogo size="md" showIcon={true} />
         </div>
 
         {/* 404 Display */}

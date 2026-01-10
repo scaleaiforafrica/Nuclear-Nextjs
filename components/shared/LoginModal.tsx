@@ -3,6 +3,7 @@
 import { X, Mail, Lock, Github, Chrome } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts';
+import { AnimatedLogo } from '@/components';
 
 export interface LoginModalProps {
   isOpen: boolean;
@@ -69,9 +70,8 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
 
         {/* Header */}
         <div className="p-8 pb-6">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg"></div>
-            <span className="text-xl">NuclearFlow</span>
+          <div className="mb-6">
+            <AnimatedLogo size="md" showIcon={true} />
           </div>
 
           <h2 className="text-3xl mb-2">

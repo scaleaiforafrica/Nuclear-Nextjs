@@ -1,4 +1,5 @@
 import { Twitter, Linkedin, Github, Mail } from 'lucide-react';
+import { AnimatedLogo } from '@/components';
 
 export function Footer() {
   const footerLinks = {
@@ -15,9 +16,8 @@ export function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-12 mb-16">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-primary rounded-lg"></div>
-              <span className="font-heading text-white text-xl">NuclearFlow</span>
+            <div className="mb-4">
+              <AnimatedLogo size="md" showIcon={true} className="text-white" />
             </div>
             <p className="mb-6 text-white/70">
               Enterprise platform for nuclear medicine supply chain management.
@@ -58,7 +58,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-500">
-            © 2026 NuclearFlow. All rights reserved.
+            © 2026 ⚛ NUCLEAR. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>

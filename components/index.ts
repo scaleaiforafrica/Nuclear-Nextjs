@@ -12,3 +12,6 @@ export * from './landing'
 
 // Shared components
 export * from './shared'
+
+// Logo components
+export * from './AnimatedLogo'

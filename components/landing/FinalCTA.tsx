@@ -22,8 +22,8 @@ export function FinalCTA({ onOpenLogin }: FinalCTAProps) {
           <h2 className="font-heading text-4xl md:text-5xl mb-6">
             Get Started with NuclearFlow
           </h2>
-          <p className="text-xl mb-12 text-white/80">
-            Join leading medical facilities ensuring safe, compliant, and efficient radiopharmaceutical delivery.
+          <p className="text-xl mb-12 text-purple-100">
+            Join leading medical facilities using ⚛ NUCLEAR to ensure safe, compliant, and efficient radiopharmaceutical delivery.
           </p>
 
           {/* Features List */}

@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Menu } from 'lucide-react';
+import { AnimatedLogo } from '@/components';
 
 export interface HeroProps {
   onOpenLogin: () => void;
@@ -11,10 +12,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
     <div className="relative min-h-screen bg-background overflow-hidden">
       {/* Navigation */}
       <nav className="container mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg"></div>
-          <span className="font-heading text-lg">NuclearFlow</span>
-        </div>
+        <AnimatedLogo size="sm" showIcon={true} />
         <div className="hidden md:flex items-center gap-8">
           <a href="#" className="text-foreground hover:text-primary transition-colors">Platform</a>
           <a href="#" className="text-foreground hover:text-primary transition-colors">Solutions</a>
