@@ -25,6 +25,12 @@ const config: Config = {
           '"Segoe UI Symbol"',
           '"Noto Color Emoji"',
         ],
+        heading: [
+          '"Erotique Regular"',
+          'Georgia',
+          '"Times New Roman"',
+          'serif',
+        ],
       },
       colors: {
         background: 'var(--background)',
