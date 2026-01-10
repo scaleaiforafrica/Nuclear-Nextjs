@@ -9,21 +9,21 @@ export interface HeroProps {
 
 export function Hero({ onOpenLogin }: HeroProps) {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 overflow-hidden">
+    <div className="relative min-h-screen bg-background overflow-hidden">
       {/* Navigation */}
       <nav className="container mx-auto px-6 py-6 flex items-center justify-between">
         <AnimatedLogo size="sm" showIcon={true} />
         <div className="hidden md:flex items-center gap-8">
-          <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">Platform</a>
-          <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">Solutions</a>
-          <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">Resources</a>
-          <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">Company</a>
+          <a href="#" className="text-foreground hover:text-primary transition-colors">Platform</a>
+          <a href="#" className="text-foreground hover:text-primary transition-colors">Solutions</a>
+          <a href="#" className="text-foreground hover:text-primary transition-colors">Resources</a>
+          <a href="#" className="text-foreground hover:text-primary transition-colors">Company</a>
         </div>
         <button 
           onClick={onOpenLogin}
-          className="bg-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition-colors"
+          className="bg-primary text-primary-foreground px-6 py-2 rounded-md hover:bg-primary/90 transition-colors font-medium"
         >
-          Get Started
+          Sign In
         </button>
         <button className="md:hidden">
           <Menu className="w-6 h-6" />
@@ -33,41 +33,39 @@ export function Hero({ onOpenLogin }: HeroProps) {
       {/* Hero Content */}
       <div className="container mx-auto px-6 pt-20 pb-32 text-center">
         <div className="max-w-4xl mx-auto space-y-8">
-          <div className="inline-block px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full border border-purple-200">
-            <span className="text-purple-600">✨ Next-Gen Medical Logistics Platform</span>
+          <div className="inline-block px-4 py-2 bg-card border border-primary/20 rounded-md">
+            <span className="text-primary font-medium">Professional Medical Logistics Platform</span>
           </div>
           
-          <h1 className="text-6xl md:text-7xl lg:text-8xl tracking-tight">
-            Revolutionizing<br />
-            <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent">
-              Nuclear Medicine
-            </span><br />
-            Logistics
+          <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl tracking-tight text-foreground">
+            Nuclear Medicine<br />
+            <span className="text-primary">
+              Supply Chain Management
+            </span>
           </h1>
           
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-secondary max-w-2xl mx-auto">
             Real-time tracking, automated compliance, and intelligent routing for radiopharmaceutical delivery
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button 
               onClick={onOpenLogin}
-              className="bg-purple-600 text-white px-8 py-4 rounded-full hover:bg-purple-700 transition-all hover:scale-105 flex items-center justify-center gap-2"
+              className="bg-primary text-primary-foreground px-8 py-3 rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 font-medium"
             >
-              Start Free Trial
+              Get Started
               <ArrowRight className="w-5 h-5" />
             </button>
-            <button className="bg-white text-gray-800 px-8 py-4 rounded-full hover:bg-gray-50 transition-all border border-gray-200">
-              Watch Demo
+            <button className="bg-card text-foreground px-8 py-3 rounded-md hover:bg-muted transition-colors border border-border">
+              Schedule Demo
             </button>
           </div>
         </div>
       </div>
 
-      {/* Decorative Elements */}
-      <div className="absolute top-1/4 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-      <div className="absolute top-1/3 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse animation-delay-2000"></div>
-      <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse animation-delay-4000"></div>
+      {/* Subtle Background Elements */}
+      <div className="absolute top-1/4 left-10 w-72 h-72 bg-primary/5 rounded-full filter blur-3xl opacity-50"></div>
+      <div className="absolute bottom-20 right-10 w-72 h-72 bg-primary/5 rounded-full filter blur-3xl opacity-50"></div>
     </div>
   );
 }

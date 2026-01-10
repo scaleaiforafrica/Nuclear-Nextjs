@@ -11,19 +11,19 @@ export function QualityCompliance() {
   ];
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-card">
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
           <div>
-            <div className="inline-block px-4 py-2 bg-green-100 rounded-full mb-6">
-              <span className="text-green-600">Quality & Compliance</span>
+            <div className="inline-block px-4 py-2 bg-primary/10 rounded-md mb-6 border border-primary/20">
+              <span className="text-primary font-medium">Quality & Compliance</span>
             </div>
-            <h2 className="text-5xl mb-6">
-              International Quality & Compliance Assurance
+            <h2 className="font-heading text-4xl md:text-5xl mb-6 text-foreground">
+              Regulatory Compliance & Quality Assurance
             </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Our platform is built to meet the strictest regulatory standards for nuclear medicine logistics worldwide.
+            <p className="text-xl text-secondary mb-8">
+              Built to meet international regulatory standards for nuclear medicine logistics.
             </p>
 
             {/* Key Points */}
@@ -36,14 +36,14 @@ export function QualityCompliance() {
                 'Digital signature verification'
               ].map((point, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">{point}</span>
+                  <CheckCircle className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-foreground">{point}</span>
                 </div>
               ))}
             </div>
 
-            <button className="bg-green-600 text-white px-8 py-4 rounded-full hover:bg-green-700 transition-colors">
-              Download Compliance Guide
+            <button className="bg-primary text-primary-foreground px-8 py-3 rounded-md hover:bg-primary/90 transition-colors font-medium">
+              View Compliance Documentation
             </button>
           </div>
 

@@ -4,34 +4,34 @@ import { TrendingUp, Activity, Package } from 'lucide-react';
 
 export function Analytics() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-background">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-5xl mb-4">Powerful Analytics Dashboard</h2>
-          <p className="text-xl text-gray-600">Real-time insights into your entire logistics operation</p>
+          <h2 className="font-heading text-4xl md:text-5xl mb-4 text-foreground">Analytics & Reporting</h2>
+          <p className="text-xl text-secondary">Comprehensive insights for operational excellence</p>
         </div>
 
         {/* Dashboard Preview */}
         <div className="grid lg:grid-cols-3 gap-6 mb-12">
           {/* Main Chart Card */}
-          <div className="lg:col-span-2 bg-white border border-gray-200 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+          <div className="lg:col-span-2 bg-card border border-border rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg mb-1">Delivery Performance</h3>
-                <p className="text-gray-500">Last 30 days</p>
+                <h3 className="font-heading text-lg mb-1 text-foreground">Delivery Performance</h3>
+                <p className="text-secondary">Last 30 days</p>
               </div>
               <div className="flex gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600">On Time</span>
+                  <div className="w-3 h-3 bg-accent rounded-full"></div>
+                  <span className="text-sm text-secondary">On Time</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600">Delayed</span>
+                  <span className="text-sm text-secondary">Delayed</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600">Critical</span>
+                  <span className="text-sm text-secondary">Critical</span>
                 </div>
               </div>
             </div>
@@ -40,7 +40,7 @@ export function Analytics() {
             <div className="h-64 flex items-end gap-2">
               {Array.from({ length: 30 }).map((_, i) => {
                 const height = Math.random() * 80 + 20;
-                const colors = ['bg-green-500', 'bg-yellow-500', 'bg-red-500'];
+                const colors = ['bg-accent', 'bg-yellow-500', 'bg-red-500'];
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 return (
                   <div key={i} className="flex-1 flex flex-col justify-end">
@@ -55,16 +55,16 @@ export function Analytics() {
           </div>
 
           {/* Temperature Monitor */}
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+          <div className="bg-primary/5 border border-primary/20 rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-6">
-              <Activity className="w-6 h-6 text-blue-600" />
-              <h3 className="text-lg">Temperature Monitor</h3>
+              <Activity className="w-6 h-6 text-primary" />
+              <h3 className="font-heading text-lg text-foreground">Temperature Monitor</h3>
             </div>
             <div className="space-y-4">
-              <div className="text-5xl">2.4°C</div>
+              <div className="text-5xl text-foreground">2.4°C</div>
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-                <span className="text-green-600">Within range</span>
+                <TrendingUp className="w-5 h-5 text-accent" />
+                <span className="text-accent">Within range</span>
               </div>
               <div className="pt-4">
                 <div className="h-32 flex items-end gap-1">
@@ -73,7 +73,7 @@ export function Analytics() {
                     return (
                       <div key={i} className="flex-1 flex flex-col justify-end">
                         <div 
-                          className="bg-blue-600 rounded-t opacity-70 hover:opacity-100 transition-opacity"
+                          className="bg-primary rounded-t opacity-70 hover:opacity-100 transition-opacity"
                           style={{ height: `${height}%` }}
                         ></div>
                       </div>
