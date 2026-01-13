@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Mail, Lock, Github, Chrome } from 'lucide-react';
+import { X, Mail, Lock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts';
 import { AnimatedLogo } from '@/components';
@@ -116,25 +116,7 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
             </p>
           </div>
 
-          {/* Social Login Buttons */}
-          <div className="px-6 sm:px-8 pb-4 sm:pb-6">
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
-              <button className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                <Chrome className="w-4 sm:w-5 h-4 sm:h-5 text-gray-700" />
-                <span className="text-sm">Google</span>
-              </button>
-              <button className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                <Github className="w-4 sm:w-5 h-4 sm:h-5 text-gray-700" />
-                <span className="text-sm">GitHub</span>
-              </button>
-            </div>
 
-            <div className="flex items-center gap-3 sm:gap-4 my-4 sm:my-6">
-              <div className="flex-1 h-px bg-gray-200"></div>
-              <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">or continue with email</span>
-              <div className="flex-1 h-px bg-gray-200"></div>
-            </div>
-          </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="px-6 sm:px-8 pb-6 sm:pb-8">
