@@ -22,6 +22,8 @@ describe('isDemoUser', () => {
     expect(isDemoUser('remodel@example.com')).toBe(false)
     expect(isDemoUser('demo.user@example.com')).toBe(false)
     expect(isDemoUser('demouser@example.com')).toBe(false)
+    expect(isDemoUser('user@notdemo.example.com')).toBe(false)
+    expect(isDemoUser('user@mydemo.com')).toBe(false)
   })
 
   it('should return false for null or undefined email', () => {
