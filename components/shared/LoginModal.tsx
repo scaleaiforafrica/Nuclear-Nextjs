@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Mail, Lock } from 'lucide-react';
+import { X, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts';
 import { AnimatedLogo } from '@/components';
@@ -19,6 +19,7 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login, signUp } = useAuth();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -150,14 +151,26 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
                   <Lock className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
                   <input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all text-base touch-manipulation"
+                    className="w-full pl-10 sm:pl-12 pr-12 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all text-base touch-manipulation"
                     required
                     autoComplete={isSignUp ? 'new-password' : 'current-password'}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 rounded"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 sm:w-5 h-4 sm:h-5" />
+                    ) : (
+                      <Eye className="w-4 sm:w-5 h-4 sm:h-5" />
+                    )}
+                  </button>
                 </div>
               </div>
 
