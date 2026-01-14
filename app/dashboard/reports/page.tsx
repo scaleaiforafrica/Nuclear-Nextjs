@@ -62,7 +62,7 @@ export default function ReportsPage() {
     }
 
     const data = MOCK_DATA[reportType];
-    const daysDiff = differenceInDays(endDate, startDate);
+    const daysDiff = Math.max(1, differenceInDays(endDate, startDate));
     
     // Calculate shipments based on date range (scaled by days)
     const totalShipments = Math.floor(data.baseShipments * (daysDiff / 30));
