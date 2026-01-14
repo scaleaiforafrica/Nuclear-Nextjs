@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Hero,
@@ -12,10 +12,22 @@ import {
   Footer,
 } from '@/components/landing';
 import { LoginModal } from '@/components/shared';
+import { useAuth } from '@/contexts';
+import { isDemoUser } from '@/lib/utils';
 
 export default function LandingPage() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const router = useRouter();
+  const { isAuthenticated, supabaseUser, isLoading } = useAuth();
+
+  // Redirect authenticated demo users to settings page
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && supabaseUser?.email) {
+      if (isDemoUser(supabaseUser.email)) {
+        router.push('/dashboard/settings');
+      }
+    }
+  }, [isLoading, isAuthenticated, supabaseUser, router]);
 
   const handleOpenLogin = () => {
     setIsLoginOpen(true);
