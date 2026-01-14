@@ -19,15 +19,16 @@ export default function LandingPage() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const router = useRouter();
   const { isAuthenticated, supabaseUser, isLoading } = useAuth();
+  const userEmail = supabaseUser?.email;
 
   // Redirect authenticated demo users to settings page
   useEffect(() => {
-    if (!isLoading && isAuthenticated && supabaseUser?.email) {
-      if (isDemoUser(supabaseUser.email)) {
+    if (!isLoading && isAuthenticated && userEmail) {
+      if (isDemoUser(userEmail)) {
         router.push('/dashboard/settings');
       }
     }
-  }, [isLoading, isAuthenticated, supabaseUser, router]);
+  }, [isLoading, isAuthenticated, userEmail, router]);
 
   const handleOpenLogin = () => {
     setIsLoginOpen(true);
