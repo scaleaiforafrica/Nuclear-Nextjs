@@ -40,24 +40,27 @@ export function AnimatedLogo({ size = 'md', showIcon = true, className = '' }: A
   };
 
   const iconSizeClasses = {
-    sm: 'text-xl sm:text-2xl',
-    md: 'text-2xl sm:text-3xl',
-    lg: 'text-3xl sm:text-4xl md:text-5xl',
+    sm: 'w-5 h-5 sm:w-6 sm:h-6',
+    md: 'w-6 h-6 sm:w-8 sm:h-8',
+    lg: 'w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12',
   };
 
   return (
     <div className={`flex items-center gap-2 ${sizeClasses[size]} ${className}`}>
       {showIcon && (
         <span
-          className={`${iconSizeClasses[size]} ${
+          className={`inline-flex items-center justify-center ${
             isAnimating ? 'animate-fade-in-symbol' : ''
           }`}
           style={{
             animationDelay: '800ms',
           }}
-          aria-label="Nuclear symbol"
         >
-          ⚛
+          <img
+            src="/images/nuclear-logo.png"
+            alt="Nuclear logo"
+            className={`${iconSizeClasses[size]} object-contain`}
+          />
         </span>
       )}
       <span className="font-semibold flex" aria-label="NUCLEAR">
