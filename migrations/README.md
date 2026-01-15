@@ -2,6 +2,30 @@
 
 This directory contains SQL migration files for the Nuclear Supply Chain Management application.
 
+## 🚀 Automatic Deployment
+
+**Migrations are automatically deployed to production when merged to `main`!**
+
+A GitHub Actions workflow automatically:
+- Detects changes to migration files
+- Applies them to your Supabase database
+- Verifies the schema
+- Reports success/failure
+
+**See [MIGRATION_MANAGEMENT.md](../MIGRATION_MANAGEMENT.md) for complete details on:**
+- Creating new migrations
+- Testing locally
+- Rollback procedures
+- Troubleshooting
+
+**Required Setup:**
+Configure these GitHub secrets (one-time setup):
+- `SUPABASE_ACCESS_TOKEN` - Your Supabase CLI token
+- `SUPABASE_PROJECT_ID` - Your project reference ID
+- `SUPABASE_DB_PASSWORD` - Database password
+
+---
+
 ## Available Migrations
 
 ### 1. Initial Schema (`001_initial_schema.sql`)
@@ -21,7 +45,7 @@ This migration adds settings-related fields to the profiles table and creates lo
 
 ---
 
-## How to Deploy to Vercel
+## Manual Deployment (if needed)
 
 ### Option 1: Vercel + Supabase Integration (Recommended)
 

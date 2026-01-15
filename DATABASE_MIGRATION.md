@@ -2,13 +2,17 @@
 
 This document provides quick instructions for setting up the database for this application on Vercel.
 
-## Quick Start
+## 🚀 Automatic Deployment
+
+Once set up, **migrations are automatically deployed when merged to `main`**. See [MIGRATION_MANAGEMENT.md](./MIGRATION_MANAGEMENT.md) for details.
+
+## Initial Setup (One-Time)
 
 ### For Vercel + Supabase (Recommended)
 
 1. **Create a Supabase project** at [supabase.com](https://supabase.com)
 
-2. **Run the migration** in Supabase SQL Editor:
+2. **Run the initial migration** in Supabase SQL Editor:
    - Go to Supabase Dashboard → SQL Editor
    - Copy contents from `migrations/001_initial_schema.sql`
    - Paste and click "Run"
@@ -18,10 +22,21 @@ This document provides quick instructions for setting up the database for this a
    - Add the Supabase integration
    - Select your Supabase project
 
-4. **Deploy**:
+4. **Set up GitHub Secrets** for automatic deployments:
+   - Go to GitHub → Repository Settings → Secrets and variables → Actions
+   - Add these secrets:
+     - `SUPABASE_ACCESS_TOKEN` - Get from `supabase login` then `cat ~/.supabase/access-token`
+     - `SUPABASE_PROJECT_ID` - From Supabase project settings
+     - `SUPABASE_DB_PASSWORD` - Your database password
+
+5. **Deploy**:
    ```bash
    vercel --prod
    ```
+
+## Future Migrations
+
+After initial setup, any new migrations in the `migrations/` directory will be **automatically applied** when merged to `main`. No manual deployment needed!
 
 ## What's Included
 
