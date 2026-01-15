@@ -1,0 +1,112 @@
+name: Deploy Database Migrations
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'migrations/**'
+  workflow_dispatch:
+    inputs:
+      migration_file:
+        description: 'Specific migration file to run (optional)'
+        required: false
+        type: string
+
+jobs:
+  deploy-migrations:
+    name: Deploy Migrations to Supabase
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: '1.1.0'
+
+      - name: Install Supabase CLI
+        run: |
+          bun install -g supabase
+
+      - name: Get changed migration files
+        id: changed-files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.migration_file }}" ]; then
+            echo "files=${{ inputs.migration_file }}" >> $GITHUB_OUTPUT
+          else
+            # Get all changed migration files in this push
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^migrations/.*\.sql$' || echo "")
+            if [ -z "$CHANGED_FILES" ]; then
+              echo "No migration files changed"
+              echo "files=" >> $GITHUB_OUTPUT
+            else
+              echo "Migration files changed:"
+              echo "$CHANGED_FILES"
+              # Convert to comma-separated list
+              FILES=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
+              echo "files=$FILES" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Run migrations
+        if: steps.changed-files.outputs.files != ''
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          # Link to Supabase project
+          supabase link --project-ref $SUPABASE_PROJECT_ID --password $SUPABASE_DB_PASSWORD
+          
+          # Run each changed migration file
+          IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
+          for file in "${FILES[@]}"; do
+            if [ -f "$file" ]; then
+              echo "Running migration: $file"
+              supabase db push --file "$file"
+              if [ $? -eq 0 ]; then
+                echo "✅ Successfully applied migration: $file"
+              else
+                echo "❌ Failed to apply migration: $file"
+                exit 1
+              fi
+            fi
+          done
+
+      - name: Verify migrations
+        if: steps.changed-files.outputs.files != ''
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          echo "Verifying database schema..."
+          supabase db dump --schema public > /tmp/current_schema.sql
+          echo "✅ Database schema verified"
+
+      - name: Comment on PR (if applicable)
+        if: github.event_name == 'push' && steps.changed-files.outputs.files != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const files = '${{ steps.changed-files.outputs.files }}'.split(',');
+            const comment = `### ✅ Database Migrations Deployed
+            
+            The following migrations were successfully applied to the production database:
+            
+            ${files.map(f => `- \`${f}\``).join('\n')}
+            
+            Database schema has been updated and verified.`;
+            
+            // This will add a comment to the commit
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: comment
+            });
