@@ -209,9 +209,15 @@ BEGIN
     new.raw_user_meta_data->>'full_name',
     COALESCE(new.raw_user_meta_data->>'role', 'Hospital Administrator'),
     COALESCE(
-      new.raw_user_meta_data->>'initials', 
-      -- Extract first 2 chars of username (before @) as fallback
-      UPPER(SUBSTRING(SPLIT_PART(new.email, '@', 1), 1, 2))
+      new.raw_user_meta_data->>'initials',
+      -- Extract first 2 chars of username (before @) as fallback, with minimum length handling
+      CASE 
+        WHEN LENGTH(SPLIT_PART(new.email, '@', 1)) >= 2 
+          THEN UPPER(SUBSTRING(SPLIT_PART(new.email, '@', 1), 1, 2))
+        WHEN LENGTH(SPLIT_PART(new.email, '@', 1)) = 1
+          THEN UPPER(SPLIT_PART(new.email, '@', 1)) || 'X'
+        ELSE 'XX'
+      END
     )
   );
   RETURN new;
@@ -251,12 +257,21 @@ CREATE INDEX IF NOT EXISTS idx_compliance_alerts_created_at ON public.compliance
 -- ============================================================================
 -- SEED DATA (OPTIONAL - Uncomment to populate with sample data)
 -- ============================================================================
--- NOTE: The status_color field contains Tailwind CSS classes for the existing
--- application UI. In production, consider storing semantic status values and
--- mapping to CSS classes in the application layer for better maintainability.
+-- NOTE: The status_color field contains Tailwind CSS classes for backward 
+-- compatibility with the existing application UI. For new implementations,
+-- consider storing only the semantic status value and mapping to CSS classes 
+-- in the application layer for better maintainability and theme support.
+--
+-- Alternatively, you could modify the shipments table to remove status_color
+-- and use a status-to-color mapping in your application code:
+-- const statusColors = {
+--   'In Transit': 'bg-blue-100 text-blue-800',
+--   'At Customs': 'bg-yellow-100 text-yellow-800',
+--   ...
+-- }
 
 /*
--- Sample Shipments
+-- Sample Shipments (includes status_color for legacy compatibility)
 INSERT INTO public.shipments (isotope, origin, destination, status, eta, status_color) VALUES 
 ('Tc-99m', 'Oak Ridge, TN', 'Memorial Hospital, NYC', 'In Transit', NOW() + INTERVAL '2 days', 'bg-blue-100 text-blue-800'),
 ('I-131', 'Chalk River, ON', 'Johns Hopkins, MD', 'At Customs', NOW() + INTERVAL '3 days', 'bg-yellow-100 text-yellow-800'),
