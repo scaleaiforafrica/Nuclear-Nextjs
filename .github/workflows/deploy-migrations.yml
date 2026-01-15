@@ -24,14 +24,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: '20'
+          bun-version: '1.1.0'
 
       - name: Install Supabase CLI
         run: |
-          npm install -g supabase
+          bun install -g supabase
 
       - name: Get changed migration files
         id: changed-files

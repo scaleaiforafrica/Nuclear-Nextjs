@@ -70,7 +70,7 @@ Choose one of these methods:
 **Method B: Supabase CLI**
 ```bash
 # Install Supabase CLI if not already installed
-npm install -g supabase
+bun install -g supabase
 
 # Login to Supabase
 supabase login
@@ -124,7 +124,7 @@ If you prefer to use Vercel's native Postgres offering:
 #### Step 2: Connect to Database
 ```bash
 # Install Vercel CLI if not already installed
-npm install -g vercel
+bun install -g vercel
 
 # Pull environment variables
 vercel env pull .env.local
@@ -167,7 +167,7 @@ For local development and testing:
 
 ```bash
 # Install Supabase CLI
-npm install -g supabase
+bun install -g supabase
 
 # Initialize Supabase in your project
 supabase init
