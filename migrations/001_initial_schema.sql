@@ -208,7 +208,11 @@ BEGIN
     new.id,
     new.raw_user_meta_data->>'full_name',
     COALESCE(new.raw_user_meta_data->>'role', 'Hospital Administrator'),
-    COALESCE(new.raw_user_meta_data->>'initials', SUBSTRING(new.email, 1, 2))
+    COALESCE(
+      new.raw_user_meta_data->>'initials', 
+      -- Extract first 2 chars of username (before @) as fallback
+      UPPER(SUBSTRING(SPLIT_PART(new.email, '@', 1), 1, 2))
+    )
   );
   RETURN new;
 END;
@@ -247,6 +251,9 @@ CREATE INDEX IF NOT EXISTS idx_compliance_alerts_created_at ON public.compliance
 -- ============================================================================
 -- SEED DATA (OPTIONAL - Uncomment to populate with sample data)
 -- ============================================================================
+-- NOTE: The status_color field contains Tailwind CSS classes for the existing
+-- application UI. In production, consider storing semantic status values and
+-- mapping to CSS classes in the application layer for better maintainability.
 
 /*
 -- Sample Shipments

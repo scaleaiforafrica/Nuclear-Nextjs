@@ -124,9 +124,18 @@ psql "$(grep POSTGRES_URL .env.local | cut -d '=' -f2-)"
 ```
 
 **Note:** Vercel Postgres doesn't have `auth.users` table by default. You'll need to:
-1. Remove references to `auth.users` in the migration
-2. Implement your own authentication table structure
-3. Or use Supabase for auth and Vercel Postgres for data (more complex)
+
+1. **Remove auth.users references** in the migration file:
+   - Lines 6, 104, 111, 120: Remove `REFERENCES auth.users(id)` from foreign keys
+   - Lines 202-214: Remove or modify the `handle_new_user()` function
+   - Lines 221-224: Remove the trigger `on_auth_user_created`
+   
+2. **Implement your own authentication**:
+   - Create a `users` table in public schema
+   - Update profile creation logic
+   - Implement your own auth system
+   
+3. **Or use Supabase for auth** and Vercel Postgres for data (requires custom setup)
 
 ### Option 3: Local Development with Supabase
 
