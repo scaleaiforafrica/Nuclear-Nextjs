@@ -2,6 +2,17 @@
 
 Comprehensive nuclear supply chain management platform for radiopharmaceutical delivery.
 
+## Database Setup
+
+This application requires a PostgreSQL database with the proper schema. For Vercel deployment with Supabase:
+
+**Quick Start:**
+1. Create a Supabase project at [supabase.com](https://supabase.com)
+2. Run the migration from `migrations/001_initial_schema.sql` in Supabase SQL Editor
+3. Connect Supabase to Vercel via the integration
+
+**📖 See [DATABASE_MIGRATION.md](./DATABASE_MIGRATION.md) for complete setup instructions**
+
 ## Environment Setup
 
 This application requires Supabase environment variables to be configured:
