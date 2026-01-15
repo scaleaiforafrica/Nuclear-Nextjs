@@ -3,9 +3,10 @@ import path from 'path'
 
 export default defineConfig({
   test: {
-    environment: 'node',
-    include: ['**/__tests__/**/*.test.ts'],
+    environment: 'happy-dom',
+    include: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
     globals: true,
+    setupFiles: ['./vitest.setup.ts'],
   },
   resolve: {
     alias: {

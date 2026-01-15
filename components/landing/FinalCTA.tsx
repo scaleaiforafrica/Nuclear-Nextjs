@@ -23,7 +23,7 @@ export function FinalCTA({ onOpenLogin }: FinalCTAProps) {
             Get Started with NuclearFlow
           </h2>
           <p className="text-base sm:text-lg lg:text-xl mb-8 sm:mb-10 lg:mb-12 text-white/80 max-w-2xl mx-auto px-4 sm:px-0">
-            Join leading medical facilities using ⚛ NUCLEAR to ensure safe, compliant, and efficient radiopharmaceutical delivery.
+            Join leading medical facilities using NUCLEAR to ensure safe, compliant, and efficient radiopharmaceutical delivery.
           </p>
 
           {/* Features List */}
