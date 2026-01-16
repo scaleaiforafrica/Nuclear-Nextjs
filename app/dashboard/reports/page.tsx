@@ -101,7 +101,7 @@ export default function ReportsPage() {
         <button 
           onClick={handleExportReport}
           disabled={isExporting}
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 self-start text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 self-start text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isExporting ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -120,7 +120,7 @@ export default function ReportsPage() {
             <select 
               value={reportType}
               onChange={(e) => setReportType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+              className="w-full px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
             >
               <option>Shipment Performance</option>
               <option>Compliance Overview</option>
@@ -133,7 +133,7 @@ export default function ReportsPage() {
             <select 
               value={timePeriod}
               onChange={(e) => handleTimePeriodChange(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+              className="w-full px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
             >
               <option>Last 7 Days</option>
               <option>Last 30 Days</option>
@@ -166,7 +166,7 @@ export default function ReportsPage() {
           <button
             onClick={handleGenerateReport}
             disabled={isGenerateDisabled || isLoading}
-            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
