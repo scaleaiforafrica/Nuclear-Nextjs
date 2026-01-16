@@ -41,11 +41,18 @@ export function ProfileSwitcher({
   }
 
   if (collapsed) {
+    const collapsedButtonClasses = [
+      'w-full flex items-center justify-center',
+      'p-2 hover:bg-gray-50 active:bg-gray-100',
+      'rounded-lg transition-colors',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+    ].join(' ')
+
     return (
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <button
-            className="w-full flex items-center justify-center p-2 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className={collapsedButtonClasses}
             aria-label="Switch profile"
           >
             <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
@@ -81,11 +88,19 @@ export function ProfileSwitcher({
     )
   }
 
+  const expandedButtonClasses = [
+    'w-full flex items-center gap-3',
+    'p-3 hover:bg-gray-50 active:bg-gray-100',
+    'rounded-lg transition-all',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+    'group'
+  ].join(' ')
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <button
-          className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group"
+          className={expandedButtonClasses}
           aria-label="Switch profile"
         >
           <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">

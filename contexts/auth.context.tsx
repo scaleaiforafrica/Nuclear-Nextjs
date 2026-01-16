@@ -39,8 +39,10 @@ function generateInitials(name: string): string {
 
 function getUserName(supabaseUser: SupabaseUser): string {
   const email = supabaseUser.email || ''
-  return supabaseUser.user_metadata?.full_name || 
+  return (
+    supabaseUser.user_metadata?.full_name || 
     email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  )
 }
 
 function mapSupabaseUser(supabaseUser: SupabaseUser, selectedRole?: UserRole): User {
@@ -62,13 +64,17 @@ function getAvailableProfiles(supabaseUser: SupabaseUser): Profile[] {
   const name = getUserName(supabaseUser)
   const initials = generateInitials(name)
   
+  // Valid role values
+  const validRoles: UserRole[] = ['Hospital Administrator', 'Logistics Manager', 'Compliance Officer']
+  
   // Get roles from user metadata, or default to all roles
   const userRoles = supabaseUser.user_metadata?.available_roles as UserRole[] | undefined
   
-  // If user has specific roles defined, use those; otherwise provide all three roles
-  const roles: UserRole[] = userRoles && userRoles.length > 0 
-    ? userRoles 
-    : ['Hospital Administrator', 'Logistics Manager', 'Compliance Officer']
+  // Filter to ensure only valid roles, and use all roles if none are valid
+  const filteredRoles = userRoles?.filter(role => validRoles.includes(role))
+  const roles: UserRole[] = filteredRoles && filteredRoles.length > 0 
+    ? filteredRoles 
+    : validRoles
   
   return roles.map(role => ({
     name,
