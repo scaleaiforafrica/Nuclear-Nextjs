@@ -1,0 +1,32 @@
+[
+  {
+    "name": "South African Nuclear Regulator - Import License",
+    "expiry_date": "2026-12-31T23:59:59Z",
+    "status": "valid"
+  },
+  {
+    "name": "Kenya Radiation Protection Board - Operating Permit",
+    "expiry_date": "2026-02-28T23:59:59Z",
+    "status": "expiring"
+  },
+  {
+    "name": "Nigerian Nuclear Regulatory Authority - Transport License",
+    "expiry_date": "2026-08-15T23:59:59Z",
+    "status": "valid"
+  },
+  {
+    "name": "Ghana Atomic Energy Commission - Facility License",
+    "expiry_date": "2026-01-10T23:59:59Z",
+    "status": "expired"
+  },
+  {
+    "name": "Egypt Nuclear & Radiological Regulatory - Import Permit",
+    "expiry_date": "2027-03-20T23:59:59Z",
+    "status": "valid"
+  },
+  {
+    "name": "East African Community - Regional Transport Permit",
+    "expiry_date": "2026-06-30T23:59:59Z",
+    "status": "valid"
+  }
+]

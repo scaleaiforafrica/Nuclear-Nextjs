@@ -1,0 +1,74 @@
+[
+  {
+    "isotope": "Technetium-99m",
+    "origin": "Pretoria, South Africa",
+    "destination": "Kenyatta National Hospital, Nairobi",
+    "status": "In Transit",
+    "eta": "2026-01-20T14:30:00Z",
+    "status_color": "blue"
+  },
+  {
+    "isotope": "Iodine-131",
+    "origin": "Cairo Nuclear Medicine Center, Egypt",
+    "destination": "Lagos University Teaching Hospital, Nigeria",
+    "status": "At Customs",
+    "eta": "2026-01-18T09:00:00Z",
+    "status_color": "yellow"
+  },
+  {
+    "isotope": "Fluorine-18",
+    "origin": "Accra Medical Center, Ghana",
+    "destination": "Mulago Hospital, Kampala",
+    "status": "Dispatched",
+    "eta": "2026-01-17T16:45:00Z",
+    "status_color": "green"
+  },
+  {
+    "isotope": "Lutetium-177",
+    "origin": "Johannesburg Nuclear Facility, South Africa",
+    "destination": "Casablanca University Hospital, Morocco",
+    "status": "Delivered",
+    "eta": "2026-01-15T11:20:00Z",
+    "status_color": "gray"
+  },
+  {
+    "isotope": "Yttrium-90",
+    "origin": "Nairobi Nuclear Center, Kenya",
+    "destination": "Addis Ababa Medical College, Ethiopia",
+    "status": "In Transit",
+    "eta": "2026-01-19T13:15:00Z",
+    "status_color": "blue"
+  },
+  {
+    "isotope": "Radium-223",
+    "origin": "Tunis Research Institute, Tunisia",
+    "destination": "University of Cape Town Hospital, South Africa",
+    "status": "Pending",
+    "eta": "2026-01-22T10:00:00Z",
+    "status_color": "orange"
+  },
+  {
+    "isotope": "Cobalt-60",
+    "origin": "Dar es Salaam Nuclear Center, Tanzania",
+    "destination": "Korle Bu Teaching Hospital, Ghana",
+    "status": "In Transit",
+    "eta": "2026-01-21T15:30:00Z",
+    "status_color": "blue"
+  },
+  {
+    "isotope": "Strontium-89",
+    "origin": "Harare Medical Complex, Zimbabwe",
+    "destination": "Chris Hani Baragwanath Hospital, South Africa",
+    "status": "Dispatched",
+    "eta": "2026-01-18T12:00:00Z",
+    "status_color": "green"
+  },
+  {
+    "isotope": "Samarium-153",
+    "origin": "Alexandria Nuclear Medicine, Egypt",
+    "destination": "Nairobi Hospital, Kenya",
+    "status": "At Customs",
+    "eta": "2026-01-19T08:45:00Z",
+    "status_color": "yellow"
+  }
+]
