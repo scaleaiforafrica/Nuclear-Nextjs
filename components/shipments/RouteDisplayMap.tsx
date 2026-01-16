@@ -7,13 +7,16 @@ import 'leaflet/dist/leaflet.css';
 import type { RouteWaypoint } from '@/models/shipment.model';
 
 // Fix for default marker icons in Next.js
-// @ts-ignore
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-});
+// Type assertion for leaflet icon prototype
+if (typeof window !== 'undefined') {
+  const IconDefault = L.Icon.Default.prototype as unknown as { _getIconUrl?: string };
+  delete IconDefault._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  });
+}
 
 // Custom marker icons
 const createCustomIcon = (color: string) => {
