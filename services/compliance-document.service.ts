@@ -371,6 +371,9 @@ export async function fetchDocumentsForShipment(shipmentId: string): Promise<Com
 /**
  * Helper function to check if all required documents are uploaded for a shipment
  */
+/**
+ * Helper function to check if all required documents are uploaded for a shipment
+ */
 export async function checkShipmentDocumentCompliance(
   shipmentId: string,
   requiredDocumentTypes: string[]
@@ -379,7 +382,7 @@ export async function checkShipmentDocumentCompliance(
     const documents = await fetchDocumentsForShipment(shipmentId);
     const uploadedTypes = documents
       .filter(doc => doc.status === 'uploaded' || doc.status === 'verified')
-      .map(doc => doc.document_type);
+      .map(doc => doc.document_type as string);
     
     const missing = requiredDocumentTypes.filter(
       type => !uploadedTypes.includes(type)
