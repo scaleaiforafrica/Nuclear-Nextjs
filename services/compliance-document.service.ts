@@ -338,23 +338,16 @@ export async function downloadDocument(id: string, fileName?: string): Promise<v
 
 /**
  * Fetch audit logs for a document
+ * Note: This function requires direct database access or a dedicated audit API endpoint
+ * For now, this is a placeholder that returns an empty array
  */
 export async function fetchDocumentAudit(documentId: string): Promise<DocumentAuditLog[]> {
   try {
-    const response = await fetch(`${API_BASE}/${documentId}/audit`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to fetch audit logs');
-    }
-    
-    const result: DocumentApiResponse<DocumentAuditLog[]> = await response.json();
-    return result.data || [];
+    // TODO: Implement audit log fetching
+    // Option 1: Create /api/compliance-documents/[id]/audit endpoint
+    // Option 2: Use Supabase client directly from client components
+    console.warn('fetchDocumentAudit is not fully implemented yet');
+    return [];
   } catch (error) {
     console.error('Error fetching audit logs:', error);
     throw error;
@@ -368,9 +361,6 @@ export async function fetchDocumentsForShipment(shipmentId: string): Promise<Com
   return fetchDocuments({ shipment_id: shipmentId });
 }
 
-/**
- * Helper function to check if all required documents are uploaded for a shipment
- */
 /**
  * Helper function to check if all required documents are uploaded for a shipment
  */
