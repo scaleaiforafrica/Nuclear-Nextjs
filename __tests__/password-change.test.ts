@@ -170,8 +170,8 @@ describe('Password Change Integration', () => {
     })
 
     it('should handle null or undefined gracefully', () => {
-      // @ts-ignore - Testing runtime behavior
-      const strength = validatePasswordStrength(null)
+      // Testing runtime behavior with null/undefined
+      const strength = validatePasswordStrength(null as unknown as string)
       
       expect(strength).toBeDefined()
       expect(strength.isValid).toBe(false)

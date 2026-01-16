@@ -66,8 +66,7 @@ export function PasswordStrengthIndicator({
           value={percentage} 
           className="h-2"
           style={{
-            // @ts-ignore - Custom CSS variable
-            '--progress-background': color,
+            ['--progress-background' as string]: color,
           } as React.CSSProperties}
         />
       </div>

@@ -99,6 +99,20 @@ export async function storePasswordHistory(
 
 /**
  * Check if password matches any in user's password history
+ * 
+ * **LIMITATION**: This function currently cannot perform bcrypt comparison
+ * because we don't have access to Supabase Auth's internal password hashing.
+ * A complete implementation would require:
+ * 1. Custom password hashing/comparison logic, OR
+ * 2. Supabase Auth API extension to check password history
+ * 
+ * For now, this function is a placeholder that always returns false,
+ * allowing password changes to proceed. The password_history table
+ * still stores hashes for future implementation.
+ * 
+ * @param userId - User ID to check history for
+ * @param newPassword - Plain text password to check (not used currently)
+ * @returns Always returns false - password history check not implemented
  */
 export async function checkPasswordHistory(
   userId: string,
@@ -107,7 +121,7 @@ export async function checkPasswordHistory(
   try {
     const supabase = await createClient()
     
-    // Get user's password history
+    // Get user's password history for logging purposes
     const { data: history, error } = await supabase
       .from('password_history')
       .select('password_hash')
@@ -115,21 +129,17 @@ export async function checkPasswordHistory(
       .order('created_at', { ascending: false })
       .limit(5)
     
-    if (error || !history) {
-      // If we can't check history, allow the password change
+    if (error) {
       console.error('Failed to check password history:', error)
-      return false
     }
     
-    // Check if new password matches any historical password
-    // Note: We're using bcrypt comparison which is handled by Supabase Auth
-    // For now, we'll do a simple hash comparison
-    // In production, you'd want to use proper bcrypt comparison
+    // TODO: Implement password comparison when bcrypt utilities are available
+    // This would require either:
+    // 1. Implementing custom password hashing outside Supabase Auth
+    // 2. Using Supabase Edge Functions with password comparison capability
+    // 3. Waiting for Supabase Auth API to expose password history checking
     
-    // Since we can't easily compare bcrypt hashes without the compare function,
-    // we'll return false for now and rely on Supabase Auth's built-in mechanisms
-    // This is a limitation we'll document
-    
+    // For now, return false (no match found) to allow password changes
     return false
   } catch (error) {
     console.error('Password history check error:', error)
