@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Eye, Download, Trash2, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import type { ComplianceDocument } from '@/models/compliance-document.model';
-import { getStatusColor, formatFileSize } from '@/models/compliance-document.model';
+import { getDocumentStatusColor, formatFileSize } from '@/models/compliance-document.model';
 
 interface DocumentListTableProps {
   documents: ComplianceDocument[];
@@ -151,7 +151,7 @@ export function DocumentListTable({
           </thead>
           <tbody className="divide-y divide-gray-200">
             {sortedDocuments.map((document) => {
-              const statusColor = getStatusColor(document.status);
+              const statusColor = getDocumentStatusColor(document.status);
               return (
                 <tr key={document.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">

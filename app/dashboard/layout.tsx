@@ -21,6 +21,9 @@ import { ProtectedRoute } from '@/components/shared'
 import { AnimatedLogo } from '@/components'
 import { DemoBanner } from '@/components/demo/DemoBanner'
 import { isDemoAccount } from '@/lib/demo/utils'
+import { DashboardTopNav } from '@/components/dashboard/DashboardTopNav'
+import { AboutModal } from '@/components/dashboard/AboutModal'
+import { APP_CONFIG } from '@/lib/app-config'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -104,10 +107,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <ProtectedRoute>
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
-        {/* Demo Banner - Only shown for demo accounts */}
-        {isDemo && <DemoBanner />}
-        
+      {/* Demo Banner - Fixed at top for demo accounts */}
+      {isDemo && <DemoBanner />}
+      
+      <div className={`flex h-screen bg-gray-50 overflow-hidden ${isDemo ? 'pt-[52px]' : ''}`}>
         {/* Mobile Menu Overlay */}
         {mobileMenuOpen && (
           <div 

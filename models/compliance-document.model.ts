@@ -262,7 +262,7 @@ export const DOCUMENT_TYPE_CONFIGS: DocumentTypeConfig[] = [
 /**
  * Helper function to get status color configuration
  */
-export function getStatusColor(status: DocumentStatus): StatusColor {
+export function getDocumentStatusColor(status: DocumentStatus): StatusColor {
   const colors: Record<DocumentStatus, StatusColor> = {
     pending: {
       bg: 'bg-amber-50',
