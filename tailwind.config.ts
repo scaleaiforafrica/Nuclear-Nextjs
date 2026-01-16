@@ -32,8 +32,30 @@ const config: Config = {
           '"Times New Roman"',
           'serif',
         ],
+        body: [
+          'Roboto',
+          '"Inter"',
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif',
+        ],
       },
       colors: {
+        // Renova Brand Colors
+        'brand-navy': '#153057',
+        'brand-gold': '#c69c6d',
+        'brand-muted': '#bec1c4',
+        'brand-white': '#ffffff',
+        renova: {
+          navy: '#153057',
+          gold: '#c69c6d',
+          muted: '#bec1c4',
+          white: '#ffffff',
+        },
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         card: {
