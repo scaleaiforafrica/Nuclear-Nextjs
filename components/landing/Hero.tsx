@@ -44,6 +44,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
       {/* Navigation */}
+      <div style={{ backgroundColor: 'var(--header-footer-bg)' }}>
       <nav className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between relative z-50">
         <AnimatedLogo size="sm" showIcon={true} />
         
@@ -63,7 +64,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
         {/* Desktop Sign In Button */}
         <button 
           onClick={onOpenLogin}
-          className="hidden md:block bg-primary text-primary-foreground px-4 lg:px-6 py-2 rounded-md hover:bg-primary/90 transition-colors font-medium text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="hidden md:block btn-homepage px-4 lg:px-6 py-2 rounded-md transition-colors font-medium text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           Sign In
         </button>
@@ -82,6 +83,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
           )}
         </button>
       </nav>
+      </div>
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
@@ -138,7 +140,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
                 setIsMobileMenuOpen(false);
                 onOpenLogin();
               }}
-              className="w-full bg-primary text-primary-foreground px-6 py-3 rounded-md hover:bg-primary/90 transition-colors font-medium text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="w-full btn-homepage px-6 py-3 rounded-md transition-colors font-medium text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Sign In
             </button>
@@ -167,12 +169,12 @@ export function Hero({ onOpenLogin }: HeroProps) {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0">
             <button 
               onClick={onOpenLogin}
-              className="bg-primary text-primary-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 font-medium text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="btn-homepage px-6 sm:px-8 py-3 rounded-md transition-colors flex items-center justify-center gap-2 font-medium text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Get Started
               <ArrowRight className="w-5 h-5" />
             </button>
-            <button className="bg-card text-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-muted transition-colors border border-secondary text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <button className="btn-homepage px-6 sm:px-8 py-3 rounded-md transition-colors border border-secondary text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
               Schedule Demo
             </button>
           </div>

@@ -10,7 +10,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-primary text-white pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10">
+    <footer className="text-white pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10" style={{ backgroundColor: 'var(--header-footer-bg)' }}>
       <div className="container mx-auto px-4 sm:px-6">
         {/* Main Footer Content */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-6 gap-8 sm:gap-10 lg:gap-12 mb-10 sm:mb-12 lg:mb-16">
