@@ -95,7 +95,7 @@ export function DashboardTopNav({
         {/* Help/About button */}
         <button
           onClick={onAboutClick}
-          className="hidden sm:flex p-2 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors touch-manipulation min-w-[44px] min-h-[44px] items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="hidden sm:flex p-2 bg-white hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors touch-manipulation min-w-[44px] min-h-[44px] items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Help and about"
         >
           <HelpCircle className="w-5 h-5 text-gray-600" aria-hidden="true" />
