@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, Filter, Search, Eye, Edit, X, ChevronDown } from 'lucide-react';
+import { Plus, Filter, Eye, Edit, X, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/components/responsive';
@@ -404,14 +404,6 @@ export default function ProcurementPage() {
 
       {/* Filters Bar */}
       <div className="bg-white rounded-lg p-3 sm:p-4 mb-6 border border-gray-200 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-        <div className="relative flex-1 max-w-full sm:max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input 
-            type="text" 
-            placeholder="Search requests..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-          />
-        </div>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
           <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
             <option>All Statuses</option>
