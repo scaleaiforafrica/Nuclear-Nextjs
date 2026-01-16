@@ -129,13 +129,13 @@ export async function PUT(
         {
           success: false,
           message: 'Validation failed',
-          error: validationResult.error.errors.map(e => e.message).join(', '),
+          error: validationResult.error.issues.map(e => e.message).join(', '),
         },
         { status: 400 }
       )
     }
 
-    const data: Partial<UpdateProcurementRequest> = validationResult.data
+    const data: Partial<UpdateProcurementRequest> & { status_color?: string } = validationResult.data
 
     // Update status color if status is being changed
     if (data.status) {

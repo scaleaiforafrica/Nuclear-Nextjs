@@ -7,7 +7,7 @@ import type { ProcurementRequest, CreateProcurementRequest } from '@/models/proc
 const createProcurementSchema = z.object({
   isotope: z.string().min(1, 'Isotope is required'),
   quantity: z.number().positive('Quantity must be positive'),
-  unit: z.enum(['mCi', 'GBq'], { errorMap: () => ({ message: 'Unit must be mCi or GBq' }) }),
+  unit: z.enum(['mCi', 'GBq'], { message: 'Unit must be mCi or GBq' }),
   delivery_date: z.string().min(1, 'Delivery date is required'),
   delivery_time_window: z.enum(['Morning', 'Afternoon', 'Evening']).optional(),
   delivery_location: z.string().min(1, 'Delivery location is required'),
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
         {
           success: false,
           message: 'Validation failed',
-          error: validationResult.error.errors.map(e => e.message).join(', '),
+          error: validationResult.error.issues.map(e => e.message).join(', '),
         },
         { status: 400 }
       )
