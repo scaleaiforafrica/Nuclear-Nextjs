@@ -27,9 +27,8 @@ export function FinalCTA({ onOpenLogin }: FinalCTAProps) {
           </p>
 
           {/* Features List */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-10 lg:mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-10 lg:mb-12">
             {[
-              '30-day trial period',
               'Enterprise support',
               'Regulatory compliance included'
             ].map((feature, index) => (
