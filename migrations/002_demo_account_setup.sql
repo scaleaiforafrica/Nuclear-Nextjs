@@ -24,11 +24,21 @@
 
 -- Create demo user in auth.users
 -- Password: DemoNuclear2026!
--- NOTE: The password hash below is a placeholder. 
--- For production, generate a proper bcrypt hash using:
---   SELECT crypt('DemoNuclear2026!', gen_salt('bf'));
--- Or use Supabase Admin API to create the user properly.
--- For development/testing, update this hash with a real bcrypt hash.
+-- 
+-- ⚠️  IMPORTANT - PASSWORD SECURITY:
+-- The password hash below is a PLACEHOLDER and will NOT work.
+-- 
+-- For production use, you MUST:
+-- 1. Use the setup script: node scripts/setup-demo-account.js (RECOMMENDED)
+--    This uses Supabase Admin API to properly create the user
+-- 
+-- OR
+-- 
+-- 2. Generate a proper bcrypt hash:
+--    SELECT crypt('DemoNuclear2026!', gen_salt('bf', 10));
+--    Then replace the encrypted_password value below
+--
+-- The setup script is the recommended approach as it handles all edge cases.
 INSERT INTO auth.users (
   id,
   instance_id,

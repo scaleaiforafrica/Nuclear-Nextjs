@@ -9,6 +9,9 @@
  * Environment variables required:
  * - SUPABASE_URL
  * - SUPABASE_SERVICE_ROLE_KEY (not anon key!)
+ * 
+ * NOTE: Demo account constants are defined in lib/demo/config.ts
+ * Changes to demo credentials should be made there.
  */
 
 const https = require('https');
@@ -16,18 +19,20 @@ const https = require('https');
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Demo account details
+// Demo account details - keep in sync with lib/demo/config.ts
+const DEMO_ACCOUNT_EMAIL = 'demo@nuclearflow.com';
+const DEMO_ACCOUNT_PASSWORD = 'DemoNuclear2026!';
+const DEMO_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+
 const DEMO_USER = {
-  email: 'demo@nuclearflow.com',
-  password: 'DemoNuclear2026!',
+  email: DEMO_ACCOUNT_EMAIL,
+  password: DEMO_ACCOUNT_PASSWORD,
   email_confirm: true,
   user_metadata: {
     full_name: 'Demo User',
     role: 'Hospital Administrator'
   }
 };
-
-const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001';
 
 function makeRequest(options, data) {
   return new Promise((resolve, reject) => {
@@ -114,7 +119,7 @@ async function createDemoUser() {
 async function verifyDemoProfile() {
   console.log('\n🔍 Checking demo profile...');
   
-  const url = new URL(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${DEMO_USER_ID}`);
+  const url = new URL(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${DEMO_ACCOUNT_ID}`);
   
   const options = {
     hostname: url.hostname,

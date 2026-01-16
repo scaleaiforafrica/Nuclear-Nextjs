@@ -6,12 +6,16 @@
 import type { DemoConfig } from '@/types/demo'
 
 /**
- * Demo account credentials
+ * Demo account credentials and identifiers
  * Email: demo@nuclearflow.com
  * Password: DemoNuclear2026!
+ * 
+ * IMPORTANT: The password must be set using Supabase Admin API or by generating
+ * a proper bcrypt hash. See scripts/setup-demo-account.js for automated setup.
  */
 export const DEMO_ACCOUNT_EMAIL = 'demo@nuclearflow.com'
 export const DEMO_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001'
+export const DEMO_ACCOUNT_PASSWORD = 'DemoNuclear2026!'
 
 /**
  * Tables included in demo data restoration

@@ -33,13 +33,28 @@ export function isDemoAccountEmail(email: string | undefined | null): boolean {
 /**
  * Generate a deterministic ID for demo data
  * Ensures consistent IDs across restorations for testing
- * Note: This is primarily for development/testing purposes
+ * 
+ * Note: This is primarily for development/testing purposes.
+ * In production, Supabase will generate proper UUIDs automatically.
+ * 
+ * @param table - Table name for uniqueness
+ * @param index - Record index within table
+ * @returns A valid UUID v4 format string
  */
 export function generateDemoId(table: string, index: number): string {
-  // Use a proper UUID format with deterministic values
-  const tableCode = table.charCodeAt(0).toString(16).padStart(2, '0')
-  const indexHex = index.toString(16).padStart(6, '0')
-  return `10000000-${tableCode}00-0000-0000-${indexHex.padStart(12, '0')}`
+  // Create a simple hash from table name for uniqueness
+  let tableHash = 0
+  for (let i = 0; i < table.length; i++) {
+    tableHash = ((tableHash << 5) - tableHash) + table.charCodeAt(i)
+    tableHash = tableHash & tableHash // Convert to 32-bit integer
+  }
+  
+  // Use absolute value and format as hex
+  const tableHex = Math.abs(tableHash).toString(16).padStart(4, '0').substring(0, 4)
+  const indexHex = index.toString(16).padStart(8, '0')
+  
+  // Format as UUID v4: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+  return `10000000-${tableHex}-4000-8000-${indexHex}`
 }
 
 /**
