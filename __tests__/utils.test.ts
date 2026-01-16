@@ -1,37 +1,33 @@
 import { describe, it, expect } from 'vitest'
-import { isDemoUser } from '@/lib/utils'
+import { isDemoUser } from '../lib/utils'
 
 describe('isDemoUser', () => {
-  it('should return true for emails starting with "demo@"', () => {
+  it('should return true for demo@ emails', () => {
     expect(isDemoUser('demo@example.com')).toBe(true)
-    expect(isDemoUser('Demo@example.com')).toBe(true)
     expect(isDemoUser('DEMO@example.com')).toBe(true)
+    expect(isDemoUser('Demo@Company.com')).toBe(true)
   })
 
-  it('should return true for emails with @demo. domain', () => {
-    expect(isDemoUser('user@demo.example.com')).toBe(true)
-    expect(isDemoUser('admin@demo.com')).toBe(true)
-    expect(isDemoUser('test@demo.org')).toBe(true)
+  it('should return true for test@ emails', () => {
+    expect(isDemoUser('test@example.com')).toBe(true)
+    expect(isDemoUser('TEST@example.com')).toBe(true)
+    expect(isDemoUser('Test@Company.com')).toBe(true)
   })
 
-  it('should return false for emails not matching demo pattern', () => {
+  it('should return false for regular emails', () => {
     expect(isDemoUser('user@example.com')).toBe(false)
-    expect(isDemoUser('admin@example.com')).toBe(false)
-    expect(isDemoUser('test@example.com')).toBe(false)
-    expect(isDemoUser('democracy@example.com')).toBe(false)
-    expect(isDemoUser('remodel@example.com')).toBe(false)
-    expect(isDemoUser('demo.user@example.com')).toBe(false)
-    expect(isDemoUser('demouser@example.com')).toBe(false)
-    expect(isDemoUser('user@notdemo.example.com')).toBe(false)
-    expect(isDemoUser('user@mydemo.com')).toBe(false)
+    expect(isDemoUser('admin@company.com')).toBe(false)
+    expect(isDemoUser('john.doe@example.com')).toBe(false)
   })
 
-  it('should return false for null or undefined email', () => {
-    expect(isDemoUser(null)).toBe(false)
+  it('should return false for undefined or null', () => {
     expect(isDemoUser(undefined)).toBe(false)
+    expect(isDemoUser(null)).toBe(false)
   })
 
-  it('should return false for empty string', () => {
-    expect(isDemoUser('')).toBe(false)
+  it('should not match emails containing demo or test but not starting with them', () => {
+    expect(isDemoUser('mydemo@example.com')).toBe(false)
+    expect(isDemoUser('mytest@example.com')).toBe(false)
+    expect(isDemoUser('user.demo@example.com')).toBe(false)
   })
 })

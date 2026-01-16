@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Hero,
@@ -17,17 +17,20 @@ import { isDemoUser } from '@/lib/utils';
 export default function LandingPage() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const router = useRouter();
-  const { isAuthenticated, supabaseUser, isLoading } = useAuth();
-  const userEmail = supabaseUser?.email;
+  const { user, supabaseUser, isLoading } = useAuth();
+  const hasRedirected = useRef(false);
 
-  // Redirect authenticated demo users to settings page
+  // Redirect demo users to settings page
   useEffect(() => {
-    if (!isLoading && isAuthenticated && userEmail) {
-      if (isDemoUser(userEmail)) {
-        router.push('/dashboard/settings');
-      }
+    // Skip if already redirected or still loading
+    if (hasRedirected.current || isLoading) return;
+
+    // Check if user is authenticated and is a demo user
+    if (supabaseUser?.email && isDemoUser(supabaseUser.email)) {
+      hasRedirected.current = true;
+      router.push('/dashboard/settings');
     }
-  }, [isLoading, isAuthenticated, userEmail, router]);
+  }, [supabaseUser, isLoading, router]);
 
   const handleOpenLogin = () => {
     setIsLoginOpen(true);

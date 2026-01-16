@@ -6,22 +6,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Determines if a user is a demo user based on their email address
- * @param email - The user's email address
- * @returns true if the email starts with 'demo@' or has a domain starting with 'demo.', false otherwise
+ * Checks if an email belongs to a demo user
+ * Demo users are identified by email addresses starting with "demo@" or "test@"
  */
-export function isDemoUser(email: string | null | undefined): boolean {
+export function isDemoUser(email: string | undefined | null): boolean {
   if (!email) return false
   const lowerEmail = email.toLowerCase()
-  // Check if email starts with 'demo@' (e.g., demo@example.com)
-  if (lowerEmail.startsWith('demo@')) return true
-  
-  // Check if domain starts with 'demo.' (e.g., user@demo.example.com)
-  const atIndex = lowerEmail.indexOf('@')
-  if (atIndex !== -1) {
-    const domain = lowerEmail.substring(atIndex + 1)
-    if (domain.startsWith('demo.')) return true
-  }
-  
-  return false
+  return lowerEmail.startsWith('demo@') || lowerEmail.startsWith('test@')
 }
