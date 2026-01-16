@@ -23,6 +23,8 @@ import type { NavigationItem, DashboardPage } from '@/models'
 import { useAuth } from '@/contexts'
 import { ProtectedRoute } from '@/components/shared'
 import { AnimatedLogo } from '@/components'
+import { DemoBanner } from '@/components/demo/DemoBanner'
+import { isDemoAccount } from '@/lib/demo/utils'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -43,7 +45,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [notificationCount] = useState(3)
   const pathname = usePathname()
   const router = useRouter()
-  const { user, logout } = useAuth()
+  const { user, logout, supabaseUser } = useAuth()
+
+  // Check if current user is demo account
+  const isDemo = supabaseUser ? isDemoAccount(supabaseUser) : false
 
   // Mobile menu handlers
   const openMobileMenu = () => setMobileMenuOpen(true)
@@ -103,6 +108,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <ProtectedRoute>
       <div className="flex h-screen bg-gray-50 overflow-hidden">
+        {/* Demo Banner - Only shown for demo accounts */}
+        {isDemo && <DemoBanner />}
+        
         {/* Mobile Menu Overlay */}
         {mobileMenuOpen && (
           <div 

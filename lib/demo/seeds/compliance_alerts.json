@@ -1,0 +1,37 @@
+[
+  {
+    "severity": "warning",
+    "title": "Permit Expiration Approaching",
+    "description": "South African transport permit for radioactive materials expires in 15 days. Renewal application should be submitted immediately."
+  },
+  {
+    "severity": "error",
+    "title": "Missing Documentation",
+    "description": "Customs clearance delayed for I-131 shipment to Lagos. Certificate of analysis not found in shipping documents."
+  },
+  {
+    "severity": "info",
+    "title": "New Regulation Update",
+    "description": "East African Community has updated radiation safety guidelines. Review compliance requirements for Kenya, Uganda, and Tanzania operations."
+  },
+  {
+    "severity": "warning",
+    "title": "Temperature Excursion Detected",
+    "description": "Cold chain monitoring system recorded 2°C above threshold for 12 minutes during Tc-99m transport. Isotope integrity assessment required."
+  },
+  {
+    "severity": "error",
+    "title": "License Suspension Risk",
+    "description": "Ghana facility operating license expired 3 days ago. Immediate action required to avoid shipment disruption."
+  },
+  {
+    "severity": "info",
+    "title": "Training Certification Due",
+    "description": "Annual radiation safety training for 15 staff members at Nairobi facility due within 30 days."
+  },
+  {
+    "severity": "warning",
+    "title": "Container Inspection Overdue",
+    "description": "Type B transport container #TB-2047 has not been inspected in 11 months. Inspection required before next shipment."
+  }
+]
