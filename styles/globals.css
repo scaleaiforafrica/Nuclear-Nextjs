@@ -239,7 +239,7 @@ html {
   /* Homepage button styles */
   .btn-homepage {
     background-color: var(--button-primary);
-    color: #083A4F;
+    color: var(--foreground);
   }
   
   .btn-homepage:hover {
