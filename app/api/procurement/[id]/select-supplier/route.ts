@@ -55,7 +55,7 @@ export async function PUT(
         {
           success: false,
           message: 'Validation failed',
-          error: validationResult.error.issues.map((e: { message: string }) => e.message).join(', '),
+          error: validationResult.error.issues.map(e => e.message).join(', '),
         },
         { status: 400 }
       )

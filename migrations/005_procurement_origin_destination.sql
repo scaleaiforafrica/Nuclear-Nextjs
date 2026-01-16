@@ -25,15 +25,22 @@ COMMENT ON COLUMN public.procurement_requests.selected_supplier_id IS 'The suppl
 -- Function to update origin when supplier is selected
 CREATE OR REPLACE FUNCTION auto_populate_origin_from_supplier()
 RETURNS TRIGGER AS $$
+DECLARE
+  supplier_location TEXT;
 BEGIN
   -- If selected_supplier_id is being set or changed
   IF NEW.selected_supplier_id IS NOT NULL AND 
      (OLD.selected_supplier_id IS NULL OR OLD.selected_supplier_id != NEW.selected_supplier_id) THEN
     
     -- Fetch supplier location and set as origin
-    SELECT location INTO NEW.origin
+    SELECT location INTO supplier_location
     FROM public.suppliers
     WHERE id = NEW.selected_supplier_id;
+    
+    -- Only update origin if supplier was found
+    IF supplier_location IS NOT NULL THEN
+      NEW.origin := supplier_location;
+    END IF;
     
   END IF;
   

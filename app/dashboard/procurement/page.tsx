@@ -4,6 +4,7 @@ import { Plus, Filter, Eye, Edit, X, ChevronDown, Search, Loader2, AlertCircle, 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/components/responsive';
+import { RouteDisplay } from '@/components/procurement';
 import { toast } from 'sonner';
 import type { ProcurementRequest, ProcurementQuote, Supplier, ProcurementStatus, ActivityUnit, DeliveryTimeWindow } from '@/models/procurement.model';
 import { getStatusColor, canViewQuotes, canEditRequest, canCancelRequest, formatShippingRoute } from '@/models/procurement.model';
@@ -946,16 +947,7 @@ export default function ProcurementPage() {
                           {new Date(request.delivery_date).toLocaleDateString()}
                         </td>
                         <td className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">
-                          {request.origin && request.destination ? (
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-gray-400" />
-                              {formatShippingRoute(request.origin, request.destination)}
-                            </span>
-                          ) : request.origin ? (
-                            request.origin
-                          ) : (
-                            <span className="text-gray-400">-</span>
-                          )}
+                          <RouteDisplay origin={request.origin} destination={request.destination} />
                         </td>
                         <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                           <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${getStatusColor(request.status)}`}>
@@ -1042,10 +1034,11 @@ export default function ProcurementPage() {
                       <MobileTableCardRow 
                         label="Route" 
                         value={
-                          <span className="flex items-center gap-1 text-sm">
-                            <MapPin className="w-3 h-3 text-gray-400" />
-                            {formatShippingRoute(request.origin, request.destination || request.delivery_location)}
-                          </span>
+                          <RouteDisplay 
+                            origin={request.origin} 
+                            destination={request.destination || request.delivery_location}
+                            className="text-sm"
+                          />
                         } 
                       />
                     )}

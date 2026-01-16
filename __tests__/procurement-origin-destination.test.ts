@@ -56,10 +56,10 @@ describe('Procurement Origin and Destination', () => {
     })
 
     it('should handle locations with multiple commas', () => {
-      const result = formatShippingRoute('City Hospital, 123 St, Cape Town, South Africa', 'Main Hospital, Johannesburg, ZA')
+      const result = formatShippingRoute('City Hospital, 123 St, Cape Town, South Africa', 'Main Hospital, 456 Ave, Johannesburg, ZA')
       
-      // Should use first part and second part only
-      expect(result).toBe('City Hospital, 1 → Main Hospital, J')
+      // Should use last two parts (city and country)
+      expect(result).toBe('Cape Town, So → Johannesburg, ZA')
     })
   })
 

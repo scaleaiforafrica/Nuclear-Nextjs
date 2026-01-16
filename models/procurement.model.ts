@@ -205,11 +205,17 @@ export function formatShippingRoute(origin?: string, destination?: string): stri
   if (!origin && !destination) return '-';
   
   const formatLocation = (loc: string) => {
-    const parts = loc.split(', ');
-    if (parts.length === 2) {
+    // Split by comma and take last two parts (city, country)
+    const parts = loc.split(',').map(p => p.trim()).filter(p => p);
+    
+    if (parts.length >= 2) {
+      // Use last two parts: city and country
+      const city = parts[parts.length - 2];
+      const country = parts[parts.length - 1];
       // Abbreviate country to 2 letters
-      return `${parts[0]}, ${parts[1].substring(0, 2)}`;
+      return `${city}, ${country.substring(0, 2)}`;
     }
+    // If not in expected format, return as is
     return loc;
   };
   
