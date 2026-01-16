@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import type { Shipment, ShipmentFromProcurement } from '@/models/shipment.model';
+import type { Shipment, ShipmentFromProcurement, RouteWaypoint } from '@/models/shipment.model';
 import { calculateCurrentActivity } from '@/lib/isotope-decay';
 import { generateRouteWaypoints } from '@/lib/route-utils';
 
@@ -52,7 +52,7 @@ export async function POST(
     const validation = fromProcurementSchema.safeParse(body);
 
     if (!validation.success) {
-      const errors = validation.error.errors.map((err) => `${err.path.join('.')}: ${err.message}`);
+      const errors = validation.error.issues.map((err) => `${err.path.join('.')}: ${err.message}`);
       return NextResponse.json(
         {
           success: false,
@@ -157,7 +157,7 @@ export async function POST(
     const shipment_number = shipmentNumberData;
 
     // Generate route waypoints
-    let route_waypoints;
+    let route_waypoints: RouteWaypoint[] = [];
     try {
       route_waypoints = await generateRouteWaypoints(
         procurementRequest.origin,

@@ -100,14 +100,6 @@ export interface ShipmentStats {
 }
 
 /**
- * Pagination parameters
- */
-export interface PaginationParams {
-  page?: number;
-  per_page?: number;
-}
-
-/**
  * Sort criteria and direction
  */
 export type SortCriteria = 'id' | 'isotope' | 'origin' | 'destination' | 'status' | 'eta' | 'shipment_number' | 'created_at';
