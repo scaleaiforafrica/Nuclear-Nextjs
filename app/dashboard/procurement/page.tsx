@@ -1,12 +1,13 @@
 'use client';
 
-import { Plus, Filter, Eye, Edit, X, ChevronDown, Search, Loader2, AlertCircle } from 'lucide-react';
+import { Plus, Filter, Eye, Edit, X, ChevronDown, Search, Loader2, AlertCircle, MapPin, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/components/responsive';
+import { RouteDisplay } from '@/components/procurement';
 import { toast } from 'sonner';
 import type { ProcurementRequest, ProcurementQuote, Supplier, ProcurementStatus, ActivityUnit, DeliveryTimeWindow } from '@/models/procurement.model';
-import { getStatusColor, canViewQuotes, canEditRequest, canCancelRequest } from '@/models/procurement.model';
+import { getStatusColor, canViewQuotes, canEditRequest, canCancelRequest, formatShippingRoute } from '@/models/procurement.model';
 
 export default function ProcurementPage() {
   const router = useRouter();
@@ -243,6 +244,46 @@ export default function ProcurementPage() {
     setView('form');
   };
 
+  // Select supplier and create PO
+  const handleSelectSupplier = async (quote: ProcurementQuote) => {
+    if (!selectedRequest) return;
+    
+    if (!confirm(`Select ${quote.supplier?.name} as the supplier?\n\nThis will set the status to "PO Approved" and create a purchase order.`)) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/procurement/${selectedRequest.id}/select-supplier`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          supplier_id: quote.supplier_id,
+          quote_id: quote.id,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        const updatedRequest = data.data as ProcurementRequest;
+        toast.success(data.message || 'Supplier selected successfully', {
+          description: updatedRequest.origin && updatedRequest.destination 
+            ? `Route: ${formatShippingRoute(updatedRequest.origin, updatedRequest.destination)}`
+            : undefined,
+        });
+        setView('list');
+        setSelectedRequest(null);
+        setQuotes([]);
+        fetchRequests();
+      } else {
+        toast.error(data.message || 'Failed to select supplier');
+      }
+    } catch (error) {
+      toast.error('Failed to select supplier');
+      console.error(error);
+    }
+  };
+
   // Get unique isotopes for filter
   const uniqueIsotopes = Array.from(new Set(requests.map(r => r.isotope))).sort();
 
@@ -374,10 +415,34 @@ export default function ProcurementPage() {
                         ))}
                         <span className="text-sm text-gray-600 ml-1">{quote.supplier!.rating.toFixed(1)}</span>
                       </div>
-                      <p className="text-xs text-gray-500">{quote.supplier!.location}</p>
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <MapPin className="w-3 h-3" />
+                        <span>{quote.supplier!.location}</span>
+                      </div>
                     </>
                   )}
                 </div>
+
+                {/* Route Visualization */}
+                {quote.supplier && selectedRequest.destination && (
+                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-blue-600" />
+                        <span className="font-medium text-blue-900">
+                          {quote.supplier.location.split(',')[0]?.trim() || quote.supplier.location}
+                        </span>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-blue-600" />
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-blue-600" />
+                        <span className="font-medium text-blue-900">
+                          {selectedRequest.destination.split(',')[0]?.trim() || selectedRequest.destination}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
                   <div className="flex justify-between text-sm">
@@ -428,11 +493,12 @@ export default function ProcurementPage() {
                 </div>
 
                 <button 
-                  className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors min-h-[44px]"
-                  onClick={() => toast.info('Purchase order creation will be implemented in future release')}
-                  title="Create Purchase Order (Coming Soon)"
+                  className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => handleSelectSupplier(quote)}
+                  disabled={selectedRequest.status === 'PO Approved' || selectedRequest.status === 'Completed'}
+                  title={selectedRequest.status === 'PO Approved' ? 'Supplier already selected' : 'Select this supplier and create purchase order'}
                 >
-                  Select & Create PO
+                  {selectedRequest.status === 'PO Approved' ? 'Supplier Selected' : 'Select & Create PO'}
                 </button>
               </div>
             ))}
@@ -616,6 +682,10 @@ export default function ProcurementPage() {
                   placeholder="e.g., City Hospital, 123 Medical Ave, Cape Town"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                 />
+                <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  <span>This will be set as the destination for delivery</span>
+                </p>
               </div>
 
               <div>
@@ -676,6 +746,24 @@ export default function ProcurementPage() {
                   )}
                 </div>
               </div>
+
+              {/* Origin/Destination Section */}
+              {formData.delivery_location && (
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h4 className="font-semibold mb-2 text-sm text-blue-900 flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    Shipping Route
+                  </h4>
+                  <div className="text-sm mb-1">
+                    <span className="text-gray-600">Origin:</span>{' '}
+                    <span className="font-medium text-gray-500 italic">Will be set when supplier is selected</span>
+                  </div>
+                  <div className="text-sm flex items-center gap-2">
+                    <span className="text-gray-600">To:</span>{' '}
+                    <span className="font-medium">{formData.delivery_location}</span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -837,8 +925,7 @@ export default function ProcurementPage() {
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quantity</th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Delivery Date</th>
-                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Origin</th>
-                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Destination</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quotes</th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Actions</th>
@@ -863,11 +950,8 @@ export default function ProcurementPage() {
                         <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
                           {new Date(request.delivery_date).toLocaleDateString()}
                         </td>
-                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                          {request.origin || '-'}
-                        </td>
-                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                          {request.destination || request.delivery_location}
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">
+                          <RouteDisplay origin={request.origin} destination={request.destination} />
                         </td>
                         <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                           <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${getStatusColor(request.status)}`}>
@@ -950,16 +1034,18 @@ export default function ProcurementPage() {
                       label="Delivery" 
                       value={new Date(request.delivery_date).toLocaleDateString()} 
                     />
-                    {request.origin && (
+                    {(request.origin || request.destination) && (
                       <MobileTableCardRow 
-                        label="Origin" 
-                        value={request.origin} 
+                        label="Route" 
+                        value={
+                          <RouteDisplay 
+                            origin={request.origin} 
+                            destination={request.destination || request.delivery_location}
+                            className="text-sm"
+                          />
+                        } 
                       />
                     )}
-                    <MobileTableCardRow 
-                      label="Destination" 
-                      value={request.destination || request.delivery_location} 
-                    />
                     <MobileTableCardRow 
                       label="Status" 
                       value={

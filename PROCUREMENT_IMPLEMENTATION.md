@@ -54,6 +54,8 @@ This document summarizes the complete implementation of the procurement system a
 - `canEditRequest()` - Check if request can be edited
 - `canCancelRequest()` - Check if request can be cancelled
 - `canViewQuotes()` - Check if quotes can be viewed
+- `formatShippingRoute()` - Format origin → destination route display with abbreviations
+- `hasSelectedSupplier()` - Check if procurement has a selected supplier
 
 **Strict TypeScript:**
 - ✅ No `any` types used
@@ -103,6 +105,16 @@ This document summarizes the complete implementation of the procurement system a
 - Joins with suppliers table
 - Orders by total_cost ascending
 - Authentication required
+
+#### PUT /api/procurement/[id]/select-supplier
+**File:** `/app/api/procurement/[id]/select-supplier/route.ts`
+- Selects a supplier for a procurement request
+- Accepts `supplier_id` and optional `quote_id`
+- Automatically populates `origin` from supplier location (via database trigger)
+- Updates status to 'PO Approved'
+- Verifies supplier and quote exist
+- Authentication required
+- Returns updated request with origin populated
 
 #### GET /api/suppliers
 **File:** `/app/api/suppliers/route.ts`
@@ -352,9 +364,131 @@ npm run build
 - SQL injection prevention (Supabase)
 - XSS prevention (React)
 
+### 8. Origin and Destination Feature ✅
+
+**Migration:** `/migrations/005_procurement_origin_destination.sql`
+
+#### Database Enhancements:
+- ✅ Added `selected_supplier_id` column to `procurement_requests` table
+- ✅ Foreign key relationship to `suppliers` table
+- ✅ Index on `selected_supplier_id` for performance
+- ✅ Database function `auto_populate_origin_from_supplier()` to automatically set origin
+- ✅ Trigger `trigger_auto_populate_origin` that fires on INSERT/UPDATE
+- ✅ Updated seed data to link existing requests with suppliers
+
+#### Automatic Population Logic:
+1. **Destination:** Automatically set to `delivery_location` when creating a procurement request
+2. **Origin:** Automatically populated from `supplier.location` when a supplier is selected via:
+   - Database trigger (preferred method - ensures data integrity)
+   - API endpoint `/api/procurement/[id]/select-supplier`
+
+#### API Endpoint - Select Supplier:
+**PUT /api/procurement/[id]/select-supplier**
+- Accepts: `supplier_id` (required), `quote_id` (optional)
+- Validates supplier exists
+- Validates quote matches procurement and supplier (if provided)
+- Updates procurement with `selected_supplier_id`
+- Database trigger automatically sets `origin` from supplier location
+- Updates status to 'PO Approved'
+- Returns success message with origin → destination info
+
+#### Model Updates:
+**ProcurementRequest Interface:**
+```typescript
+{
+  // ... existing fields
+  origin?: string;              // Auto-populated from supplier location
+  destination?: string;          // Auto-populated from delivery_location
+  selected_supplier_id?: string; // UUID of selected supplier
+  selected_supplier?: Supplier;  // Full supplier object (joined)
+}
+```
+
+**Helper Functions:**
+```typescript
+// Format route display: "Johannesburg, So → Cape Town, So"
+formatShippingRoute(origin?: string, destination?: string): string
+
+// Check if supplier has been selected
+hasSelectedSupplier(request: ProcurementRequest): boolean
+```
+
+#### UI Enhancements:
+
+**List View:**
+- "Route" column shows origin → destination with MapPin icon
+- Compact format with country abbreviations
+- Shows "-" if no origin yet (supplier not selected)
+- Mobile view shows route in collapsed details
+
+**Quote Comparison View:**
+- Visual route indicator in each quote card
+- Shows supplier location (origin) → delivery location (destination)
+- Blue-themed route visualization box with arrow
+- MapPin icons for both locations
+- "Select & Create PO" button:
+  - Calls `/api/procurement/[id]/select-supplier` endpoint
+  - Shows confirmation dialog before selection
+  - Success toast displays the route (origin → destination)
+  - Updates status to 'PO Approved'
+  - Disabled if supplier already selected
+
+**Form View - Step 2 (Delivery):**
+- Helper text below delivery location: "This will be set as the destination for delivery"
+- MapPin icon for visual context
+
+**Form View - Step 3 (Review):**
+- New "Shipping Route" section (blue box)
+- Shows origin as "Will be set when supplier is selected"
+- Shows destination (delivery location)
+- MapPin icon in section header
+
+**Request Summary (Quotes View):**
+- Displays origin and destination if available
+- Shown prominently at the top of quote comparison
+
+#### Business Logic:
+1. **Creation:**
+   - User creates request with delivery_location
+   - `destination` auto-set to delivery_location
+   - `origin` remains null until supplier selected
+
+2. **Supplier Selection:**
+   - User views quotes for request
+   - User clicks "Select & Create PO" on preferred quote
+   - API validates supplier and optional quote
+   - Database trigger sets `origin` from supplier.location
+   - Status changes to 'PO Approved'
+   - User sees success message with route
+
+3. **Display:**
+   - Draft/Pending Quotes: Shows only destination
+   - Quotes Received: Shows origin → destination in quote cards
+   - PO Approved/Completed: Shows full route in list view
+
+#### Data Integrity:
+- Origin is read-only after supplier selection (enforced by UI)
+- If delivery_location changes, destination updates automatically
+- Supplier location changes don't affect existing procurement origins (historical data)
+- Database trigger ensures origin always matches selected supplier
+
+#### Testing:
+**Test File:** `__tests__/procurement-origin-destination.test.ts`
+- ✅ formatShippingRoute with both origin and destination
+- ✅ formatShippingRoute with country abbreviations
+- ✅ formatShippingRoute with null/undefined handling
+- ✅ formatShippingRoute with single-word locations
+- ✅ hasSelectedSupplier checks
+- ✅ Integration test for full supplier selection workflow
+
 ## Files Changed/Created
 
-### New Files:
+### New Files (Origin/Destination Feature):
+1. `/migrations/005_procurement_origin_destination.sql` - Database migration for origin/destination
+2. `/app/api/procurement/[id]/select-supplier/route.ts` - Supplier selection endpoint
+3. `/__tests__/procurement-origin-destination.test.ts` - Tests for origin/destination feature
+
+### Original Procurement System Files:
 1. `/migrations/004_procurement_system.sql`
 2. `/models/procurement.model.ts`
 3. `/app/api/procurement/route.ts`
@@ -362,11 +496,16 @@ npm run build
 5. `/app/api/procurement/[id]/quotes/route.ts`
 6. `/app/api/suppliers/route.ts`
 
-### Modified Files:
+### Modified Files (Origin/Destination Feature):
+1. `/models/procurement.model.ts` - Added helper functions and updated interfaces
+2. `/app/api/procurement/[id]/route.ts` - Added selected_supplier_id validation
+3. `/app/dashboard/procurement/page.tsx` - Added supplier selection, route display
+4. `/PROCUREMENT_IMPLEMENTATION.md` - Added origin/destination documentation
+
+### Previously Modified Files:
 1. `/models/index.ts` - Added procurement model export
-2. `/app/dashboard/procurement/page.tsx` - Complete rewrite with full functionality
-3. `/app/dashboard/reports/page.tsx` - Added 44px touch targets
-4. `/app/dashboard/traceability/page.tsx` - Added 44px touch targets
+2. `/app/dashboard/reports/page.tsx` - Added 44px touch targets
+3. `/app/dashboard/traceability/page.tsx` - Added 44px touch targets
 
 ## Acceptance Criteria Status
 
