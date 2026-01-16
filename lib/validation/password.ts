@@ -53,6 +53,11 @@ export const DEFAULT_PASSWORD_CONFIG: PasswordConfig = {
 }
 
 /**
+ * Regular expression for special characters
+ */
+const SPECIAL_CHAR_REGEX = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
+
+/**
  * Validate password requirements
  * @param password - The password to validate
  * @param config - Optional configuration overrides
@@ -68,7 +73,7 @@ export function checkPasswordRequirements(
     hasLowercase: config.requireLowercase ? /[a-z]/.test(password) : true,
     hasNumber: config.requireNumber ? /\d/.test(password) : true,
     hasSpecialChar: config.requireSpecialChar
-      ? /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+      ? SPECIAL_CHAR_REGEX.test(password)
       : true,
     notCommon: config.checkCommonPasswords ? !isCommonPassword(password) : true,
   }
@@ -91,7 +96,7 @@ export function calculatePasswordScore(password: string): number {
   if (/[a-z]/.test(password)) score += 1
   if (/[A-Z]/.test(password)) score += 1
   if (/\d/.test(password)) score += 1
-  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score += 1
+  if (SPECIAL_CHAR_REGEX.test(password)) score += 1
 
   // Complexity bonus (0-2 points)
   // Check for multiple character types in combination
@@ -99,7 +104,7 @@ export function calculatePasswordScore(password: string): number {
     /[a-z]/.test(password),
     /[A-Z]/.test(password),
     /\d/.test(password),
-    /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    SPECIAL_CHAR_REGEX.test(password),
   ].filter(Boolean).length
 
   if (hasMultipleTypes >= 3) score += 1

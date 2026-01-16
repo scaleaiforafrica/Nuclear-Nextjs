@@ -89,8 +89,9 @@ describe('Password Validation', () => {
 
     it('penalizes common passwords', () => {
       const commonScore = calculatePasswordScore('password')
-      const uniqueScore = calculatePasswordScore('password')
+      const uniqueScore = calculatePasswordScore('UniqueP@ss123')
       expect(commonScore).toBeLessThanOrEqual(3)
+      expect(uniqueScore).toBeGreaterThan(commonScore)
     })
 
     it('rewards longer passwords', () => {
