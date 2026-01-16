@@ -4,6 +4,9 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import { createClient } from '@/lib/supabase/client'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import type { User, AuthResult, UserRole } from '@/models'
+import { isDemoAccount } from '@/lib/demo/utils'
+import { restoreDemoData } from '@/lib/demo/restore-demo-data'
+import { DEMO_CONFIG } from '@/lib/demo/config'
 
 interface AuthContextValue {
   isAuthenticated: boolean
@@ -99,10 +102,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [supabase.auth])
 
   const logout = useCallback(async () => {
+    // Check if demo account and restore data before logout
+    if (supabaseUser && isDemoAccount(supabaseUser) && DEMO_CONFIG.restoration.onLogout) {
+      try {
+        await restoreDemoData('logout')
+      } catch (error) {
+        console.error('Failed to restore demo data on logout:', error)
+        // Continue with logout even if restoration fails
+      }
+    }
+    
     await supabase.auth.signOut()
     setSupabaseUser(null)
     setUser(null)
-  }, [supabase.auth])
+  }, [supabase.auth, supabaseUser])
 
   const resetPassword = useCallback(async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {

@@ -1,557 +1,511 @@
 'use client';
 
-import { List, Map, LayoutGrid, Search, Filter, Download, Phone, MapPin, Clock, Activity } from 'lucide-react';
-import { useState } from 'react';
+import { Plus, Search, Filter, Loader2, ArrowLeft, MapPin, Clock, Package, Thermometer, AlertCircle, Eye, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/components/responsive';
+import { CreateShipmentDialog, ShipmentRouteCard } from '@/components/shipments';
+import type { Shipment, ShipmentStatus } from '@/models/shipment.model';
+import { fetchShipments, fetchShipmentById, formatShipmentETA } from '@/services/shipment.service';
+import { toast } from 'sonner';
 
 export default function ShipmentsPage() {
-  const [viewType, setViewType] = useState<'list' | 'map' | 'kanban'>('list');
-  const [selectedShipment, setSelectedShipment] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('tracking');
+  // State management
+  const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  
+  // Filter state
+  const [filterStatus, setFilterStatus] = useState<ShipmentStatus | ''>('');
+  const [filterIsotope, setFilterIsotope] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterFromProcurement, setFilterFromProcurement] = useState<boolean | undefined>(undefined);
 
-  const shipments = [
-    { 
-      id: 'SH-2851', 
-      isotope: 'Tc-99m', 
-      batch: 'TC-2026-001', 
-      origin: 'Johannesburg', 
-      destination: 'Cape Town', 
-      carrier: 'NucTransport', 
-      status: 'In Transit', 
-      activity: 85,
-      eta: '2 hours',
-      statusColor: 'bg-blue-100 text-blue-700'
-    },
-    { 
-      id: 'SH-2850', 
-      isotope: 'F-18 FDG', 
-      batch: 'FDG-2026-015', 
-      origin: 'Nairobi', 
-      destination: 'Mombasa', 
-      carrier: 'MedLogistics', 
-      status: 'At Customs', 
-      activity: 78,
-      eta: '4 hours',
-      statusColor: 'bg-amber-100 text-amber-700'
-    },
-    { 
-      id: 'SH-2849', 
-      isotope: 'I-131', 
-      batch: 'I131-2026-008', 
-      origin: 'Lagos', 
-      destination: 'Accra', 
-      carrier: 'AfricaCargo', 
-      status: 'In Transit', 
-      activity: 92,
-      eta: '6 hours',
-      statusColor: 'bg-blue-100 text-blue-700'
-    },
-    { 
-      id: 'SH-2848', 
-      isotope: 'Lu-177', 
-      batch: 'LU-2026-003', 
-      origin: 'Cairo', 
-      destination: 'Alexandria', 
-      carrier: 'NileExpress', 
-      status: 'Dispatched', 
-      activity: 98,
-      eta: '1 hour',
-      statusColor: 'bg-green-100 text-green-700'
-    },
-  ];
+  // Fetch shipments from API
+  const loadShipments = async () => {
+    try {
+      setLoading(true);
+      const filters: any = {};
+      if (filterStatus) filters.status = filterStatus;
+      if (filterIsotope) filters.isotope = filterIsotope;
+      if (filterFromProcurement !== undefined) filters.from_procurement = filterFromProcurement;
+      
+      const data = await fetchShipments(filters);
+      setShipments(data);
+    } catch (error) {
+      toast.error('Failed to fetch shipments');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const trackingEvents = [
-    { time: '10:30 AM', location: 'Paarl Checkpoint', status: 'In Transit', completed: true },
-    { time: '09:45 AM', location: 'Worcester Junction', status: 'Passed', completed: true },
-    { time: '08:30 AM', location: 'N1 Highway Entry', status: 'Departed', completed: true },
-    { time: '08:00 AM', location: 'Johannesburg Facility', status: 'Dispatched', completed: true },
-    { time: '12:00 PM (Est)', location: 'Cape Town Hospital', status: 'Expected Delivery', completed: false },
-  ];
+  // Fetch single shipment details
+  const loadShipmentDetails = async (id: string) => {
+    try {
+      setDetailLoading(true);
+      const data = await fetchShipmentById(id);
+      if (data) {
+        setSelectedShipment(data);
+      } else {
+        toast.error('Shipment not found');
+        setSelectedShipment(null);
+      }
+    } catch (error) {
+      toast.error('Failed to fetch shipment details');
+      console.error(error);
+    } finally {
+      setDetailLoading(false);
+    }
+  };
 
+  // Initial load
+  useEffect(() => {
+    loadShipments();
+  }, []);
 
+  // Reload when filters change
+  useEffect(() => {
+    loadShipments();
+  }, [filterStatus, filterIsotope, filterFromProcurement]);
+
+  // Handle shipment creation success
+  const handleShipmentCreated = () => {
+    setCreateDialogOpen(false);
+    loadShipments();
+    toast.success('Shipment created successfully');
+  };
+
+  // Handle row click
+  const handleShipmentClick = (shipment: Shipment) => {
+    loadShipmentDetails(shipment.id);
+  };
+
+  // Filter shipments by search query
+  const filteredShipments = shipments.filter(shipment => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      shipment.shipment_number.toLowerCase().includes(query) ||
+      shipment.isotope.toLowerCase().includes(query) ||
+      shipment.batch_number.toLowerCase().includes(query) ||
+      shipment.origin.toLowerCase().includes(query) ||
+      shipment.destination.toLowerCase().includes(query)
+    );
+  });
+
+  // Get unique isotopes for filter
+  const uniqueIsotopes = Array.from(new Set(shipments.map(s => s.isotope))).sort();
+
+  // Detail view
   if (selectedShipment) {
-    const shipment = shipments.find(s => s.id === selectedShipment);
-    if (!shipment) return null;
+    if (detailLoading) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+        </div>
+      );
+    }
 
     return (
       <div>
         <button 
           onClick={() => setSelectedShipment(null)}
-          className="mb-6 text-purple-600 hover:text-purple-700 flex items-center gap-2"
+          className="mb-6 text-purple-600 hover:text-purple-700 flex items-center gap-2 transition-colors"
         >
-          ← Back to Shipments
+          <ArrowLeft className="w-4 h-4" />
+          Back to Shipments
         </button>
 
-        {/* Header Section */}
+        {/* Header */}
         <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+          <div className="flex flex-col gap-4">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-mono mb-2">{shipment.id}</h2>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
-                <span><strong>Isotope:</strong> {shipment.isotope}</span>
-                <span><strong>Batch:</strong> {shipment.batch}</span>
-                <span className={`px-3 py-1 rounded-full ${shipment.statusColor} self-start`}>
-                  {shipment.status}
-                </span>
+              <h2 className="text-2xl sm:text-3xl font-mono mb-3">{selectedShipment.shipment_number}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                <div>
+                  <span className="text-gray-600">Isotope:</span>
+                  <span className="ml-2 font-medium">{selectedShipment.isotope}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Batch:</span>
+                  <span className="ml-2 font-mono text-xs">{selectedShipment.batch_number}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Status:</span>
+                  <span className={`ml-2 px-3 py-1 rounded-full text-xs ${selectedShipment.status_color}`}>
+                    {selectedShipment.status}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Carrier:</span>
+                  <span className="ml-2 font-medium">{selectedShipment.carrier}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">ETA:</span>
+                  <span className="ml-2 font-medium">{formatShipmentETA(selectedShipment.eta)}</span>
+                </div>
+                {selectedShipment.procurement_request_id && (
+                  <div>
+                    <span className="text-gray-600">Procurement:</span>
+                    <span className="ml-2 font-mono text-xs text-purple-600">{selectedShipment.procurement_request_id}</span>
+                  </div>
+                )}
               </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
-                Re-route
-              </button>
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm">
-                <Phone className="w-4 h-4" />
-                Contact Carrier
-              </button>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm">
-                <Download className="w-4 h-4" />
-                Documents
-              </button>
             </div>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="bg-white rounded-xl border border-gray-200">
-          <div className="border-b border-gray-200 px-4 sm:px-6 overflow-x-auto">
-            <div className="flex gap-4 sm:gap-6 min-w-max">
-              {[
-                { id: 'tracking', label: 'Tracking' },
-                { id: 'decay', label: 'Decay Curve' },
-                { id: 'documents', label: 'Documents' },
-                { id: 'sensors', label: 'Sensor Data' },
-                { id: 'blockchain', label: 'Blockchain' },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 border-b-2 transition-colors ${
-                    activeTab === tab.id
-                      ? 'border-purple-600 text-purple-600'
-                      : 'border-transparent text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {tab.label}
-                </button>
+        {/* Route Card */}
+        <div className="mb-6">
+          <ShipmentRouteCard
+            origin={selectedShipment.origin}
+            destination={selectedShipment.destination}
+            waypoints={selectedShipment.route_waypoints}
+            eta={selectedShipment.eta}
+            estimatedDeliveryTime={selectedShipment.estimated_delivery_time}
+            currentActivity={selectedShipment.current_activity}
+            initialActivity={selectedShipment.initial_activity}
+            expectedActivityAtArrival={selectedShipment.expected_activity_at_arrival}
+            isotope={selectedShipment.isotope}
+          />
+        </div>
+
+        {/* Additional Information */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Activity Information */}
+          {selectedShipment.initial_activity && (
+            <div className="bg-white rounded-xl p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Package className="w-5 h-5 text-purple-600" />
+                Activity Decay Information
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center pb-2 border-b">
+                  <span className="text-gray-600">Initial Activity</span>
+                  <span className="font-semibold">{selectedShipment.initial_activity} mCi</span>
+                </div>
+                {selectedShipment.current_activity && (
+                  <div className="flex justify-between items-center pb-2 border-b">
+                    <span className="text-gray-600">Current Activity</span>
+                    <span className="font-semibold text-blue-600">{selectedShipment.current_activity.toFixed(2)} mCi</span>
+                  </div>
+                )}
+                {selectedShipment.expected_activity_at_arrival && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Expected at Arrival</span>
+                    <span className="font-semibold text-green-600">{selectedShipment.expected_activity_at_arrival.toFixed(2)} mCi</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Handling Requirements */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Thermometer className="w-5 h-5 text-blue-600" />
+              Handling Requirements
+            </h3>
+            <div className="space-y-3">
+              {selectedShipment.temperature_requirements && (
+                <div>
+                  <span className="text-gray-600 text-sm">Temperature:</span>
+                  <p className="font-medium">{selectedShipment.temperature_requirements}</p>
+                </div>
+              )}
+              {selectedShipment.special_handling_instructions && (
+                <div>
+                  <span className="text-gray-600 text-sm">Special Instructions:</span>
+                  <p className="font-medium">{selectedShipment.special_handling_instructions}</p>
+                </div>
+              )}
+              {!selectedShipment.temperature_requirements && !selectedShipment.special_handling_instructions && (
+                <p className="text-gray-500 text-sm">No special handling requirements specified</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Waypoints Timeline */}
+        {selectedShipment.route_waypoints && selectedShipment.route_waypoints.length > 0 && (
+          <div className="bg-white rounded-xl p-6 border border-gray-200 mt-6">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-purple-600" />
+              Waypoints Timeline
+            </h3>
+            <div className="space-y-4">
+              {selectedShipment.route_waypoints.map((waypoint, index) => (
+                <div key={`${waypoint.name}-${index}`} className="flex gap-4">
+                  <div className="flex flex-col items-center flex-shrink-0">
+                    <div className={`w-4 h-4 rounded-full ${
+                      waypoint.status === 'completed' ? 'bg-green-600' :
+                      waypoint.status === 'current' ? 'bg-blue-600' :
+                      'bg-gray-300'
+                    }`}></div>
+                    {index < selectedShipment.route_waypoints!.length - 1 && (
+                      <div className={`w-0.5 h-full mt-2 ${
+                        waypoint.status === 'completed' ? 'bg-green-600' : 'bg-gray-300'
+                      }`}></div>
+                    )}
+                  </div>
+                  <div className="flex-1 pb-6">
+                    <div className="font-medium">{waypoint.name}</div>
+                    {waypoint.timestamp && (
+                      <div className="text-sm text-gray-500 mt-1">
+                        {new Date(waypoint.timestamp).toLocaleString()}
+                      </div>
+                    )}
+                    {waypoint.status === 'current' && (
+                      <span className="inline-block mt-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                        Current Location
+                      </span>
+                    )}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-
-          <div className="p-4 sm:p-6">
-            {activeTab === 'tracking' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Map */}
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl h-64 sm:h-80 lg:h-96 flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 opacity-20">
-                    <svg viewBox="0 0 400 400" className="w-full h-full">
-                      <path 
-                        d="M 100,100 L 150,120 L 200,150 L 250,140 L 300,100" 
-                        fill="none" 
-                        stroke="#7C3AED" 
-                        strokeWidth="3"
-                        strokeDasharray="5,5"
-                      />
-                    </svg>
-                  </div>
-                  <div className="relative">
-                    <MapPin className="w-16 h-16 text-purple-600" fill="currentColor" />
-                  </div>
-                </div>
-
-                {/* Timeline */}
-                <div className="space-y-4">
-                  {trackingEvents.map((event, index) => (
-                    <div key={index} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        <div 
-                          className={`w-4 h-4 rounded-full ${
-                            event.completed ? 'bg-green-600' : 'bg-gray-300'
-                          }`}
-                        ></div>
-                        {index < trackingEvents.length - 1 && (
-                          <div className={`w-0.5 h-full mt-2 ${
-                            event.completed ? 'bg-green-600' : 'bg-gray-300'
-                          }`}></div>
-                        )}
-                      </div>
-                      <div className="flex-1 pb-6">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm">{event.status}</span>
-                          <span className="text-xs text-gray-500">{event.time}</span>
-                        </div>
-                        <p className="text-sm text-gray-600">{event.location}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-
-            {activeTab === 'decay' && (
-              <div>
-                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-8 mb-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h3 className="text-lg mb-1">Activity Decay Curve</h3>
-                      <p className="text-sm text-gray-600">Real-time activity monitoring</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-3xl text-purple-600">{shipment.activity}%</div>
-                      <div className="text-sm text-gray-600">Current Activity</div>
-                    </div>
-                  </div>
-                  
-                  {/* Decay Chart Visualization */}
-                  <div className="h-64 flex items-end gap-2">
-                    {Array.from({ length: 24 }).map((_, i) => {
-                      const height = 100 - (i * 3.5);
-                      const isCurrentPosition = i === 8;
-                      return (
-                        <div key={i} className="flex-1 flex flex-col justify-end relative">
-                          <div 
-                            className={`${
-                              isCurrentPosition ? 'bg-purple-600' : 'bg-blue-400'
-                            } rounded-t transition-all hover:opacity-80`}
-                            style={{ height: `${height}%` }}
-                          ></div>
-                          {isCurrentPosition && (
-                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-purple-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                              Current: {shipment.activity}%
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-600 mt-2">
-                    <span>Dispatch</span>
-                    <span>Current Time</span>
-                    <span>Delivery</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="text-sm text-gray-600 mb-1">Initial Activity</div>
-                    <div className="text-2xl">500 mCi</div>
-                  </div>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="text-sm text-gray-600 mb-1">Current Activity</div>
-                    <div className="text-2xl text-purple-600">425 mCi</div>
-                  </div>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="text-sm text-gray-600 mb-1">Expected at Arrival</div>
-                    <div className="text-2xl text-green-600">380 mCi</div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'documents' && (
-              <div className="space-y-4">
-                {[
-                  { name: 'Certificate of Analysis', status: 'Complete', color: 'text-green-600' },
-                  { name: 'Transport Permit', status: 'Complete', color: 'text-green-600' },
-                  { name: 'Customs Declaration', status: 'In Progress', color: 'text-amber-600' },
-                  { name: 'Insurance Certificate', status: 'Complete', color: 'text-green-600' },
-                  { name: 'Radiation Safety Report', status: 'Complete', color: 'text-green-600' },
-                ].map((doc, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <Download className="w-5 h-5 text-purple-600" />
-                      </div>
-                      <div>
-                        <div className="font-medium">{doc.name}</div>
-                        <div className={`text-sm ${doc.color}`}>{doc.status}</div>
-                      </div>
-                    </div>
-                    <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                      Download
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-
-            {activeTab === 'sensors' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white border border-gray-200 rounded-xl p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg">Temperature</h3>
-                    <Activity className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div className="text-4xl mb-2 text-blue-600">2.4°C</div>
-                  <div className="text-sm text-green-600 mb-4">Within safe range (0-8°C)</div>
-                  <div className="h-32 flex items-end gap-1">
-                    {Array.from({ length: 24 }).map((_, i) => {
-                      const height = 40 + Math.random() * 30;
-                      return (
-                        <div key={i} className="flex-1 flex flex-col justify-end">
-                          <div 
-                            className="bg-blue-400 rounded-t hover:bg-blue-600 transition-colors"
-                            style={{ height: `${height}%` }}
-                          ></div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="bg-white border border-gray-200 rounded-xl p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg">Radiation Level</h3>
-                    <Activity className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div className="text-4xl mb-2 text-purple-600">0.12 mSv</div>
-                  <div className="text-sm text-green-600 mb-4">Normal levels</div>
-                  <div className="h-32 flex items-end gap-1">
-                    {Array.from({ length: 24 }).map((_, i) => {
-                      const height = 30 + Math.random() * 20;
-                      return (
-                        <div key={i} className="flex-1 flex flex-col justify-end">
-                          <div 
-                            className="bg-purple-400 rounded-t hover:bg-purple-600 transition-colors"
-                            style={{ height: `${height}%` }}
-                          ></div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'blockchain' && (
-              <div className="space-y-4">
-                <div className="bg-gray-900 text-white rounded-xl p-6 mb-6">
-                  <h3 className="text-lg mb-2">Immutable Event Log</h3>
-                  <p className="text-sm text-gray-400">All events are recorded on Hyperledger blockchain</p>
-                </div>
-                
-                {[
-                  { event: 'Shipment Created', hash: '0x4f3a...8b2c', time: '08:00 AM', user: 'System' },
-                  { event: 'Dispatched from Facility', hash: '0x7d2e...4a1f', time: '08:00 AM', user: 'Warehouse Manager' },
-                  { event: 'Loaded on Vehicle', hash: '0x9b1c...6d3e', time: '08:15 AM', user: 'Driver: J. Smith' },
-                  { event: 'Temperature Check', hash: '0x2e4f...7c8a', time: '09:30 AM', user: 'IoT Sensor' },
-                  { event: 'Checkpoint Passed', hash: '0x5a6b...9d2f', time: '10:30 AM', user: 'Driver: J. Smith' },
-                ].map((log, index) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <div className="font-medium mb-1">{log.event}</div>
-                        <div className="text-sm text-gray-600">{log.user}</div>
-                      </div>
-                      <div className="text-sm text-gray-500">{log.time}</div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">{log.hash}</code>
-                      <button className="text-sm text-purple-600 hover:text-purple-700">
-                        Verify on Chain →
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     );
   }
 
-
+  // List view
   return (
     <div>
+      {/* Header with Create Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h2 className="text-xl sm:text-2xl">Shipments & Logistics</h2>
-        <div className="flex items-center gap-2">
-          <button 
-            onClick={() => setViewType('list')}
-            className={`p-2 rounded-lg transition-colors ${
-              viewType === 'list' ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100'
-            }`}
-          >
-            <List className="w-5 h-5" />
-          </button>
-          <button 
-            onClick={() => setViewType('map')}
-            className={`p-2 rounded-lg transition-colors ${
-              viewType === 'map' ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100'
-            }`}
-          >
-            <Map className="w-5 h-5" />
-          </button>
-          <button 
-            onClick={() => setViewType('kanban')}
-            className={`p-2 rounded-lg transition-colors ${
-              viewType === 'kanban' ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100'
-            }`}
-          >
-            <LayoutGrid className="w-5 h-5" />
-          </button>
-        </div>
+        <button 
+          onClick={() => setCreateDialogOpen(true)}
+          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+        >
+          <Plus className="w-5 h-5" />
+          Create Shipment
+        </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-3 sm:p-4 mb-6 border border-gray-200 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-        <div className="relative flex-1 max-w-full sm:max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input 
-            type="text" 
-            placeholder="Search shipments..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-          />
-        </div>
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-            <option>All Statuses</option>
-            <option>Dispatched</option>
-            <option>In Transit</option>
-            <option>At Customs</option>
-            <option>Delivered</option>
-          </select>
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-            <option>All Isotopes</option>
-          </select>
-          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-            <Filter className="w-4 h-4" />
-            More Filters
-          </button>
+      <div className="bg-white rounded-lg p-3 sm:p-4 mb-6 border border-gray-200">
+        <div className="flex flex-col gap-3">
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input 
+              type="text" 
+              placeholder="Search by shipment number, isotope, batch..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            />
+          </div>
+          
+          {/* Filter dropdowns */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <select 
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as ShipmentStatus | '')}
+            >
+              <option value="">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Dispatched">Dispatched</option>
+              <option value="In Transit">In Transit</option>
+              <option value="At Customs">At Customs</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+            
+            <select 
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+              value={filterIsotope}
+              onChange={(e) => setFilterIsotope(e.target.value)}
+            >
+              <option value="">All Isotopes</option>
+              {uniqueIsotopes.map(isotope => (
+                <option key={isotope} value={isotope}>{isotope}</option>
+              ))}
+            </select>
+            
+            <label className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+              <input 
+                type="checkbox"
+                checked={filterFromProcurement === true}
+                onChange={(e) => setFilterFromProcurement(e.target.checked ? true : undefined)}
+                className="w-4 h-4 text-purple-600 rounded focus:ring-2 focus:ring-purple-600"
+              />
+              <span className="text-sm">From Procurement</span>
+            </label>
+          </div>
         </div>
       </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center h-64 bg-white rounded-xl border border-gray-200">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin text-purple-600 mx-auto mb-2" />
+            <p className="text-gray-600">Loading shipments...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && filteredShipments.length === 0 && (
+        <div className="flex items-center justify-center h-64 bg-white rounded-xl border border-gray-200">
+          <div className="text-center">
+            <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-600 mb-2">No shipments found</p>
+            <p className="text-sm text-gray-500">Try adjusting your filters or create a new shipment</p>
+          </div>
+        </div>
+      )}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {/* Desktop Table View */}
-        <DesktopOnly>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[800px]">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Shipment ID</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Batch #</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Carrier</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Activity</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {shipments.map((shipment) => (
-                <tr 
-                  key={shipment.id} 
-                  className="hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() => setSelectedShipment(shipment.id)}
-                >
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono text-purple-600">
-                    {shipment.id}
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.isotope}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{shipment.batch}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                    {shipment.origin} → {shipment.destination}
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.carrier}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${shipment.statusColor}`}>
-                      {shipment.status}
-                    </span>
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[60px] sm:max-w-[80px]">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            shipment.activity >= 90 ? 'bg-green-600' :
-                            shipment.activity >= 70 ? 'bg-yellow-600' :
-                            'bg-red-600'
-                          }`}
-                          style={{ width: `${shipment.activity}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-xs sm:text-sm">{shipment.activity}%</span>
-                    </div>
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.eta}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-        </DesktopOnly>
+      {!loading && filteredShipments.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          {/* Desktop Table View */}
+          <DesktopOnly>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1000px]">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Shipment #</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Batch #</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Carrier</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">ETA</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Procurement</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {filteredShipments.map((shipment) => (
+                    <tr 
+                      key={shipment.id} 
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleShipmentClick(shipment)}
+                          className="text-xs sm:text-sm font-mono text-purple-600 hover:text-purple-700 hover:underline"
+                        >
+                          {shipment.shipment_number}
+                        </button>
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.isotope}</td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{shipment.batch_number}</td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        <div className="flex items-center gap-1">
+                          <span className="truncate max-w-[100px]">{shipment.origin.split(',')[0]}</span>
+                          <ArrowRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                          <span className="truncate max-w-[100px]">{shipment.destination.split(',')[0]}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{shipment.carrier}</td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${shipment.status_color}`}>
+                          {shipment.status}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        {formatShipmentETA(shipment.eta)}
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        {shipment.procurement_request_id ? (
+                          <span className="font-mono text-xs text-purple-600">{shipment.procurement_request_id}</span>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleShipmentClick(shipment)}
+                          className="inline-flex items-center gap-1 px-3 py-1 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+                        >
+                          <Eye className="w-3 h-3" />
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </DesktopOnly>
 
-        {/* Mobile Card View */}
-        <MobileOnly>
-          <div className="p-4 space-y-3">
-            {shipments.map((shipment) => (
-              <MobileTableCard 
-                key={shipment.id}
-                onClick={() => setSelectedShipment(shipment.id)}
-              >
-                <MobileTableCardRow 
-                  label="ID" 
-                  value={<span className="font-mono text-xs text-purple-600">{shipment.id}</span>} 
-                />
-                <MobileTableCardRow 
-                  label="Isotope" 
-                  value={shipment.isotope} 
-                />
-                <MobileTableCardRow 
-                  label="Batch" 
-                  value={<span className="font-mono text-xs">{shipment.batch}</span>} 
-                />
-                <MobileTableCardRow 
-                  label="Route" 
-                  value={
-                    <span className="text-xs">
-                      {shipment.origin} → {shipment.destination}
-                    </span>
-                  } 
-                />
-                <MobileTableCardRow 
-                  label="Carrier" 
-                  value={shipment.carrier} 
-                />
-                <MobileTableCardRow 
-                  label="Status" 
-                  value={
-                    <span className={`px-2 py-1 rounded-full text-xs ${shipment.statusColor}`}>
-                      {shipment.status}
-                    </span>
-                  } 
-                />
-                <MobileTableCardRow 
-                  label="Activity" 
-                  value={
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[60px]">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            shipment.activity >= 90 ? 'bg-green-600' :
-                            shipment.activity >= 70 ? 'bg-yellow-600' :
-                            'bg-red-600'
-                          }`}
-                          style={{ width: `${shipment.activity}%` }}
-                        ></div>
+          {/* Mobile Card View */}
+          <MobileOnly>
+            <div className="p-4 space-y-3">
+              {filteredShipments.map((shipment) => (
+                <MobileTableCard 
+                  key={shipment.id}
+                  onClick={() => handleShipmentClick(shipment)}
+                >
+                  <MobileTableCardRow 
+                    label="Shipment #" 
+                    value={<span className="font-mono text-xs text-purple-600">{shipment.shipment_number}</span>} 
+                  />
+                  <MobileTableCardRow 
+                    label="Isotope" 
+                    value={shipment.isotope} 
+                  />
+                  <MobileTableCardRow 
+                    label="Batch" 
+                    value={<span className="font-mono text-xs">{shipment.batch_number}</span>} 
+                  />
+                  <MobileTableCardRow 
+                    label="Route" 
+                    value={
+                      <div className="flex items-center gap-1 text-xs">
+                        <span className="truncate">{shipment.origin.split(',')[0]}</span>
+                        <ArrowRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                        <span className="truncate">{shipment.destination.split(',')[0]}</span>
                       </div>
-                      <span className="text-xs">{shipment.activity}%</span>
-                    </div>
-                  } 
-                />
-                <MobileTableCardRow 
-                  label="ETA" 
-                  value={shipment.eta} 
-                />
-              </MobileTableCard>
-            ))}
-          </div>
-        </MobileOnly>
-      </div>
+                    } 
+                  />
+                  <MobileTableCardRow 
+                    label="Carrier" 
+                    value={shipment.carrier} 
+                  />
+                  <MobileTableCardRow 
+                    label="Status" 
+                    value={
+                      <span className={`px-2 py-1 rounded-full text-xs ${shipment.status_color}`}>
+                        {shipment.status}
+                      </span>
+                    } 
+                  />
+                  <MobileTableCardRow 
+                    label="ETA" 
+                    value={formatShipmentETA(shipment.eta)} 
+                  />
+                  <MobileTableCardRow 
+                    label="Procurement" 
+                    value={
+                      shipment.procurement_request_id ? (
+                        <span className="font-mono text-xs text-purple-600">{shipment.procurement_request_id}</span>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )
+                    } 
+                  />
+                </MobileTableCard>
+              ))}
+            </div>
+          </MobileOnly>
+        </div>
+      )}
+
+      {/* Create Shipment Dialog */}
+      <CreateShipmentDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onSuccess={handleShipmentCreated}
+      />
     </div>
   );
 }
