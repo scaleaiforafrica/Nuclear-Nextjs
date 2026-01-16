@@ -98,9 +98,34 @@ export default function SettingsPage() {
     setHasChanges(true)
   }
 
-  const handlePreferencesUpdate = (data: PreferencesUpdateData) => {
-    setPendingChanges((prev: any) => ({ ...prev, ...data }))
-    setHasChanges(true)
+  const handlePreferencesUpdate = async (data: PreferencesUpdateData) => {
+    // Auto-save preferences immediately
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/settings/preferences', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update preferences')
+      }
+
+      const result = await response.json()
+      
+      // Validate response structure
+      if (result && result.profile) {
+        setProfile((prev: any) => ({ ...prev, ...result.profile }))
+        toast.success('Preferences updated successfully')
+      } else {
+        throw new Error('Invalid response structure')
+      }
+    } catch (error) {
+      toast.error('Failed to update preferences')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handlePasswordChange = async (data: PasswordChangeData) => {
@@ -261,13 +286,15 @@ export default function SettingsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl sm:text-2xl font-semibold">Settings</h2>
-        <Button
-          onClick={handleSaveChanges}
-          disabled={!hasChanges || isLoading}
-          className="hidden sm:inline-flex"
-        >
-          {isLoading ? 'Saving...' : 'Save Changes'}
-        </Button>
+        {activeTab !== 'preferences' && activeTab !== 'notifications' && (
+          <Button
+            onClick={handleSaveChanges}
+            disabled={!hasChanges || isLoading}
+            className="hidden sm:inline-flex"
+          >
+            {isLoading ? 'Saving...' : 'Save Changes'}
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
@@ -344,16 +371,18 @@ export default function SettingsPage() {
             />
           )}
 
-          {/* Mobile Save Button */}
-          <div className="mt-6 sm:hidden">
-            <Button
-              onClick={handleSaveChanges}
-              disabled={!hasChanges || isLoading}
-              className="w-full"
-            >
-              {isLoading ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </div>
+          {/* Mobile Save Button - only for tabs that don't auto-save */}
+          {activeTab !== 'preferences' && activeTab !== 'notifications' && (
+            <div className="mt-6 sm:hidden">
+              <Button
+                onClick={handleSaveChanges}
+                disabled={!hasChanges || isLoading}
+                className="w-full"
+              >
+                {isLoading ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
