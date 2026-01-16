@@ -82,7 +82,7 @@ export default function TraceabilityPage() {
             />
             <span className="text-xs sm:text-sm">Regulator View</span>
           </label>
-          <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm">
+          <button className="px-4 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm">
             <Download className="w-4 h-4" />
             <span className="whitespace-nowrap">Export Audit Report</span>
           </button>
@@ -114,7 +114,7 @@ export default function TraceabilityPage() {
                 value={selectedShipment}
                 onChange={(e) => setSelectedShipment(e.target.value)}
                 placeholder="Search by ID or batch..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
               />
             </div>
           </div>
@@ -122,14 +122,14 @@ export default function TraceabilityPage() {
             <label className="block text-sm mb-2 text-gray-700">Date Range</label>
             <input 
               type="date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              className="w-full px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
             />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm mb-2 text-gray-700">Origin Country</label>
-            <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <select className="w-full px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
               <option>All Countries</option>
               <option>South Africa</option>
               <option>Kenya</option>
@@ -139,7 +139,7 @@ export default function TraceabilityPage() {
           </div>
           <div>
             <label className="block text-sm mb-2 text-gray-700">Isotope Type</label>
-            <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <select className="w-full px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
               <option>All Isotopes</option>
               <option>Tc-99m</option>
               <option>F-18 FDG</option>
@@ -149,7 +149,7 @@ export default function TraceabilityPage() {
           </div>
           <div>
             <label className="block text-sm mb-2 text-gray-700">Manufacturer</label>
-            <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <select className="w-full px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
               <option>All Manufacturers</option>
               <option>NucMed Solutions</option>
               <option>RadioPharma Inc</option>
@@ -185,7 +185,7 @@ export default function TraceabilityPage() {
           </div>
           <button
             onClick={() => setVerifyDialogOpen(true)}
-            className="px-4 py-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-lg transition-colors text-sm whitespace-nowrap"
+            className="px-4 py-2 min-h-[44px] bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-lg transition-colors text-sm whitespace-nowrap"
           >
             Verify on Chain
           </button>
@@ -245,7 +245,7 @@ export default function TraceabilityPage() {
                       <div className="bg-gray-900 rounded-lg p-3 sm:p-4">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
                           <span className="text-xs text-gray-400">Blockchain Transaction Hash</span>
-                          <button className="text-xs text-purple-400 hover:text-purple-300 transition-colors self-start">
+                          <button className="text-xs text-purple-400 hover:text-purple-300 transition-colors self-start min-h-[44px] px-2 py-1 flex items-center">
                             Verify on Chain →
                           </button>
                         </div>
@@ -270,7 +270,7 @@ export default function TraceabilityPage() {
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <button 
                 onClick={() => downloadAuditTrailJSON(selectedShipment, auditEvents)}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white transition-colors text-xs sm:text-sm"
+                className="px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg hover:bg-white transition-colors text-xs sm:text-sm"
               >
                 Download JSON
               </button>
@@ -279,7 +279,7 @@ export default function TraceabilityPage() {
                   isotope: 'Tc-99m',
                   batch: 'TC-2026-001'
                 })}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-xs sm:text-sm flex items-center justify-center gap-2"
+                className="px-4 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-xs sm:text-sm flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />
                 <span className="whitespace-nowrap">Generate Signed PDF Report</span>
