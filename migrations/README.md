@@ -1,6 +1,41 @@
 # Database Migration Guide
 
-This directory contains SQL migration files for the Nuclear Supply Chain Management application.
+## CI/CD Automated Migrations
+
+Database migrations are automatically applied to Supabase when a pull request is opened against the `main` branch that includes changes to migration files.
+
+### How It Works
+
+The GitHub Action workflow (`.github/workflows/supabase-migration.yml`) automatically:
+
+1. **Detects changes** to database-related files:
+   - `migrations/**/*.sql` - Individual migration files
+   - `schema.sql` - Main schema file
+   - `full_db_setup.sql` - Full database setup
+
+2. **Runs migrations** using the Supabase CLI when changes are detected
+
+3. **Validates** the database schema after migrations
+
+### Required GitHub Secrets
+
+To enable automated migrations, configure these secrets in your GitHub repository:
+
+| Secret | Description |
+|--------|-------------|
+| `SUPABASE_ACCESS_TOKEN` | Your Supabase access token (from [Supabase Dashboard](https://supabase.com/dashboard/account/tokens)) |
+| `SUPABASE_DB_PASSWORD` | Your Supabase database password |
+| `SUPABASE_PROJECT_ID` | Your Supabase project reference ID (found in Project Settings) |
+
+### Adding New Migrations
+
+1. Create a new SQL file in the `migrations/` directory (e.g., `migrations/add_new_feature.sql`)
+2. Use `IF NOT EXISTS` clauses for idempotency
+3. Open a pull request - migrations will run automatically
+
+---
+
+## Settings Page Migration
 
 ## 🚀 Automatic Deployment
 
