@@ -245,7 +245,7 @@ export default function TraceabilityPage() {
                       <div className="bg-gray-900 rounded-lg p-3 sm:p-4">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
                           <span className="text-xs text-gray-400">Blockchain Transaction Hash</span>
-                          <button className="text-xs text-purple-400 hover:text-purple-300 transition-colors self-start min-h-[44px]">
+                          <button className="text-xs text-purple-400 hover:text-purple-300 transition-colors self-start min-h-[44px] px-2 py-1 flex items-center">
                             Verify on Chain →
                           </button>
                         </div>
