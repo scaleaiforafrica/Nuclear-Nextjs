@@ -16,9 +16,17 @@ interface NotificationProviderProps {
 
 export function NotificationProvider({ children }: NotificationProviderProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isClient, setIsClient] = useState(false);
+
+  // Check if we're on the client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Load notifications from localStorage on mount
   useEffect(() => {
+    if (!isClient) return;
+    
     const stored = localStorage.getItem('notifications');
     if (stored) {
       try {
@@ -33,17 +41,20 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
         console.error('Failed to load notifications:', error);
       }
     }
-  }, []);
+  }, [isClient]);
 
   // Save notifications to localStorage when they change
   useEffect(() => {
+    if (!isClient) return;
     localStorage.setItem('notifications', JSON.stringify(notifications));
-  }, [notifications]);
+  }, [notifications, isClient]);
 
   const addNotification = useCallback((notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     const newNotification: Notification = {
       ...notification,
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: typeof crypto !== 'undefined' && crypto.randomUUID 
+        ? crypto.randomUUID() 
+        : `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date(),
       read: false,
     };
@@ -105,7 +116,9 @@ export function useNotifications() {
 
 // Helper function to play notification sounds
 function playNotificationSound(type: NotificationType) {
-  // Only play sounds if user preferences allow it
+  // Only play sounds if user preferences allow it and we're on the client
+  if (typeof window === 'undefined') return;
+  
   const soundEnabled = localStorage.getItem('notificationSoundEnabled') !== 'false';
   if (!soundEnabled) return;
 
