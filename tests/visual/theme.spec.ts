@@ -59,7 +59,8 @@ test.describe('Renova Brand Theme - CSS Variables', () => {
     });
     
     // Validate each CSS variable (colors may be normalized by browser)
-    expect(rootStyles['--color-bg'].toLowerCase()).toMatch(/#fff(fff)?/);
+    // Match either #fff or #ffffff (browser may normalize)
+    expect(rootStyles['--color-bg'].toLowerCase()).toMatch(/^#fff(fff)?$/);
     expect(rootStyles['--color-navy']).toBe(EXPECTED_CSS_VARIABLES['--color-navy']);
     expect(rootStyles['--color-gold']).toBe(EXPECTED_CSS_VARIABLES['--color-gold']);
     expect(rootStyles['--color-muted']).toBe(EXPECTED_CSS_VARIABLES['--color-muted']);
