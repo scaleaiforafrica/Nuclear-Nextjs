@@ -180,13 +180,13 @@ async function performRestoration(
         continue
       }
 
-      // Delete existing demo data
+      // Delete existing demo data for this table
       await withRetry(
         async () => {
           const { error: deleteError } = await supabase
             .from(table)
             .delete()
-            .neq('id', '00000000-0000-0000-0000-000000000000') // Delete all
+            .gte('created_at', '1970-01-01T00:00:00Z') // Delete all records
 
           if (deleteError) throw deleteError
         },
@@ -206,7 +206,13 @@ async function performRestoration(
               .insert(batch)
 
             if (insertError) throw insertError
-            recordsInserted += count || batch.length
+            // Only increment if count is available, otherwise assume batch length
+            // Note: In case of partial failure, this may be inaccurate
+            if (typeof count === 'number') {
+              recordsInserted += count
+            } else {
+              recordsInserted += batch.length
+            }
           },
           RESTORATION_CONFIG.retryAttempts,
           RESTORATION_CONFIG.retryDelayMs

@@ -47,6 +47,7 @@
       "schemaHash": "sha256:005"
     }
   },
+  "_note": "Schema hash values are placeholders. For production, compute actual SHA-256 hashes of table schemas for change detection.",
   "context": {
     "region": "Africa",
     "countries": [

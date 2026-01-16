@@ -189,7 +189,30 @@ const { data } = await response.json()
 
 ## Database Setup
 
-### Running the Migration
+### Method 1: Using Setup Script (Recommended)
+
+The easiest way to create the demo user is using the provided setup script:
+
+```bash
+# Set environment variables
+export SUPABASE_URL="your-supabase-url"
+export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
+
+# Run the setup script
+node scripts/setup-demo-account.js
+```
+
+The script will:
+1. Create the demo user via Supabase Admin API
+2. Verify the user was created
+3. Check if the profile exists
+
+After running the script, you still need to run the migration SQL to create:
+- The tracking tables (demo_restorations, demo_seed_versions)
+- The demo profile (if not already created)
+- RLS policies and functions
+
+### Method 2: Manual Migration
 
 **Option 1: Supabase Dashboard**
 1. Go to SQL Editor in Supabase Dashboard

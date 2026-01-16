@@ -33,12 +33,13 @@ export function isDemoAccountEmail(email: string | undefined | null): boolean {
 /**
  * Generate a deterministic ID for demo data
  * Ensures consistent IDs across restorations for testing
+ * Note: This is primarily for development/testing purposes
  */
 export function generateDemoId(table: string, index: number): string {
-  const baseId = '10000000-0000-0000-0000-000000000000'
-  const tableCode = table.charCodeAt(0).toString(16).padStart(3, '0')
-  const indexHex = index.toString(16).padStart(3, '0')
-  return baseId.replace('100000', `1${tableCode}${indexHex}`)
+  // Use a proper UUID format with deterministic values
+  const tableCode = table.charCodeAt(0).toString(16).padStart(2, '0')
+  const indexHex = index.toString(16).padStart(6, '0')
+  return `10000000-${tableCode}00-0000-0000-${indexHex.padStart(12, '0')}`
 }
 
 /**

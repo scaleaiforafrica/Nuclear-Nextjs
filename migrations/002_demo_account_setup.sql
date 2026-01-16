@@ -11,9 +11,24 @@
 -- DEMO USER SETUP
 -- ============================================================================
 
+-- IMPORTANT: This creates the demo user directly in auth.users.
+-- For production deployments, consider using Supabase Admin API instead:
+--   const { data, error } = await supabase.auth.admin.createUser({
+--     email: 'demo@nuclearflow.com',
+--     password: 'DemoNuclear2026!',
+--     email_confirm: true,
+--     user_metadata: { full_name: 'Demo User', role: 'Hospital Administrator' }
+--   })
+--
+-- Direct insertion is suitable for development/testing environments.
+
 -- Create demo user in auth.users
 -- Password: DemoNuclear2026!
--- Password hash generated with Supabase's bcrypt algorithm
+-- NOTE: The password hash below is a placeholder. 
+-- For production, generate a proper bcrypt hash using:
+--   SELECT crypt('DemoNuclear2026!', gen_salt('bf'));
+-- Or use Supabase Admin API to create the user properly.
+-- For development/testing, update this hash with a real bcrypt hash.
 INSERT INTO auth.users (
   id,
   instance_id,
