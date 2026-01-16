@@ -18,6 +18,7 @@ import type {
   PasswordChangeData,
   UserSession,
   LoginHistoryEntry,
+  ProfileSettings,
 } from '@/models'
 
 type TabId = 'profile' | 'account' | 'preferences' | 'security' | 'notifications'
@@ -39,12 +40,12 @@ const tabs: Tab[] = [
 export default function SettingsPage() {
   const { user, supabaseUser } = useAuth()
   const [activeTab, setActiveTab] = useState<TabId>('profile')
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<ProfileSettings | null>(null)
   const [sessions, setSessions] = useState<UserSession[]>([])
   const [loginHistory, setLoginHistory] = useState<LoginHistoryEntry[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
-  const [pendingChanges, setPendingChanges] = useState<any>({})
+  const [pendingChanges, setPendingChanges] = useState<Partial<ProfileUpdateData & PreferencesUpdateData>>({})
 
   // Fetch profile data
   useEffect(() => {
@@ -107,7 +108,7 @@ export default function SettingsPage() {
       }
 
       const result = await response.json()
-      setProfile((prev: any) => ({ ...prev, ...result.profile }))
+      setProfile((prev: ProfileSettings | null) => prev ? { ...prev, ...result.profile } : result.profile)
       toast.success('Profile updated successfully')
     } catch (error) {
       toast.error('Failed to update profile')
@@ -117,7 +118,7 @@ export default function SettingsPage() {
   }
 
   const handlePreferencesUpdate = (data: PreferencesUpdateData) => {
-    setPendingChanges((prev: any) => ({ ...prev, ...data }))
+    setPendingChanges((prev) => ({ ...prev, ...data }))
     setHasChanges(true)
   }
 
@@ -149,7 +150,7 @@ export default function SettingsPage() {
     try {
       // TODO: Implement 2FA toggle API
       await new Promise(resolve => setTimeout(resolve, 1000))
-      setProfile((prev: any) => ({ ...prev, two_factor_enabled: enabled }))
+      setProfile((prev) => prev ? { ...prev, two_factor_enabled: enabled } : null)
       toast.success(enabled ? '2FA enabled successfully' : '2FA disabled successfully')
     } catch (error) {
       toast.error('Failed to toggle 2FA')
@@ -159,7 +160,7 @@ export default function SettingsPage() {
   }
 
   const handleToggleEmailNotifications = async (enabled: boolean) => {
-    setPendingChanges((prev: any) => ({ ...prev, email_notifications: enabled }))
+    setPendingChanges((prev) => ({ ...prev, email_notifications: enabled }))
     setHasChanges(true)
   }
 
@@ -235,7 +236,7 @@ export default function SettingsPage() {
         }
 
         const data = await response.json()
-        setProfile((prev: any) => ({ ...prev, ...data.profile }))
+        setProfile((prev) => prev ? { ...prev, ...data.profile } : data.profile)
       }
 
       // Update preferences if there are preference changes
@@ -251,7 +252,7 @@ export default function SettingsPage() {
         }
 
         const data = await response.json()
-        setProfile((prev: any) => ({ ...prev, ...data.profile }))
+        setProfile((prev) => prev ? { ...prev, ...data.profile } : data.profile)
       }
 
       toast.success('Settings saved successfully')

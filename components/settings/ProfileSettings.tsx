@@ -5,6 +5,13 @@ import { User, Upload } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import type { ProfileUpdateData } from '@/models'
 
 interface ProfileSettingsProps {
@@ -183,14 +190,19 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
         </div>
         <div className="space-y-2">
           <Label htmlFor="role">Role</Label>
-          <Input
-            id="role"
-            name="role"
-            type="text"
+          <Select
             value={formData.role}
-            onChange={handleInputChange}
-            placeholder="e.g., Hospital Administrator"
-          />
+            onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+          >
+            <SelectTrigger id="role">
+              <SelectValue placeholder="Select a role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Hospital Administrator">Hospital Administrator</SelectItem>
+              <SelectItem value="Logistics Manager">Logistics Manager</SelectItem>
+              <SelectItem value="Compliance Officer">Compliance Officer</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
