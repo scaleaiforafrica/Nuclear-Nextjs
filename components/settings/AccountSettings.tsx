@@ -19,6 +19,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { PasswordStrengthIndicator } from '@/components/ui/password-strength-indicator'
+import { PasswordRequirementsChecklist } from '@/components/ui/password-requirements-checklist'
+import { validatePasswordStrength } from '@/lib/password-validator'
 import type { PasswordChangeData } from '@/models'
 
 interface AccountSettingsProps {
@@ -134,6 +137,20 @@ export function AccountSettings({
     }
   }
 
+  // Handle Enter key to submit
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !isLoading) {
+      handleSubmitPassword()
+    } else if (e.key === 'Escape') {
+      setPasswordData({
+        current_password: '',
+        new_password: '',
+        confirm_password: '',
+      })
+      setPasswordErrors([])
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -147,6 +164,7 @@ export function AccountSettings({
       <div className="space-y-4">
         <h4 className="font-medium">Change Password</h4>
         <div className="space-y-3">
+          {/* Current Password */}
           <div className="space-y-2">
             <Label htmlFor="current_password">Current Password</Label>
             <div className="relative">
@@ -173,6 +191,8 @@ export function AccountSettings({
               </button>
             </div>
           </div>
+
+          {/* New Password */}
           <div className="space-y-2">
             <Label htmlFor="new_password">New Password</Label>
             <div className="relative">
@@ -247,7 +267,11 @@ export function AccountSettings({
 
           {/* Error Messages */}
           {passwordErrors.length > 0 && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <div 
+              className="bg-red-50 border border-red-200 rounded-lg p-3"
+              role="alert"
+              aria-live="polite"
+            >
               {passwordErrors.map((error, idx) => (
                 <p key={idx} className="text-sm text-red-600">
                   • {error}
@@ -255,6 +279,8 @@ export function AccountSettings({
               ))}
             </div>
           )}
+
+          {/* Submit Button */}
           <Button
             onClick={handleSubmitPassword}
             disabled={isLoading}
@@ -262,6 +288,12 @@ export function AccountSettings({
           >
             {isLoading ? 'Updating...' : 'Update Password'}
           </Button>
+
+          {/* Keyboard Shortcuts Help */}
+          <p className="text-xs text-gray-500">
+            Press <kbd className="px-2 py-1 bg-gray-100 rounded">Enter</kbd> to submit or{' '}
+            <kbd className="px-2 py-1 bg-gray-100 rounded">Esc</kbd> to clear
+          </p>
         </div>
       </div>
 
@@ -287,6 +319,7 @@ export function AccountSettings({
             checked={profile?.two_factor_enabled || false}
             onCheckedChange={onToggle2FA}
             disabled={isLoading}
+            aria-label="Toggle two-factor authentication"
           />
         </div>
       </div>
@@ -304,6 +337,7 @@ export function AccountSettings({
             checked={profile?.email_notifications || false}
             onCheckedChange={onToggleEmailNotifications}
             disabled={isLoading}
+            aria-label="Toggle email notifications"
           />
         </div>
       </div>
@@ -320,7 +354,11 @@ export function AccountSettings({
               </p>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="sm">
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    className="min-w-[44px] min-h-[44px]"
+                  >
                     Delete Account
                   </Button>
                 </AlertDialogTrigger>

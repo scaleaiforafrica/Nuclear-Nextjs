@@ -1,7 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { validatePasswordStrength } from '@/lib/validation/password'
 import { getRateLimiter } from '@/lib/api/rate-limiter'
+import { logPasswordChangeAttempt } from '@/lib/audit-logger'
 
 interface PasswordChangeResponse {
   success?: boolean
@@ -21,6 +23,23 @@ interface PasswordChangeResponse {
   }
 }
 
+// Validation schema using Zod
+const passwordChangeSchema = z.object({
+  current_password: z.string().min(1, 'Current password is required'),
+  new_password: z.string().min(12, 'New password must be at least 12 characters'),
+  confirm_password: z.string().optional(),
+})
+
+/**
+ * POST /api/settings/password
+ * 
+ * Change user password with comprehensive security checks:
+ * - Rate limiting to prevent brute force attacks
+ * - Password strength validation
+ * - Password history checking
+ * - Audit logging
+ * - Session management
+ */
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
 
@@ -145,6 +164,14 @@ export async function POST(request: NextRequest) {
   })
 
   if (signInError) {
+    await logPasswordChangeAttempt({
+      user_id: user.id,
+      success: false,
+      failure_reason: 'Incorrect current password',
+      ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+      user_agent: request.headers.get('user-agent') || undefined,
+    })
+
     return NextResponse.json(
       {
         error: 'Current password is incorrect',
@@ -161,6 +188,14 @@ export async function POST(request: NextRequest) {
   })
 
   if (updateError) {
+    await logPasswordChangeAttempt({
+      user_id: user.id,
+      success: false,
+      failure_reason: updateError.message,
+      ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+      user_agent: request.headers.get('user-agent') || undefined,
+    })
+
     return NextResponse.json(
       {
         error: 'Failed to update password',
