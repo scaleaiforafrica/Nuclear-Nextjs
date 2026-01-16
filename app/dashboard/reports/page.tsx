@@ -197,8 +197,6 @@ export default function ReportsPage() {
             >
               <option>Shipment Performance</option>
               <option>Compliance Overview</option>
-              <option>Financial Summary</option>
-              <option>Activity Decay Analysis</option>
             </select>
           </div>
           <div>
