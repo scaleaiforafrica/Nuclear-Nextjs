@@ -172,9 +172,12 @@ export function Hero({ onOpenLogin }: HeroProps) {
               Get Started
               <ArrowRight className="w-5 h-5" />
             </button>
-            <button className="bg-card text-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-muted transition-colors border border-secondary text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <a 
+              href="mailto:scaleaiforafrica@gmail.com?subject=Schedule%20Demo%20Request&body=Hello%2C%0A%0AI%20would%20like%20to%20schedule%20a%20demo%20of%20NuclearFlow.%0A%0AYou%20can%20also%20reach%20us%20at%3A%20%2B263%2078544753"
+              className="bg-card text-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-muted transition-colors border border-secondary text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 inline-flex items-center justify-center"
+            >
               Schedule Demo
-            </button>
+            </a>
           </div>
         </div>
       </div>
