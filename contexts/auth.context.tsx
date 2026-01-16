@@ -59,6 +59,11 @@ function mapSupabaseUser(supabaseUser: SupabaseUser, selectedRole?: UserRole): U
   }
 }
 
+// Type guard to check if a value is a valid UserRole
+function isValidUserRole(role: any): role is UserRole {
+  return ['Hospital Administrator', 'Logistics Manager', 'Compliance Officer'].includes(role)
+}
+
 // Generate available profiles for a user
 function getAvailableProfiles(supabaseUser: SupabaseUser): Profile[] {
   const name = getUserName(supabaseUser)
@@ -67,14 +72,14 @@ function getAvailableProfiles(supabaseUser: SupabaseUser): Profile[] {
   // Valid role values
   const validRoles: UserRole[] = ['Hospital Administrator', 'Logistics Manager', 'Compliance Officer']
   
-  // Get roles from user metadata, or default to all roles
-  const userRoles = supabaseUser.user_metadata?.available_roles as UserRole[] | undefined
+  // Get roles from user metadata with type guard validation
+  const userRolesRaw = supabaseUser.user_metadata?.available_roles
+  const userRoles = Array.isArray(userRolesRaw) 
+    ? userRolesRaw.filter(isValidUserRole) 
+    : []
   
-  // Filter to ensure only valid roles, and use all roles if none are valid
-  const filteredRoles = userRoles?.filter(role => validRoles.includes(role))
-  const roles: UserRole[] = filteredRoles && filteredRoles.length > 0 
-    ? filteredRoles 
-    : validRoles
+  // Use validated user roles if available, otherwise use all roles
+  const roles: UserRole[] = userRoles.length > 0 ? userRoles : validRoles
   
   return roles.map(role => ({
     name,
