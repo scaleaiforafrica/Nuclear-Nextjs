@@ -114,11 +114,6 @@ export function AccountSettings({
       }
     }
     
-    // Use the password strength validation
-    if (passwordStrength && !passwordStrength.isValid) {
-      errors.push('Password does not meet security requirements')
-    }
-    
     setPasswordErrors(errors)
     return errors.length === 0
   }

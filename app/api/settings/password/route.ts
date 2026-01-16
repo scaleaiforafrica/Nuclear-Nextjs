@@ -1,7 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { validatePasswordStrength } from '@/lib/validation/password'
 import { getRateLimiter } from '@/lib/api/rate-limiter'
+import { logPasswordChangeAttempt } from '@/lib/audit-logger'
 
 interface PasswordChangeResponse {
   success?: boolean
