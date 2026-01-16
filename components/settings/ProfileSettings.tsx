@@ -13,12 +13,27 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { ProfileUpdateData } from '@/models'
+import type { UserRole } from '@/models/user.model'
 
 interface ProfileSettingsProps {
-  profile: any
+  profile: {
+    name?: string
+    phone?: string
+    job_title?: string
+    department?: string
+    role?: string
+    email?: string
+    avatar_url?: string
+  } | null
   onUpdate: (data: ProfileUpdateData) => Promise<void>
   isLoading: boolean
 }
+
+const USER_ROLES: UserRole[] = [
+  'Hospital Administrator',
+  'Logistics Manager',
+  'Compliance Officer'
+]
 
 export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSettingsProps) {
   const [formData, setFormData] = useState({
@@ -198,9 +213,11 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
               <SelectValue placeholder="Select a role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Hospital Administrator">Hospital Administrator</SelectItem>
-              <SelectItem value="Logistics Manager">Logistics Manager</SelectItem>
-              <SelectItem value="Compliance Officer">Compliance Officer</SelectItem>
+              {USER_ROLES.map((role) => (
+                <SelectItem key={role} value={role}>
+                  {role}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
