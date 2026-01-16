@@ -37,10 +37,14 @@ function generateInitials(name: string): string {
     .join('')
 }
 
-function mapSupabaseUser(supabaseUser: SupabaseUser, selectedRole?: UserRole): User {
+function getUserName(supabaseUser: SupabaseUser): string {
   const email = supabaseUser.email || ''
-  const name = supabaseUser.user_metadata?.full_name || 
+  return supabaseUser.user_metadata?.full_name || 
     email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
+
+function mapSupabaseUser(supabaseUser: SupabaseUser, selectedRole?: UserRole): User {
+  const name = getUserName(supabaseUser)
   
   // Use selected role if provided, otherwise use role from metadata or default
   const role = selectedRole || (supabaseUser.user_metadata?.role as UserRole) || 'Hospital Administrator'
@@ -55,9 +59,7 @@ function mapSupabaseUser(supabaseUser: SupabaseUser, selectedRole?: UserRole): U
 
 // Generate available profiles for a user
 function getAvailableProfiles(supabaseUser: SupabaseUser): Profile[] {
-  const email = supabaseUser.email || ''
-  const name = supabaseUser.user_metadata?.full_name || 
-    email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  const name = getUserName(supabaseUser)
   const initials = generateInitials(name)
   
   // Get roles from user metadata, or default to all roles
@@ -73,6 +75,14 @@ function getAvailableProfiles(supabaseUser: SupabaseUser): Profile[] {
     role,
     initials
   }))
+}
+
+// Helper function to get stored role from localStorage
+function getStoredRole(profiles: Profile[]): UserRole | undefined {
+  const storedRole = localStorage.getItem('selectedRole') as UserRole | null
+  return storedRole && profiles.some(p => p.role === storedRole) 
+    ? storedRole 
+    : undefined
 }
 
 interface AuthProviderProps {
@@ -96,12 +106,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const profiles = getAvailableProfiles(session.user)
         setAvailableProfiles(profiles)
         
-        // Try to get stored role preference from localStorage
-        const storedRole = localStorage.getItem('selectedRole') as UserRole | null
-        const roleToUse = storedRole && profiles.some(p => p.role === storedRole) 
-          ? storedRole 
-          : undefined
-        
+        const roleToUse = getStoredRole(profiles)
         setSelectedRole(roleToUse)
         setUser(mapSupabaseUser(session.user, roleToUse))
       }
@@ -117,12 +122,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           const profiles = getAvailableProfiles(session.user)
           setAvailableProfiles(profiles)
           
-          // Try to get stored role preference from localStorage
-          const storedRole = localStorage.getItem('selectedRole') as UserRole | null
-          const roleToUse = storedRole && profiles.some(p => p.role === storedRole) 
-            ? storedRole 
-            : undefined
-          
+          const roleToUse = getStoredRole(profiles)
           setSelectedRole(roleToUse)
           setUser(mapSupabaseUser(session.user, roleToUse))
         } else {
