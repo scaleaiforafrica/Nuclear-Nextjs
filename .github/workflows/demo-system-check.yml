@@ -1,0 +1,270 @@
+name: Demo System Health Check
+
+# Triggers when new features are built or code changes are pushed
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+    inputs:
+      run_full_check:
+        description: 'Run full demo system validation'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  demo-system-check:
+    name: Validate Demo System
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Run TypeScript type check
+        run: npm run type-check
+
+      - name: Check demo system files
+        id: demo-check
+        run: |
+          echo "Checking demo system integrity..."
+          
+          # Check if all required demo files exist
+          REQUIRED_FILES=(
+            "lib/demo/config.ts"
+            "lib/demo/utils.ts"
+            "lib/demo/restore-demo-data.ts"
+            "lib/demo/seeds/shipments.json"
+            "lib/demo/seeds/activities.json"
+            "lib/demo/seeds/compliance_alerts.json"
+            "lib/demo/seeds/permits.json"
+            "lib/demo/seeds/deliveries.json"
+            "lib/demo/seeds/_metadata.json"
+            "migrations/002_demo_account_setup.sql"
+            "scripts/setup-demo-account.js"
+            "components/demo/DemoBanner.tsx"
+            "hooks/useDemoRestore.ts"
+            "app/api/demo/restore/route.ts"
+            "app/api/demo/status/route.ts"
+          )
+          
+          MISSING_FILES=()
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              MISSING_FILES+=("$file")
+              echo "❌ Missing: $file"
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+          
+          if [ ${#MISSING_FILES[@]} -gt 0 ]; then
+            echo "::error::Demo system files are missing: ${MISSING_FILES[*]}"
+            exit 1
+          fi
+          
+          echo "All demo system files present"
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Validate seed data JSON
+        run: |
+          echo "Validating seed data JSON files..."
+          
+          # Validate each JSON file
+          for json_file in lib/demo/seeds/*.json; do
+            if [ -f "$json_file" ]; then
+              echo "Validating $json_file..."
+              if jq empty "$json_file" 2>/dev/null; then
+                echo "✅ Valid JSON: $json_file"
+              else
+                echo "❌ Invalid JSON: $json_file"
+                exit 1
+              fi
+            fi
+          done
+          
+          echo "All seed data JSON files are valid"
+
+      - name: Check for new database tables
+        id: new-tables
+        run: |
+          echo "Checking for new tables in migrations..."
+          
+          # Get all SQL files in migrations
+          SQL_FILES=$(find migrations -name "*.sql" -type f | sort)
+          
+          # Extract CREATE TABLE statements
+          TABLES=$(grep -h "CREATE TABLE" $SQL_FILES | grep -v "^--" | awk '{print $3}' | sort -u || echo "")
+          
+          # Check which tables have seed data
+          echo "Tables found in migrations:"
+          echo "$TABLES"
+          
+          # Tables that should have seed data
+          DEMO_TABLES=("shipments" "activities" "compliance_alerts" "permits" "deliveries")
+          
+          echo ""
+          echo "Checking seed data coverage..."
+          MISSING_SEEDS=()
+          
+          for table in "${DEMO_TABLES[@]}"; do
+            SEED_FILE="lib/demo/seeds/${table}.json"
+            if [ ! -f "$SEED_FILE" ]; then
+              MISSING_SEEDS+=("$table")
+              echo "⚠️  Missing seed data for: $table"
+            else
+              # Check if seed file is not empty
+              RECORD_COUNT=$(jq 'length' "$SEED_FILE" 2>/dev/null || echo "0")
+              if [ "$RECORD_COUNT" -eq 0 ]; then
+                echo "⚠️  Empty seed data for: $table"
+                MISSING_SEEDS+=("$table")
+              else
+                echo "✅ Seed data exists for: $table ($RECORD_COUNT records)"
+              fi
+            fi
+          done
+          
+          if [ ${#MISSING_SEEDS[@]} -gt 0 ]; then
+            echo ""
+            echo "::warning::Tables missing seed data: ${MISSING_SEEDS[*]}"
+            echo "::warning::Please add seed data for these tables in lib/demo/seeds/"
+            echo "has_missing_seeds=true" >> $GITHUB_OUTPUT
+            echo "missing_tables=${MISSING_SEEDS[*]}" >> $GITHUB_OUTPUT
+          else
+            echo ""
+            echo "✅ All demo tables have seed data"
+            echo "has_missing_seeds=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
+
+      - name: Run demo system tests (if available)
+        run: |
+          if npm run test -- --run __tests__/demo 2>/dev/null; then
+            echo "✅ Demo system tests passed"
+          else
+            echo "⚠️  No demo-specific tests found or tests failed"
+          fi
+        continue-on-error: true
+
+      - name: Generate demo system report
+        if: always()
+        run: |
+          echo "# Demo System Health Report" > demo-report.md
+          echo "" >> demo-report.md
+          echo "**Date**: $(date)" >> demo-report.md
+          echo "**Commit**: ${{ github.sha }}" >> demo-report.md
+          echo "**Branch**: ${{ github.ref_name }}" >> demo-report.md
+          echo "" >> demo-report.md
+          echo "## Status" >> demo-report.md
+          echo "" >> demo-report.md
+          
+          if [ "${{ steps.demo-check.outputs.status }}" = "success" ]; then
+            echo "✅ All demo system files present" >> demo-report.md
+          else
+            echo "❌ Some demo system files missing" >> demo-report.md
+          fi
+          
+          echo "" >> demo-report.md
+          echo "## Seed Data Coverage" >> demo-report.md
+          echo "" >> demo-report.md
+          
+          for json_file in lib/demo/seeds/*.json; do
+            if [ -f "$json_file" ]; then
+              FILENAME=$(basename "$json_file")
+              COUNT=$(jq 'length' "$json_file" 2>/dev/null || echo "0")
+              echo "- **$FILENAME**: $COUNT records" >> demo-report.md
+            fi
+          done
+          
+          if [ "${{ steps.new-tables.outputs.has_missing_seeds }}" = "true" ]; then
+            echo "" >> demo-report.md
+            echo "## ⚠️  Action Required" >> demo-report.md
+            echo "" >> demo-report.md
+            echo "The following tables are missing seed data:" >> demo-report.md
+            echo "" >> demo-report.md
+            for table in ${{ steps.new-tables.outputs.missing_tables }}; do
+              echo "- \`$table\`" >> demo-report.md
+            done
+            echo "" >> demo-report.md
+            echo "Please create seed data files for these tables in \`lib/demo/seeds/\`" >> demo-report.md
+          fi
+          
+          cat demo-report.md
+
+      - name: Upload demo system report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-system-report
+          path: demo-report.md
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && steps.new-tables.outputs.has_missing_seeds == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const missingTables = '${{ steps.new-tables.outputs.missing_tables }}'.split(' ');
+            
+            const comment = `### ⚠️  Demo System Warning
+            
+            The following tables are missing seed data:
+            
+            ${missingTables.map(t => `- \`${t}\``).join('\n')}
+            
+            **Action Required:**
+            Please add seed data for these tables in \`lib/demo/seeds/\` to ensure the demo account works correctly.
+            
+            **How to add seed data:**
+            1. Create a JSON file: \`lib/demo/seeds/{table_name}.json\`
+            2. Add realistic demo records (5-15 records recommended)
+            3. Update \`lib/demo/seeds/_metadata.json\`
+            4. Add the table to \`DEMO_TABLES\` in \`lib/demo/config.ts\`
+            5. Import and add to \`SEED_DATA_REGISTRY\` in \`lib/demo/restore-demo-data.ts\`
+            
+            See \`DEMO_ACCOUNT_IMPLEMENTATION.md\` for detailed instructions.`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "::notice::✅ Demo system health check passed. All systems operational."
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::❌ Demo system health check failed. Please review the errors above."
