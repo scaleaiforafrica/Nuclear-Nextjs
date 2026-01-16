@@ -109,7 +109,7 @@ export function Analytics() {
             {/* Bar Chart Visualization */}
             <div className="h-48 sm:h-56 lg:h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={deliveryData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={deliveryData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                   <XAxis 
                     dataKey="day" 
@@ -130,8 +130,8 @@ export function Analytics() {
                     wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
                     iconType="circle"
                   />
-                  <Bar dataKey="onTime" stackId="a" fill="hsl(var(--secondary))" name="On Time" radius={[0, 0, 0, 0]} />
-                  <Bar dataKey="delayed" stackId="a" fill="hsl(var(--accent))" name="Delayed" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="onTime" stackId="a" fill="hsl(var(--secondary))" name="On Time" />
+                  <Bar dataKey="delayed" stackId="a" fill="hsl(var(--accent))" name="Delayed" />
                   <Bar dataKey="critical" stackId="a" fill="hsl(var(--destructive))" name="Critical" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -199,7 +199,7 @@ export function Analytics() {
                               style={{ height: `${height}%` }}
                             ></div>
                             {/* Tooltip on hover */}
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-card text-foreground text-xs rounded border border-border opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
                               {data.hour}: {data.temp}°C
                             </div>
                           </div>
