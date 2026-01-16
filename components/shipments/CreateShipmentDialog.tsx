@@ -29,7 +29,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { ShipmentStatus } from '@/models/shipment.model';
-import type { ProcurementRequest } from '@/models/procurement.model';
+import type { ProcurementRequest, ProcurementStatus } from '@/models/procurement.model';
 import { createShipment, createShipmentFromProcurement } from '@/services/shipment.service';
 
 interface CreateShipmentDialogProps {
@@ -65,6 +65,9 @@ const SHIPMENT_STATUSES: ShipmentStatus[] = [
   'Dispatched',
   'Delivered',
 ];
+
+// Procurement statuses that allow shipment creation
+const VALID_PROCUREMENT_STATUSES_FOR_SHIPMENT: ProcurementStatus[] = ['PO Approved', 'Completed'];
 
 export function CreateShipmentDialog({
   open,
@@ -121,7 +124,7 @@ export function CreateShipmentDialog({
         // Filter for only PO Approved or Completed status
         const validRequests = (data.data || []).filter(
           (req: ProcurementRequest) =>
-            req.status === 'PO Approved' || req.status === 'Completed'
+            VALID_PROCUREMENT_STATUSES_FOR_SHIPMENT.includes(req.status)
         );
         setProcurementRequests(validRequests);
       } else {
@@ -429,8 +432,7 @@ export function CreateShipmentDialog({
                 ) : procurementRequests.length === 0 ? (
                   <div className="p-4 border rounded-md bg-gray-50">
                     <p className="text-sm text-gray-600">
-                      No procurement requests available. Only requests with status &quot;PO Approved&quot; or
-                      &quot;Completed&quot; can be used to create shipments.
+                      No procurement requests available. Only requests with status &quot;{VALID_PROCUREMENT_STATUSES_FOR_SHIPMENT.join('&quot; or &quot;')}&quot; can be used to create shipments.
                     </p>
                   </div>
                 ) : (
