@@ -38,6 +38,7 @@ export interface ProfileUpdateData {
   job_title?: string
   department?: string
   avatar_url?: string
+  role?: string
 }
 
 export interface PreferencesUpdateData {

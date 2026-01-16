@@ -5,13 +5,35 @@ import { User, Upload } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import type { ProfileUpdateData } from '@/models'
+import type { UserRole } from '@/models/user.model'
 
 interface ProfileSettingsProps {
-  profile: any
+  profile: {
+    name?: string
+    phone?: string
+    job_title?: string
+    department?: string
+    role?: string
+    email?: string
+    avatar_url?: string
+  } | null
   onUpdate: (data: ProfileUpdateData) => Promise<void>
   isLoading: boolean
 }
+
+const USER_ROLES: UserRole[] = [
+  'Hospital Administrator',
+  'Logistics Manager',
+  'Compliance Officer'
+]
 
 export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSettingsProps) {
   const [formData, setFormData] = useState({
@@ -19,8 +41,10 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
     phone: profile?.phone || '',
     job_title: profile?.job_title || '',
     department: profile?.department || '',
+    role: profile?.role || '',
   })
   const [avatarPreview, setAvatarPreview] = useState<string>(profile?.avatar_url || '')
+  const [hasPhotoChanged, setHasPhotoChanged] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +61,7 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
       const reader = new FileReader()
       reader.onloadend = () => {
         setAvatarPreview(reader.result as string)
+        setHasPhotoChanged(true)
       }
       reader.readAsDataURL(file)
       
@@ -86,28 +111,30 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
             </div>
           )}
         </div>
-        <div className="text-center sm:text-left">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileChange}
-          />
-          <Button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            variant="outline"
-            className="mb-2"
-            size="sm"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            Change Photo
-          </Button>
-          <p className="text-xs sm:text-sm text-gray-500">
-            JPG, PNG or GIF (max. 5MB)
-          </p>
-        </div>
+        {!hasPhotoChanged && (
+          <div className="text-center sm:text-left">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <Button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              variant="outline"
+              className="mb-2"
+              size="sm"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Change Photo
+            </Button>
+            <p className="text-xs sm:text-sm text-gray-500">
+              JPG, PNG or GIF (max. 5MB)
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Basic Info */}
@@ -178,17 +205,33 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
         </div>
         <div className="space-y-2">
           <Label htmlFor="role">Role</Label>
-          <Input
-            id="role"
-            type="text"
-            value={profile?.role || 'User'}
-            disabled
-            className="bg-gray-50"
-          />
-          <p className="text-xs text-gray-500">
-            Role is assigned by your administrator
-          </p>
+          <Select
+            value={formData.role}
+            onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+          >
+            <SelectTrigger id="role">
+              <SelectValue placeholder="Select a role" />
+            </SelectTrigger>
+            <SelectContent>
+              {USER_ROLES.map((role) => (
+                <SelectItem key={role} value={role}>
+                  {role}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+      </div>
+
+      {/* Save Changes Button */}
+      <div className="flex justify-end pt-4">
+        <Button
+          onClick={handleSubmit}
+          disabled={isLoading}
+          className="w-full sm:w-auto"
+        >
+          {isLoading ? 'Saving...' : 'Save Changes'}
+        </Button>
       </div>
     </div>
   )

@@ -18,6 +18,7 @@ import type {
   PasswordChangeData,
   UserSession,
   LoginHistoryEntry,
+  ProfileSettings,
 } from '@/models'
 
 type TabId = 'profile' | 'account' | 'preferences' | 'security' | 'notifications'
@@ -39,12 +40,12 @@ const tabs: Tab[] = [
 export default function SettingsPage() {
   const { user, supabaseUser } = useAuth()
   const [activeTab, setActiveTab] = useState<TabId>('profile')
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<ProfileSettings | null>(null)
   const [sessions, setSessions] = useState<UserSession[]>([])
   const [loginHistory, setLoginHistory] = useState<LoginHistoryEntry[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
-  const [pendingChanges, setPendingChanges] = useState<any>({})
+  const [pendingChanges, setPendingChanges] = useState<Partial<ProfileUpdateData & PreferencesUpdateData>>({})
 
   // Fetch profile data
   useEffect(() => {
@@ -94,12 +95,30 @@ export default function SettingsPage() {
   }, [user])
 
   const handleProfileUpdate = async (data: ProfileUpdateData) => {
-    setPendingChanges((prev: any) => ({ ...prev, ...data }))
-    setHasChanges(true)
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/settings/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile')
+      }
+
+      const result = await response.json()
+      setProfile((prev: ProfileSettings | null) => prev ? { ...prev, ...result.profile } : result.profile)
+      toast.success('Profile updated successfully')
+    } catch (error) {
+      toast.error('Failed to update profile')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handlePreferencesUpdate = (data: PreferencesUpdateData) => {
-    setPendingChanges((prev: any) => ({ ...prev, ...data }))
+    setPendingChanges((prev) => ({ ...prev, ...data }))
     setHasChanges(true)
   }
 
@@ -131,7 +150,7 @@ export default function SettingsPage() {
     try {
       // TODO: Implement 2FA toggle API
       await new Promise(resolve => setTimeout(resolve, 1000))
-      setProfile((prev: any) => ({ ...prev, two_factor_enabled: enabled }))
+      setProfile((prev) => prev ? { ...prev, two_factor_enabled: enabled } : null)
       toast.success(enabled ? '2FA enabled successfully' : '2FA disabled successfully')
     } catch (error) {
       toast.error('Failed to toggle 2FA')
@@ -141,7 +160,7 @@ export default function SettingsPage() {
   }
 
   const handleToggleEmailNotifications = async (enabled: boolean) => {
-    setPendingChanges((prev: any) => ({ ...prev, email_notifications: enabled }))
+    setPendingChanges((prev) => ({ ...prev, email_notifications: enabled }))
     setHasChanges(true)
   }
 
@@ -217,7 +236,7 @@ export default function SettingsPage() {
         }
 
         const data = await response.json()
-        setProfile((prev: any) => ({ ...prev, ...data.profile }))
+        setProfile((prev) => prev ? { ...prev, ...data.profile } : data.profile)
       }
 
       // Update preferences if there are preference changes
@@ -233,7 +252,7 @@ export default function SettingsPage() {
         }
 
         const data = await response.json()
-        setProfile((prev: any) => ({ ...prev, ...data.profile }))
+        setProfile((prev) => prev ? { ...prev, ...data.profile } : data.profile)
       }
 
       toast.success('Settings saved successfully')
@@ -261,13 +280,15 @@ export default function SettingsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl sm:text-2xl font-semibold">Settings</h2>
-        <Button
-          onClick={handleSaveChanges}
-          disabled={!hasChanges || isLoading}
-          className="hidden sm:inline-flex"
-        >
-          {isLoading ? 'Saving...' : 'Save Changes'}
-        </Button>
+        {activeTab !== 'profile' && (
+          <Button
+            onClick={handleSaveChanges}
+            disabled={!hasChanges || isLoading}
+            className="hidden sm:inline-flex"
+          >
+            {isLoading ? 'Saving...' : 'Save Changes'}
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
@@ -345,15 +366,17 @@ export default function SettingsPage() {
           )}
 
           {/* Mobile Save Button */}
-          <div className="mt-6 sm:hidden">
-            <Button
-              onClick={handleSaveChanges}
-              disabled={!hasChanges || isLoading}
-              className="w-full"
-            >
-              {isLoading ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </div>
+          {activeTab !== 'profile' && (
+            <div className="mt-6 sm:hidden">
+              <Button
+                onClick={handleSaveChanges}
+                disabled={!hasChanges || isLoading}
+                className="w-full"
+              >
+                {isLoading ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
