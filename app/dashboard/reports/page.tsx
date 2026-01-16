@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { subDays } from 'date-fns';
+import { useState, useEffect, useMemo } from 'react';
+import { subDays, differenceInDays } from 'date-fns';
 import { TrendingUp, Download, FileText, Loader2 } from 'lucide-react';
 import { DatePicker } from '@/components/ui/date-picker';
 import { toast } from 'sonner';
@@ -9,13 +9,86 @@ import { toast } from 'sonner';
 const REPORT_GENERATION_DELAY_MS = 1500;
 const EXPORT_DELAY_MS = 1000;
 
+// Mock data structure for different report types
+const MOCK_DATA = {
+  'Shipment Performance': {
+    baseShipments: 150,
+    dailyVariance: 5,
+    onTimeRate: 98.7,
+    avgTransit: 18.5,
+    complianceRate: 100,
+  },
+  'Compliance Overview': {
+    baseShipments: 120,
+    dailyVariance: 3,
+    onTimeRate: 99.2,
+    avgTransit: 17.2,
+    complianceRate: 100,
+  },
+  'Financial Summary': {
+    baseShipments: 180,
+    dailyVariance: 7,
+    onTimeRate: 97.5,
+    avgTransit: 19.8,
+    complianceRate: 98.5,
+  },
+  'Activity Decay Analysis': {
+    baseShipments: 95,
+    dailyVariance: 4,
+    onTimeRate: 96.8,
+    avgTransit: 20.1,
+    complianceRate: 99.2,
+  },
+};
+
 export default function ReportsPage() {
-  const [reportType, setReportType] = useState('Shipment Performance');
+  const [reportType, setReportType] = useState<keyof typeof MOCK_DATA>('Shipment Performance');
   const [timePeriod, setTimePeriod] = useState('Last 7 Days');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+
+  // Calculate filtered statistics based on current filters
+  const filteredStats = useMemo(() => {
+    if (!startDate || !endDate) {
+      return {
+        totalShipments: 0,
+        onTimeDelivery: 0,
+        avgTransitTime: 0,
+        complianceRate: 0,
+        changePercent: 0,
+      };
+    }
+
+    const data = MOCK_DATA[reportType];
+    const daysDiff = Math.max(1, differenceInDays(endDate, startDate));
+    
+    // Calculate shipments based on date range (scaled by days)
+    const totalShipments = Math.floor(data.baseShipments * (daysDiff / 30));
+    
+    // Add some variance based on date range
+    const variance = (daysDiff % 7) * data.dailyVariance;
+    const adjustedShipments = totalShipments + variance;
+    
+    // Calculate change percentage (comparing to previous period)
+    const changePercent = 5 + (daysDiff % 10) * 1.5;
+
+    return {
+      totalShipments: Math.max(1, adjustedShipments),
+      onTimeDelivery: data.onTimeRate,
+      avgTransitTime: data.avgTransit,
+      complianceRate: data.complianceRate,
+      changePercent: Number(changePercent.toFixed(1)),
+    };
+  }, [reportType, startDate, endDate]);
+
+  // Initialize dates on mount
+  useEffect(() => {
+    const today = new Date();
+    setStartDate(subDays(today, 7));
+    setEndDate(today);
+  }, []);
 
   // Handle time period change
   const handleTimePeriodChange = (value: string) => {
@@ -119,8 +192,8 @@ export default function ReportsPage() {
             <label className="block text-sm mb-2">Report Type</label>
             <select 
               value={reportType}
-              onChange={(e) => setReportType(e.target.value)}
-              className="w-full px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+              onChange={(e) => setReportType(e.target.value as keyof typeof MOCK_DATA)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
             >
               <option>Shipment Performance</option>
               <option>Compliance Overview</option>
@@ -186,10 +259,30 @@ export default function ReportsPage() {
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
         {[
-          { label: 'Total Shipments', value: '142', change: '+12%', color: 'blue' },
-          { label: 'On-Time Delivery', value: '98.7%', change: '+2.3%', color: 'green' },
-          { label: 'Avg Transit Time', value: '18.5h', change: '-1.2h', color: 'purple' },
-          { label: 'Compliance Rate', value: '100%', change: '0%', color: 'green' },
+          { 
+            label: 'Total Shipments', 
+            value: filteredStats.totalShipments.toString(), 
+            change: `+${filteredStats.changePercent}%`, 
+            color: 'blue' 
+          },
+          { 
+            label: 'On-Time Delivery', 
+            value: `${filteredStats.onTimeDelivery}%`, 
+            change: '+2.3%', 
+            color: 'green' 
+          },
+          { 
+            label: 'Avg Transit Time', 
+            value: `${filteredStats.avgTransitTime}h`, 
+            change: '-1.2h', 
+            color: 'purple' 
+          },
+          { 
+            label: 'Compliance Rate', 
+            value: `${filteredStats.complianceRate}%`, 
+            change: '0%', 
+            color: 'green' 
+          },
         ].map((metric, index) => (
           <div key={index} className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
             <div className="text-xs sm:text-sm text-gray-600 mb-2">{metric.label}</div>
@@ -220,7 +313,7 @@ export default function ReportsPage() {
                   style={{ height: `${item.value}%` }}
                 ></div>
                 <div className="text-sm mt-2 text-center">{item.label}</div>
-                <div className="text-xs text-gray-500">{Math.floor(142 * item.value / 100)}</div>
+                <div className="text-xs text-gray-500">{Math.floor(filteredStats.totalShipments * item.value / 100)}</div>
               </div>
             ))}
           </div>
@@ -244,7 +337,7 @@ export default function ReportsPage() {
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-2xl">142</div>
+                  <div className="text-2xl">{filteredStats.totalShipments}</div>
                   <div className="text-xs text-gray-500">Total</div>
                 </div>
               </div>
