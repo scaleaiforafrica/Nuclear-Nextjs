@@ -1,0 +1,50 @@
+[
+  {
+    "date": "2026-01-20",
+    "time": "14:30:00",
+    "isotope": "Tc-99m",
+    "destination": "Kenyatta National Hospital, Nairobi"
+  },
+  {
+    "date": "2026-01-18",
+    "time": "09:00:00",
+    "isotope": "I-131",
+    "destination": "Lagos University Teaching Hospital"
+  },
+  {
+    "date": "2026-01-17",
+    "time": "16:45:00",
+    "isotope": "F-18",
+    "destination": "Mulago Hospital, Kampala"
+  },
+  {
+    "date": "2026-01-19",
+    "time": "13:15:00",
+    "isotope": "Y-90",
+    "destination": "Addis Ababa Medical College"
+  },
+  {
+    "date": "2026-01-22",
+    "time": "10:00:00",
+    "isotope": "Ra-223",
+    "destination": "University of Cape Town Hospital"
+  },
+  {
+    "date": "2026-01-21",
+    "time": "15:30:00",
+    "isotope": "Co-60",
+    "destination": "Korle Bu Teaching Hospital, Ghana"
+  },
+  {
+    "date": "2026-01-18",
+    "time": "12:00:00",
+    "isotope": "Sr-89",
+    "destination": "Chris Hani Baragwanath Hospital"
+  },
+  {
+    "date": "2026-01-19",
+    "time": "08:45:00",
+    "isotope": "Sm-153",
+    "destination": "Nairobi Hospital, Kenya"
+  }
+]
