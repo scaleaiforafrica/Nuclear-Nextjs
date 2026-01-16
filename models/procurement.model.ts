@@ -35,6 +35,8 @@ export interface ProcurementRequest {
   delivery_location: string;
   origin?: string;
   destination?: string;
+  selected_supplier_id?: string;
+  selected_supplier?: Supplier;
   status: ProcurementStatus;
   status_color?: string;
   clinical_indication?: string;
@@ -91,6 +93,7 @@ export interface CreateProcurementRequest {
   delivery_date: string;
   delivery_time_window?: DeliveryTimeWindow;
   delivery_location: string;
+  destination?: string;
   clinical_indication?: string;
   special_instructions?: string;
   status?: ProcurementStatus;
@@ -104,6 +107,7 @@ export interface UpdateProcurementRequest extends Partial<CreateProcurementReque
   status?: ProcurementStatus;
   origin?: string;
   destination?: string;
+  selected_supplier_id?: string;
 }
 
 /**
@@ -191,4 +195,34 @@ export function canCancelRequest(status: ProcurementStatus): boolean {
  */
 export function canViewQuotes(status: ProcurementStatus): boolean {
   return status === 'Quotes Received' || status === 'PO Approved' || status === 'Completed';
+}
+
+/**
+ * Format origin → destination route display
+ * Abbreviates country names for compact display
+ */
+export function formatShippingRoute(origin?: string, destination?: string): string {
+  if (!origin && !destination) return '-';
+  
+  const formatLocation = (loc: string) => {
+    const parts = loc.split(', ');
+    if (parts.length === 2) {
+      // Abbreviate country to 2 letters
+      return `${parts[0]}, ${parts[1].substring(0, 2)}`;
+    }
+    return loc;
+  };
+  
+  if (origin && destination) {
+    return `${formatLocation(origin)} → ${formatLocation(destination)}`;
+  }
+  
+  return origin || destination || '-';
+}
+
+/**
+ * Check if procurement has a selected supplier
+ */
+export function hasSelectedSupplier(request: ProcurementRequest): boolean {
+  return !!request.selected_supplier_id;
 }

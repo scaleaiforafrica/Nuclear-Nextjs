@@ -16,6 +16,7 @@ const updateProcurementSchema = z.object({
   status: z.enum(['Draft', 'Pending Quotes', 'Quotes Received', 'PO Approved', 'Completed', 'Cancelled']).optional(),
   origin: z.string().optional(),
   destination: z.string().optional(),
+  selected_supplier_id: z.string().uuid().optional(),
 })
 
 interface ApiResponse<T = unknown> {
@@ -136,6 +137,11 @@ export async function PUT(
     }
 
     const data: Partial<UpdateProcurementRequest> & { status_color?: string } = validationResult.data
+
+    // Update destination if delivery_location is being changed
+    if (data.delivery_location && !data.destination) {
+      data.destination = data.delivery_location;
+    }
 
     // Update status color if status is being changed
     if (data.status) {
