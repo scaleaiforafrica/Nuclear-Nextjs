@@ -248,9 +248,6 @@ export default function ProcurementPage() {
 
   // Count quotes for a request
   const getQuotesCount = (request: ProcurementRequest) => {
-    // In real implementation, this should come from the API
-    // For now, return 0 for non-quote statuses
-    if (!canViewQuotes(request.status)) return 0;
     return request.quotes?.length || 0;
   };
 
@@ -432,7 +429,8 @@ export default function ProcurementPage() {
 
                 <button 
                   className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors min-h-[44px]"
-                  onClick={() => toast.info('Purchase order creation coming soon')}
+                  onClick={() => toast.info('Purchase order creation will be implemented in future release')}
+                  title="Create Purchase Order (Coming Soon)"
                 >
                   Select & Create PO
                 </button>
