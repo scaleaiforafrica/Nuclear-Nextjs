@@ -19,6 +19,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,11 +29,15 @@ export default function LoginPage() {
     const result = await login(email, password)
     
     if (result.success) {
-      router.push('/dashboard')
+      setIsRedirecting(true)
+      // Small delay to show the transitional state
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 100)
     } else {
       setError(result.error || 'Login failed')
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -78,15 +83,30 @@ export default function LoginPage() {
     const result = await login(DEMO_ACCOUNT_EMAIL, DEMO_CONFIG.account.password)
     
     if (result.success) {
-      router.push('/dashboard')
+      setIsRedirecting(true)
+      // Small delay to show the transitional state
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 100)
     } else {
       setError('Demo account unavailable. Please try again later.')
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
+      {/* Redirecting Overlay */}
+      {isRedirecting && (
+        <div className="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-lg font-medium text-gray-900">Loading dashboard...</p>
+            <p className="text-sm text-gray-600">Preparing your workspace</p>
+          </div>
+        </div>
+      )}
+      
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold font-heading flex items-center justify-center gap-2">
