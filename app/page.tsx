@@ -7,7 +7,6 @@ import {
   Features,
   Analytics,
   ChainOfCustody,
-  QualityCompliance,
   Footer,
 } from '@/components/landing';
 import { LoginModal } from '@/components/shared';
@@ -51,7 +50,6 @@ export default function LandingPage() {
       <Features />
       <Analytics />
       <ChainOfCustody />
-      <QualityCompliance />
       <Footer />
       
       <LoginModal
