@@ -20,7 +20,10 @@ import { useAuth } from '@/contexts'
 import { ProtectedRoute } from '@/components/shared'
 import { AnimatedLogo } from '@/components'
 import { DemoBanner } from '@/components/demo/DemoBanner'
+import { DashboardTopNav } from '@/components/dashboard/DashboardTopNav'
+import { AboutModal } from '@/components/dashboard/AboutModal'
 import { isDemoAccount } from '@/lib/demo/utils'
+import { APP_CONFIG } from '@/lib/app-config'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
