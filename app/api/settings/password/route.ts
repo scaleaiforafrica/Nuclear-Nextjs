@@ -1,10 +1,25 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
-import { validatePasswordStrength, isPasswordValid } from '@/lib/password-validator'
-import { checkRateLimit, resetRateLimit } from '@/lib/rate-limiter'
-import { logPasswordChangeAttempt, storePasswordHistory } from '@/lib/audit-logger'
-import type { PasswordChangeResponse } from '@/models/password.model'
+import { validatePasswordStrength } from '@/lib/validation/password'
+import { getRateLimiter } from '@/lib/api/rate-limiter'
+
+interface PasswordChangeResponse {
+  success?: boolean
+  message?: string
+  error?: string
+  code?:
+    | 'WEAK_PASSWORD'
+    | 'REUSED_PASSWORD'
+    | 'RATE_LIMITED'
+    | 'INVALID_CURRENT'
+    | 'MISSING_FIELDS'
+    | 'UNAUTHORIZED'
+  details?: {
+    missingRequirements?: string[]
+    retryAfter?: number
+    remaining?: number
+  }
+}
 
 // Validation schema using Zod
 const passwordChangeSchema = z.object({
@@ -25,123 +40,117 @@ const passwordChangeSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
-  
-  // Get authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  
+
+  // Authenticate user
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
+
   if (authError || !user) {
     return NextResponse.json(
-      { 
-        success: false,
+      {
         error: 'Unauthorized',
-        message: 'You must be logged in to change your password'
-      } as PasswordChangeResponse, 
+        code: 'UNAUTHORIZED',
+        message: 'You must be logged in to change your password',
+      } as PasswordChangeResponse,
       { status: 401 }
     )
   }
 
-  // Check rate limiting
-  const rateLimit = await checkRateLimit(user.id, 'password-change')
-  
-  if (!rateLimit.allowed) {
-    await logPasswordChangeAttempt({
-      user_id: user.id,
-      success: false,
-      failure_reason: 'Rate limit exceeded',
-      ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
-      user_agent: request.headers.get('user-agent') || undefined,
-    })
+  // Rate limiting check
+  const rateLimiter = getRateLimiter()
+  const rateLimitResult = rateLimiter.check(user.id, {
+    maxAttempts: 5,
+    windowMs: 60 * 60 * 1000, // 1 hour
+  })
 
+  if (!rateLimitResult.allowed) {
     return NextResponse.json(
-      { 
-        success: false,
-        error: 'Too many attempts',
-        message: `Too many password change attempts. Please try again in ${rateLimit.retryAfter} seconds.`,
-        validationErrors: [`Rate limit exceeded. Try again after ${new Date(rateLimit.resetAt).toLocaleTimeString()}`]
-      } as PasswordChangeResponse, 
-      { status: 429 }
+      {
+        error: 'Too many password change attempts',
+        code: 'RATE_LIMITED',
+        message: `You have exceeded the maximum number of password change attempts. Please try again later.`,
+        details: {
+          retryAfter: rateLimitResult.retryAfter,
+          remaining: rateLimitResult.remaining,
+        },
+      } as PasswordChangeResponse,
+      {
+        status: 429,
+        headers: {
+          'Retry-After': rateLimitResult.retryAfter?.toString() || '3600',
+          'X-RateLimit-Limit': '5',
+          'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+          'X-RateLimit-Reset': rateLimitResult.resetAt.toISOString(),
+        },
+      }
     )
   }
 
-  // Parse and validate request body
-  let body: z.infer<typeof passwordChangeSchema>
-  
-  try {
-    const rawBody = await request.json()
-    body = passwordChangeSchema.parse(rawBody)
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: 'Validation failed',
-          message: 'Invalid input data',
-          validationErrors: error.issues.map((issue) => issue.message)
-        } as PasswordChangeResponse, 
-        { status: 400 }
-      )
-    }
-    
+  // Parse request body
+  const { current_password, new_password, confirm_password } =
+    await request.json()
+
+  // Validate required fields
+  if (!current_password || !new_password) {
     return NextResponse.json(
-      { 
-        success: false,
-        error: 'Invalid request',
-        message: 'Failed to parse request body'
-      } as PasswordChangeResponse, 
+      {
+        error: 'Missing required fields',
+        code: 'MISSING_FIELDS',
+        message: 'Current password and new password are required',
+      } as PasswordChangeResponse,
       { status: 400 }
     )
   }
 
-  const { current_password, new_password, confirm_password } = body
-
-  // Validate passwords match if confirm_password is provided
-  if (confirm_password && new_password !== confirm_password) {
+  // Check if passwords match
+  if (new_password !== confirm_password) {
     return NextResponse.json(
-      { 
-        success: false,
+      {
         error: 'Passwords do not match',
-        message: 'New password and confirmation do not match',
-        validationErrors: ['Passwords do not match']
-      } as PasswordChangeResponse, 
+        code: 'WEAK_PASSWORD',
+        message: 'New password and confirmation password must match',
+      } as PasswordChangeResponse,
       { status: 400 }
     )
   }
 
   // Validate password strength
-  const passwordStrength = validatePasswordStrength(new_password, {
-    email: user.email,
-    name: user.user_metadata?.name || user.user_metadata?.full_name,
-  })
+  const validation = validatePasswordStrength(new_password)
 
-  if (!passwordStrength.isValid) {
-    await logPasswordChangeAttempt({
-      user_id: user.id,
-      success: false,
-      failure_reason: 'Password does not meet security requirements',
-      ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
-      user_agent: request.headers.get('user-agent') || undefined,
-    })
+  if (!validation.isValid) {
+    const missingRequirements: string[] = []
+
+    if (!validation.requirements.minLength) {
+      missingRequirements.push('Minimum 8 characters')
+    }
+    if (!validation.requirements.hasUppercase) {
+      missingRequirements.push('At least one uppercase letter')
+    }
+    if (!validation.requirements.hasLowercase) {
+      missingRequirements.push('At least one lowercase letter')
+    }
+    if (!validation.requirements.hasNumber) {
+      missingRequirements.push('At least one number')
+    }
+    if (!validation.requirements.hasSpecialChar) {
+      missingRequirements.push('At least one special character')
+    }
+    if (!validation.requirements.notCommon) {
+      missingRequirements.push('Password is too common')
+    }
 
     return NextResponse.json(
-      { 
-        success: false,
-        error: 'Weak password',
-        message: 'Password does not meet security requirements',
-        validationErrors: passwordStrength.failedRequirements
-      } as PasswordChangeResponse, 
-      { status: 400 }
-    )
-  }
-
-  // Check if new password is same as current password
-  if (current_password === new_password) {
-    return NextResponse.json(
-      { 
-        success: false,
-        error: 'Same password',
-        message: 'New password must be different from current password',
-        validationErrors: ['New password must be different from current password']
-      } as PasswordChangeResponse, 
+      {
+        error: 'Password does not meet security requirements',
+        code: 'WEAK_PASSWORD',
+        message:
+          'Your password must meet all security requirements for your protection',
+        details: {
+          missingRequirements,
+        },
+      } as PasswordChangeResponse,
       { status: 400 }
     )
   }
@@ -151,7 +160,7 @@ export async function POST(request: NextRequest) {
     email: user.email!,
     password: current_password,
   })
-  
+
   if (signInError) {
     await logPasswordChangeAttempt({
       user_id: user.id,
@@ -162,12 +171,11 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(
-      { 
-        success: false,
-        error: 'Invalid credentials',
-        message: 'Current password is incorrect',
-        validationErrors: ['Current password is incorrect']
-      } as PasswordChangeResponse, 
+      {
+        error: 'Current password is incorrect',
+        code: 'INVALID_CURRENT',
+        message: 'The current password you entered is incorrect',
+      } as PasswordChangeResponse,
       { status: 401 }
     )
   }
@@ -176,7 +184,7 @@ export async function POST(request: NextRequest) {
   const { error: updateError } = await supabase.auth.updateUser({
     password: new_password,
   })
-  
+
   if (updateError) {
     await logPasswordChangeAttempt({
       user_id: user.id,
@@ -187,54 +195,22 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(
-      { 
-        success: false,
-        error: 'Update failed',
-        message: 'Failed to update password. Please try again.',
-        validationErrors: [updateError.message]
-      } as PasswordChangeResponse, 
+      {
+        error: 'Failed to update password',
+        message: updateError.message,
+      } as PasswordChangeResponse,
       { status: 500 }
     )
   }
 
-  // Store password in history
-  // Note: In production, you would hash the password before storing
-  // For now, we'll skip this as Supabase Auth handles password hashing internally
-  // and we don't have direct access to the hashed password
-  try {
-    await storePasswordHistory(user.id, new_password)
-  } catch (error) {
-    // Don't fail the request if password history storage fails
-    console.error('Failed to store password history:', error)
-  }
+  // Reset rate limit on successful password change
+  rateLimiter.reset(user.id)
 
-  // Log successful password change
-  await logPasswordChangeAttempt({
-    user_id: user.id,
-    success: true,
-    ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
-    user_agent: request.headers.get('user-agent') || undefined,
-  })
-
-  // Reset rate limit on successful change
-  await resetRateLimit(user.id, 'password-change')
-
-  // Sign out other sessions (if supported by Supabase)
-  // This would require additional Supabase API calls or database queries
-  // For now, we'll indicate that this is a feature to be implemented
-  let sessionsSignedOut = 0
-
-  // Send email notification (would require email service integration)
-  // For now, we'll indicate that an email would be sent
-  const emailSent = false
-
-  return NextResponse.json({ 
-    success: true,
-    message: 'Password updated successfully',
-    data: {
-      passwordChanged: true,
-      sessionsSignedOut,
-      emailSent,
-    }
-  } as PasswordChangeResponse)
+  return NextResponse.json(
+    {
+      success: true,
+      message: 'Password updated successfully',
+    } as PasswordChangeResponse,
+    { status: 200 }
+  )
 }

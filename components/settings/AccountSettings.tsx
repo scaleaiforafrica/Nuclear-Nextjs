@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, ChangeEvent, useMemo, useEffect } from 'react'
+import { useState, ChangeEvent } from 'react'
 import { Shield, AlertTriangle, Eye, EyeOff } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
+import { PasswordStrengthMeter } from '@/components/ui/password-strength-meter'
+import { validatePasswordChange } from '@/lib/validation/password'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,20 +47,12 @@ export function AccountSettings({
     confirm_password: '',
   })
   const [passwordErrors, setPasswordErrors] = useState<string[]>([])
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-  const [showNewPassword, setShowNewPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-
-  // Calculate password strength in real-time
-  const passwordStrength = useMemo(() => {
-    if (!passwordData.new_password) {
-      return null
-    }
-    return validatePasswordStrength(passwordData.new_password, {
-      email: profile?.email,
-      name: profile?.name,
-    })
-  }, [passwordData.new_password, profile?.email, profile?.name])
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  })
+  const [passwordSuccess, setPasswordSuccess] = useState(false)
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPasswordData(prev => ({
@@ -66,6 +60,14 @@ export function AccountSettings({
       [e.target.name]: e.target.value
     }))
     setPasswordErrors([])
+    setPasswordSuccess(false)
+  }
+
+  const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }))
   }
 
   const validatePassword = (): boolean => {
@@ -74,17 +76,42 @@ export function AccountSettings({
     if (!passwordData.current_password) {
       errors.push('Current password is required')
     }
-    
+
     if (!passwordData.new_password) {
       errors.push('New password is required')
+      setPasswordErrors(errors)
+      return false
     }
-    
-    if (!passwordData.confirm_password) {
-      errors.push('Please confirm your new password')
-    }
-    
-    if (passwordData.new_password !== passwordData.confirm_password) {
-      errors.push('Passwords do not match')
+
+    // Use comprehensive validation
+    const validation = validatePasswordChange(
+      passwordData.new_password,
+      passwordData.confirm_password
+    )
+
+    if (!validation.isValid) {
+      // Combine requirement failures into error messages
+      if (!validation.requirements.minLength) {
+        errors.push('Password must be at least 8 characters')
+      }
+      if (!validation.requirements.hasUppercase) {
+        errors.push('Password must contain at least one uppercase letter')
+      }
+      if (!validation.requirements.hasLowercase) {
+        errors.push('Password must contain at least one lowercase letter')
+      }
+      if (!validation.requirements.hasNumber) {
+        errors.push('Password must contain at least one number')
+      }
+      if (!validation.requirements.hasSpecialChar) {
+        errors.push('Password must contain at least one special character')
+      }
+      if (!validation.requirements.notCommon) {
+        errors.push('This password is too common. Please choose a more unique password')
+      }
+      if (!validation.passwordsMatch && passwordData.confirm_password) {
+        errors.push('Passwords do not match')
+      }
     }
     
     // Use the password strength validation
@@ -99,12 +126,20 @@ export function AccountSettings({
   const handleSubmitPassword = async () => {
     if (!validatePassword()) return
     
-    await onPasswordChange(passwordData)
-    setPasswordData({
-      current_password: '',
-      new_password: '',
-      confirm_password: '',
-    })
+    try {
+      await onPasswordChange(passwordData)
+      setPasswordData({
+        current_password: '',
+        new_password: '',
+        confirm_password: '',
+      })
+      setPasswordErrors([])
+      setPasswordSuccess(true)
+      // Clear success message after 5 seconds
+      setTimeout(() => setPasswordSuccess(false), 5000)
+    } catch (error) {
+      // Error handling is done by parent component
+    }
   }
 
   // Handle Enter key to submit
@@ -141,23 +176,19 @@ export function AccountSettings({
               <Input
                 id="current_password"
                 name="current_password"
-                type={showCurrentPassword ? 'text' : 'password'}
+                type={showPasswords.current ? 'text' : 'password'}
                 value={passwordData.current_password}
                 onChange={handlePasswordChange}
-                onKeyDown={handleKeyPress}
                 placeholder="Enter current password"
                 className="pr-10"
-                autoComplete="current-password"
-                aria-label="Current password"
               />
               <button
                 type="button"
-                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded"
-                aria-label={showCurrentPassword ? 'Hide current password' : 'Show current password'}
-                tabIndex={0}
+                onClick={() => togglePasswordVisibility('current')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 rounded"
+                aria-label={showPasswords.current ? 'Hide password' : 'Show password'}
               >
-                {showCurrentPassword ? (
+                {showPasswords.current ? (
                   <EyeOff className="w-4 h-4" />
                 ) : (
                   <Eye className="w-4 h-4" />
@@ -173,23 +204,19 @@ export function AccountSettings({
               <Input
                 id="new_password"
                 name="new_password"
-                type={showNewPassword ? 'text' : 'password'}
+                type={showPasswords.new ? 'text' : 'password'}
                 value={passwordData.new_password}
                 onChange={handlePasswordChange}
-                onKeyDown={handleKeyPress}
                 placeholder="Enter new password"
                 className="pr-10"
-                autoComplete="new-password"
-                aria-label="New password"
               />
               <button
                 type="button"
-                onClick={() => setShowNewPassword(!showNewPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded"
-                aria-label={showNewPassword ? 'Hide new password' : 'Show new password'}
-                tabIndex={0}
+                onClick={() => togglePasswordVisibility('new')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 rounded"
+                aria-label={showPasswords.new ? 'Hide password' : 'Show password'}
               >
-                {showNewPassword ? (
+                {showPasswords.new ? (
                   <EyeOff className="w-4 h-4" />
                 ) : (
                   <Eye className="w-4 h-4" />
@@ -197,43 +224,35 @@ export function AccountSettings({
               </button>
             </div>
           </div>
-
-          {/* Password Strength Indicator */}
-          {passwordStrength && passwordData.new_password && (
-            <div className="space-y-3">
-              <PasswordStrengthIndicator
-                strength={passwordStrength}
-                showLabel={true}
-                showFeedback={false}
-              />
-              <PasswordRequirementsChecklist strength={passwordStrength} />
-            </div>
+          
+          {/* Password Strength Meter */}
+          {passwordData.new_password && (
+            <PasswordStrengthMeter
+              password={passwordData.new_password}
+              showRequirements={true}
+              className="mt-3"
+            />
           )}
 
-          {/* Confirm Password */}
           <div className="space-y-2">
             <Label htmlFor="confirm_password">Confirm New Password</Label>
             <div className="relative">
               <Input
                 id="confirm_password"
                 name="confirm_password"
-                type={showConfirmPassword ? 'text' : 'password'}
+                type={showPasswords.confirm ? 'text' : 'password'}
                 value={passwordData.confirm_password}
                 onChange={handlePasswordChange}
-                onKeyDown={handleKeyPress}
                 placeholder="Confirm new password"
                 className="pr-10"
-                autoComplete="new-password"
-                aria-label="Confirm new password"
               />
               <button
                 type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded"
-                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
-                tabIndex={0}
+                onClick={() => togglePasswordVisibility('confirm')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 rounded"
+                aria-label={showPasswords.confirm ? 'Hide password' : 'Show password'}
               >
-                {showConfirmPassword ? (
+                {showPasswords.confirm ? (
                   <EyeOff className="w-4 h-4" />
                 ) : (
                   <Eye className="w-4 h-4" />
@@ -241,6 +260,15 @@ export function AccountSettings({
               </button>
             </div>
           </div>
+
+          {/* Success Message */}
+          {passwordSuccess && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+              <p className="text-sm text-green-700">
+                ✓ Password updated successfully!
+              </p>
+            </div>
+          )}
 
           {/* Error Messages */}
           {passwordErrors.length > 0 && (
@@ -261,8 +289,7 @@ export function AccountSettings({
           <Button
             onClick={handleSubmitPassword}
             disabled={isLoading}
-            className="w-full sm:w-auto min-w-[44px] min-h-[44px]"
-            aria-label="Update password"
+            className="w-full sm:w-auto min-h-[44px]"
           >
             {isLoading ? 'Updating...' : 'Update Password'}
           </Button>
