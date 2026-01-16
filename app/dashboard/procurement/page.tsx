@@ -1,193 +1,473 @@
 'use client';
 
-import { Plus, Filter, Eye, Edit, X, ChevronDown } from 'lucide-react';
+import { Plus, Filter, Eye, Edit, X, ChevronDown, Search, Loader2, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/components/responsive';
+import { toast } from 'sonner';
+import type { ProcurementRequest, ProcurementQuote, Supplier, ProcurementStatus, ActivityUnit, DeliveryTimeWindow } from '@/models/procurement.model';
+import { getStatusColor, canViewQuotes, canEditRequest, canCancelRequest } from '@/models/procurement.model';
 
 export default function ProcurementPage() {
-  const searchParams = useSearchParams();
-  const viewParam = searchParams?.get('view');
+  const router = useRouter();
   const [view, setView] = useState<'list' | 'form' | 'quotes'>('list');
   const [formStep, setFormStep] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [quotesLoading, setQuotesLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  
+  // Data state
+  const [requests, setRequests] = useState<ProcurementRequest[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [selectedRequest, setSelectedRequest] = useState<ProcurementRequest | null>(null);
+  const [quotes, setQuotes] = useState<ProcurementQuote[]>([]);
+  const [editingRequest, setEditingRequest] = useState<ProcurementRequest | null>(null);
+  
+  // Filter state
+  const [filterStatus, setFilterStatus] = useState<ProcurementStatus | ''>('');
+  const [filterIsotope, setFilterIsotope] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    isotope: '',
+    quantity: '',
+    unit: 'mCi' as ActivityUnit,
+    delivery_date: '',
+    delivery_time_window: '' as DeliveryTimeWindow | '',
+    delivery_location: '',
+    clinical_indication: '',
+    special_instructions: '',
+  });
 
-  // Handle URL parameter on mount
-  useEffect(() => {
-    if (viewParam === 'form') {
-      setView('form');
+  // Fetch procurement requests
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (filterStatus) params.append('status', filterStatus);
+      if (filterIsotope) params.append('isotope', filterIsotope);
+      if (searchQuery) params.append('search', searchQuery);
+      
+      const response = await fetch(`/api/procurement?${params.toString()}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setRequests(data.data);
+      } else {
+        toast.error(data.message || 'Failed to fetch procurement requests');
+      }
+    } catch (error) {
+      toast.error('Failed to fetch procurement requests');
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  }, [viewParam]);
+  };
 
-  const procurementRequests = [
-    { 
-      id: 'PR-2847', 
-      isotope: 'Tc-99m', 
-      quantity: '500 mCi', 
-      deliveryDate: '2026-01-10', 
-      status: 'Quotes Received',
-      matchedManufacturers: 3,
-      statusColor: 'bg-blue-100 text-blue-700'
-    },
-    { 
-      id: 'PR-2846', 
-      isotope: 'F-18 FDG', 
-      quantity: '250 mCi', 
-      deliveryDate: '2026-01-08', 
-      status: 'PO Approved',
-      matchedManufacturers: 2,
-      statusColor: 'bg-green-100 text-green-700'
-    },
-    { 
-      id: 'PR-2845', 
-      isotope: 'I-131', 
-      quantity: '100 mCi', 
-      deliveryDate: '2026-01-12', 
-      status: 'Pending Quotes',
-      matchedManufacturers: 4,
-      statusColor: 'bg-amber-100 text-amber-700'
-    },
-    { 
-      id: 'PR-2844', 
-      isotope: 'Lu-177', 
-      quantity: '50 mCi', 
-      deliveryDate: '2026-01-15', 
-      status: 'Draft',
-      matchedManufacturers: 0,
-      statusColor: 'bg-gray-100 text-gray-700'
-    },
-  ];
+  // Fetch suppliers
+  const fetchSuppliers = async () => {
+    try {
+      const response = await fetch('/api/suppliers');
+      const data = await response.json();
+      if (data.success) {
+        setSuppliers(data.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch suppliers:', error);
+    }
+  };
 
-  const quotes = [
-    {
-      manufacturer: 'NucMed Solutions',
-      rating: 4.8,
-      price: { product: 4500, shipping: 350, insurance: 150 },
-      deliveryTime: '24 hours',
-      activityAtArrival: '95%',
-      isBestValue: true
-    },
-    {
-      manufacturer: 'RadioPharma Inc',
-      rating: 4.6,
-      price: { product: 4200, shipping: 450, insurance: 200 },
-      deliveryTime: '36 hours',
-      activityAtArrival: '92%',
-      isBestValue: false
-    },
-    {
-      manufacturer: 'Isotope Global',
-      rating: 4.9,
-      price: { product: 4800, shipping: 300, insurance: 125 },
-      deliveryTime: '18 hours',
-      activityAtArrival: '97%',
-      isBestValue: false
-    },
-  ];
+  // Fetch quotes for a request
+  const fetchQuotes = async (requestId: string) => {
+    try {
+      setQuotesLoading(true);
+      const response = await fetch(`/api/procurement/${requestId}/quotes`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setQuotes(data.data);
+      } else {
+        toast.error(data.message || 'Failed to fetch quotes');
+      }
+    } catch (error) {
+      toast.error('Failed to fetch quotes');
+      console.error(error);
+    } finally {
+      setQuotesLoading(false);
+    }
+  };
 
+  // Initial data fetch
+  useEffect(() => {
+    fetchRequests();
+    fetchSuppliers();
+  }, []);
 
+  // Refetch when filters change
+  useEffect(() => {
+    fetchRequests();
+  }, [filterStatus, filterIsotope, searchQuery]);
+
+  // Create new request
+  const handleCreateRequest = async () => {
+    try {
+      setSubmitting(true);
+      
+      // Validate form
+      if (!formData.isotope || !formData.quantity || !formData.delivery_date || !formData.delivery_location) {
+        toast.error('Please fill in all required fields');
+        return;
+      }
+
+      const response = await fetch('/api/procurement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          quantity: parseFloat(formData.quantity),
+          delivery_time_window: formData.delivery_time_window || undefined,
+          status: 'Draft',
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success('Procurement request created successfully');
+        setView('list');
+        setFormStep(1);
+        setFormData({
+          isotope: '',
+          quantity: '',
+          unit: 'mCi',
+          delivery_date: '',
+          delivery_time_window: '',
+          delivery_location: '',
+          clinical_indication: '',
+          special_instructions: '',
+        });
+        fetchRequests();
+      } else {
+        toast.error(data.message || 'Failed to create request');
+      }
+    } catch (error) {
+      toast.error('Failed to create request');
+      console.error(error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Update request
+  const handleUpdateRequest = async () => {
+    if (!editingRequest) return;
+    
+    try {
+      setSubmitting(true);
+      
+      const response = await fetch(`/api/procurement/${editingRequest.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          quantity: parseFloat(formData.quantity),
+          delivery_time_window: formData.delivery_time_window || undefined,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success('Procurement request updated successfully');
+        setView('list');
+        setFormStep(1);
+        setEditingRequest(null);
+        fetchRequests();
+      } else {
+        toast.error(data.message || 'Failed to update request');
+      }
+    } catch (error) {
+      toast.error('Failed to update request');
+      console.error(error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Delete/cancel request
+  const handleDeleteRequest = async (requestId: string) => {
+    if (!confirm('Are you sure you want to cancel this procurement request?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/procurement/${requestId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success('Procurement request cancelled successfully');
+        fetchRequests();
+      } else {
+        toast.error(data.message || 'Failed to cancel request');
+      }
+    } catch (error) {
+      toast.error('Failed to cancel request');
+      console.error(error);
+    }
+  };
+
+  // View quotes
+  const handleViewQuotes = async (request: ProcurementRequest) => {
+    setSelectedRequest(request);
+    await fetchQuotes(request.id);
+    setView('quotes');
+  };
+
+  // Edit request
+  const handleEditRequest = (request: ProcurementRequest) => {
+    setEditingRequest(request);
+    setFormData({
+      isotope: request.isotope,
+      quantity: request.quantity.toString(),
+      unit: request.unit,
+      delivery_date: request.delivery_date,
+      delivery_time_window: request.delivery_time_window || '',
+      delivery_location: request.delivery_location,
+      clinical_indication: request.clinical_indication || '',
+      special_instructions: request.special_instructions || '',
+    });
+    setView('form');
+  };
+
+  // Get unique isotopes for filter
+  const uniqueIsotopes = Array.from(new Set(requests.map(r => r.isotope))).sort();
+
+  // Count quotes for a request
+  const getQuotesCount = (request: ProcurementRequest) => {
+    return request.quotes?.length || 0;
+  };
+
+  // Quotes view
   if (view === 'quotes') {
+    if (!selectedRequest) {
+      return null;
+    }
+
     return (
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
           <div>
             <h2 className="text-xl sm:text-2xl mb-1">Quote Comparison</h2>
-            <p className="text-sm sm:text-base text-gray-600">Request #PR-2847 - Tc-99m</p>
+            <p className="text-sm sm:text-base text-gray-600">
+              Request #{selectedRequest.request_number}
+            </p>
           </div>
           <button 
-            onClick={() => setView('list')}
-            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors self-start"
+            onClick={() => {
+              setView('list');
+              setSelectedRequest(null);
+              setQuotes([]);
+            }}
+            className="px-4 py-2 min-h-[44px] text-gray-600 hover:bg-gray-100 rounded-lg transition-colors self-start"
           >
             Back to List
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-          {quotes.map((quote, index) => {
-            const total = quote.price.product + quote.price.shipping + quote.price.insurance;
-            return (
+        {/* Request Summary - FIRST */}
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-6">
+          <h3 className="text-lg font-semibold mb-4">Request Summary</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Request ID</span>
+              <span className="font-mono text-sm">{selectedRequest.request_number}</span>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Isotope</span>
+              <span className="text-sm font-medium">{selectedRequest.isotope}</span>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Quantity</span>
+              <span className="text-sm font-medium">{selectedRequest.quantity} {selectedRequest.unit}</span>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Delivery Date</span>
+              <span className="text-sm font-medium">
+                {new Date(selectedRequest.delivery_date).toLocaleDateString()}
+              </span>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Location</span>
+              <span className="text-sm font-medium">{selectedRequest.delivery_location}</span>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Status</span>
+              <span className={`inline-block px-2 py-1 rounded-full text-xs ${getStatusColor(selectedRequest.status)}`}>
+                {selectedRequest.status}
+              </span>
+            </div>
+            {selectedRequest.origin && (
+              <div>
+                <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Origin</span>
+                <span className="text-sm font-medium">{selectedRequest.origin}</span>
+              </div>
+            )}
+            {selectedRequest.destination && (
+              <div>
+                <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Destination</span>
+                <span className="text-sm font-medium">{selectedRequest.destination}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Quotes Loading State */}
+        {quotesLoading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+          </div>
+        )}
+
+        {/* No Quotes */}
+        {!quotesLoading && quotes.length === 0 && (
+          <div className="bg-white rounded-xl p-12 border border-gray-200 text-center">
+            <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No Quotes Available</h3>
+            <p className="text-gray-600">No supplier quotes have been received for this request yet.</p>
+          </div>
+        )}
+
+        {/* Quote Comparison Cards */}
+        {!quotesLoading && quotes.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+            {quotes.map((quote) => (
               <div 
-                key={index}
+                key={quote.id}
                 className={`bg-white rounded-xl p-6 border-2 ${
-                  quote.isBestValue ? 'border-purple-600' : 'border-gray-200'
+                  quote.is_best_value ? 'border-purple-600' : 'border-gray-200'
                 } hover:shadow-lg transition-shadow relative`}
               >
-                {quote.isBestValue && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-purple-600 text-white text-xs rounded-full">
+                {quote.is_best_value && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-purple-600 text-white text-xs rounded-full whitespace-nowrap">
                     Best Value
                   </div>
                 )}
                 
                 <div className="mb-4">
-                  <h3 className="text-lg mb-2">{quote.manufacturer}</h3>
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <div 
-                        key={i} 
-                        className={`w-4 h-4 ${
-                          i < Math.floor(quote.rating) ? 'text-yellow-400' : 'text-gray-300'
-                        }`}
-                      >
-                        ★
+                  <h3 className="text-lg mb-2">{quote.supplier?.name || 'Unknown Supplier'}</h3>
+                  {quote.supplier && (
+                    <>
+                      <div className="flex items-center gap-1 mb-1">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <div 
+                            key={i} 
+                            className={`w-4 h-4 ${
+                              i < Math.floor(quote.supplier!.rating) ? 'text-yellow-400' : 'text-gray-300'
+                            }`}
+                          >
+                            ★
+                          </div>
+                        ))}
+                        <span className="text-sm text-gray-600 ml-1">{quote.supplier!.rating.toFixed(1)}</span>
                       </div>
-                    ))}
-                    <span className="text-sm text-gray-600 ml-1">{quote.rating}</span>
-                  </div>
+                      <p className="text-xs text-gray-500">{quote.supplier!.location}</p>
+                    </>
+                  )}
                 </div>
 
                 <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Product</span>
-                    <span>${quote.price.product.toLocaleString()}</span>
+                    <span>${quote.product_cost.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping</span>
-                    <span>${quote.price.shipping.toLocaleString()}</span>
+                    <span>${quote.shipping_cost.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Insurance</span>
-                    <span>${quote.price.insurance.toLocaleString()}</span>
+                    <span>${quote.insurance_cost.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between pt-2 border-t border-gray-200">
+                  <div className="flex justify-between pt-2 border-t border-gray-200 font-semibold">
                     <span>Total</span>
-                    <span className="text-lg">${total.toLocaleString()}</span>
+                    <span className="text-lg">${quote.total_cost.toLocaleString()}</span>
                   </div>
                 </div>
 
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Delivery Time</span>
-                    <span>{quote.deliveryTime}</span>
+                    <span className="font-medium">{quote.delivery_time}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Activity at Arrival</span>
-                    <span className="text-green-600">{quote.activityAtArrival}</span>
+                    <span className="text-green-600 font-medium">{quote.activity_at_arrival}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-green-600">
-                    <div className="w-4 h-4 flex items-center justify-center">✓</div>
-                    <span>All compliance checks passed</span>
+                  <div className="flex items-center gap-2 text-sm">
+                    {quote.compliance_passed ? (
+                      <>
+                        <div className="w-4 h-4 flex items-center justify-center text-green-600">✓</div>
+                        <span className="text-green-600">Compliance passed</span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-4 h-4 flex items-center justify-center text-red-600">✗</div>
+                        <span className="text-red-600">Compliance failed</span>
+                      </>
+                    )}
                   </div>
+                  {quote.quote_valid_until && (
+                    <div className="text-xs text-gray-500">
+                      Valid until: {new Date(quote.quote_valid_until).toLocaleDateString()}
+                    </div>
+                  )}
                 </div>
 
-                <button className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors">
+                <button 
+                  className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors min-h-[44px]"
+                  onClick={() => toast.info('Purchase order creation will be implemented in future release')}
+                  title="Create Purchase Order (Coming Soon)"
+                >
                   Select & Create PO
                 </button>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
-
-
+  // Form view
   if (view === 'form') {
+    const isEditing = editingRequest !== null;
+    
     return (
       <div className="max-w-3xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
-          <h2 className="text-xl sm:text-2xl">New Procurement Request</h2>
+          <h2 className="text-xl sm:text-2xl">
+            {isEditing ? 'Edit Procurement Request' : 'New Procurement Request'}
+          </h2>
           <button 
-            onClick={() => setView('list')}
-            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors self-start"
+            onClick={() => {
+              setView('list');
+              setFormStep(1);
+              setEditingRequest(null);
+              setFormData({
+                isotope: '',
+                quantity: '',
+                unit: 'mCi',
+                delivery_date: '',
+                delivery_time_window: '',
+                delivery_location: '',
+                clinical_indication: '',
+                special_instructions: '',
+              });
+            }}
+            className="px-4 py-2 min-h-[44px] text-gray-600 hover:bg-gray-100 rounded-lg transition-colors self-start"
           >
             Cancel
           </button>
@@ -226,14 +506,22 @@ export default function ProcurementPage() {
           {formStep === 1 && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm mb-2">Isotope Type</label>
+                <label className="block text-sm font-medium mb-2">
+                  Isotope Type <span className="text-red-500">*</span>
+                </label>
                 <div className="relative">
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent appearance-none">
-                    <option>Select isotope...</option>
-                    <option>Tc-99m (Half-life: 6 hours)</option>
-                    <option>F-18 FDG (Half-life: 110 minutes)</option>
-                    <option>I-131 (Half-life: 8 days)</option>
-                    <option>Lu-177 (Half-life: 6.7 days)</option>
+                  <select 
+                    value={formData.isotope}
+                    onChange={(e) => setFormData({ ...formData, isotope: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent appearance-none"
+                  >
+                    <option value="">Select isotope...</option>
+                    <option value="Tc-99m">Tc-99m (Half-life: 6 hours)</option>
+                    <option value="F-18 FDG">F-18 FDG (Half-life: 110 minutes)</option>
+                    <option value="I-131">I-131 (Half-life: 8 days)</option>
+                    <option value="Lu-177">Lu-177 (Half-life: 6.7 days)</option>
+                    <option value="Ga-68">Ga-68 (Half-life: 68 minutes)</option>
+                    <option value="Y-90">Y-90 (Half-life: 64 hours)</option>
                   </select>
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 </div>
@@ -241,37 +529,43 @@ export default function ProcurementPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm mb-2">Activity Required</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Activity Required <span className="text-red-500">*</span>
+                  </label>
                   <input 
                     type="number" 
+                    value={formData.quantity}
+                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                     placeholder="500" 
+                    step="0.01"
+                    min="0"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm mb-2">Unit</label>
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent">
-                    <option>mCi</option>
-                    <option>GBq</option>
+                  <label className="block text-sm font-medium mb-2">
+                    Unit <span className="text-red-500">*</span>
+                  </label>
+                  <select 
+                    value={formData.unit}
+                    onChange={(e) => setFormData({ ...formData, unit: e.target.value as ActivityUnit })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  >
+                    <option value="mCi">mCi</option>
+                    <option value="GBq">GBq</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Clinical Indication (Optional)</label>
+                <label className="block text-sm font-medium mb-2">Clinical Indication (Optional)</label>
                 <textarea 
+                  value={formData.clinical_indication}
+                  onChange={(e) => setFormData({ ...formData, clinical_indication: e.target.value })}
                   rows={3}
                   placeholder="Enter clinical indication..."
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent resize-none"
                 ></textarea>
-              </div>
-
-              <div>
-                <label className="block text-sm mb-2">Attach Documents</label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-purple-600 transition-colors cursor-pointer">
-                  <p className="text-gray-600">Click to upload or drag and drop</p>
-                  <p className="text-sm text-gray-500 mt-1">PDF, DOC (max. 10MB)</p>
-                </div>
               </div>
             </div>
           )}
@@ -279,20 +573,31 @@ export default function ProcurementPage() {
           {formStep === 2 && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm mb-2">Delivery Date</label>
+                <label className="block text-sm font-medium mb-2">
+                  Delivery Date <span className="text-red-500">*</span>
+                </label>
                 <input 
                   type="date" 
+                  value={formData.delivery_date}
+                  onChange={(e) => setFormData({ ...formData, delivery_date: e.target.value })}
+                  min={new Date().toISOString().split('T')[0]}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Preferred Time Window</label>
+                <label className="block text-sm font-medium mb-2">Preferred Time Window</label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {['Morning', 'Afternoon', 'Evening'].map((time) => (
+                  {(['Morning', 'Afternoon', 'Evening'] as DeliveryTimeWindow[]).map((time) => (
                     <button 
                       key={time}
-                      className="px-4 py-3 border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors"
+                      type="button"
+                      onClick={() => setFormData({ ...formData, delivery_time_window: time })}
+                      className={`px-4 py-3 min-h-[44px] border rounded-lg transition-colors ${
+                        formData.delivery_time_window === time
+                          ? 'border-purple-600 bg-purple-50 text-purple-600'
+                          : 'border-gray-300 hover:border-purple-600 hover:bg-purple-50'
+                      }`}
                     >
                       {time}
                     </button>
@@ -301,17 +606,23 @@ export default function ProcurementPage() {
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Delivery Location</label>
+                <label className="block text-sm font-medium mb-2">
+                  Delivery Location <span className="text-red-500">*</span>
+                </label>
                 <input 
                   type="text" 
-                  defaultValue="City Hospital, 123 Medical Ave, Cape Town"
+                  value={formData.delivery_location}
+                  onChange={(e) => setFormData({ ...formData, delivery_location: e.target.value })}
+                  placeholder="e.g., City Hospital, 123 Medical Ave, Cape Town"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm mb-2">Special Instructions</label>
+                <label className="block text-sm font-medium mb-2">Special Instructions</label>
                 <textarea 
+                  value={formData.special_instructions}
+                  onChange={(e) => setFormData({ ...formData, special_instructions: e.target.value })}
                   rows={3}
                   placeholder="Enter any special handling or delivery instructions..."
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent resize-none"
@@ -323,35 +634,47 @@ export default function ProcurementPage() {
           {formStep === 3 && (
             <div className="space-y-6">
               <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="text-lg mb-4">Request Summary</h3>
+                <h3 className="text-lg font-semibold mb-4">Request Summary</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Isotope</span>
-                    <span>Tc-99m</span>
+                    <span className="font-medium">{formData.isotope || 'Not specified'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Activity Required</span>
-                    <span>500 mCi</span>
+                    <span className="font-medium">{formData.quantity} {formData.unit}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Delivery Date</span>
-                    <span>January 10, 2026</span>
+                    <span className="font-medium">
+                      {formData.delivery_date 
+                        ? new Date(formData.delivery_date).toLocaleDateString()
+                        : 'Not specified'}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Time Window</span>
-                    <span>Morning</span>
-                  </div>
+                  {formData.delivery_time_window && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Time Window</span>
+                      <span className="font-medium">{formData.delivery_time_window}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-gray-600">Location</span>
-                    <span>City Hospital, Cape Town</span>
+                    <span className="font-medium text-right">{formData.delivery_location || 'Not specified'}</span>
                   </div>
+                  {formData.clinical_indication && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Clinical Indication</span>
+                      <span className="font-medium text-right">{formData.clinical_indication}</span>
+                    </div>
+                  )}
+                  {formData.special_instructions && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Special Instructions</span>
+                      <span className="font-medium text-right">{formData.special_instructions}</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="text-sm mb-2">Expected Activity at Delivery</h4>
-                <p className="text-2xl text-blue-600">475 mCi (95%)</p>
-                <p className="text-sm text-gray-600 mt-1">Based on 24-hour estimated transit time</p>
               </div>
             </div>
           )}
@@ -360,7 +683,8 @@ export default function ProcurementPage() {
             {formStep > 1 && (
               <button 
                 onClick={() => setFormStep(formStep - 1)}
-                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors order-2 sm:order-1"
+                disabled={submitting}
+                className="px-6 py-3 min-h-[44px] border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors order-2 sm:order-1 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Back
               </button>
@@ -370,32 +694,42 @@ export default function ProcurementPage() {
                 if (formStep < 3) {
                   setFormStep(formStep + 1);
                 } else {
-                  setView('list');
+                  if (isEditing) {
+                    handleUpdateRequest();
+                  } else {
+                    handleCreateRequest();
+                  }
                 }
               }}
-              className="flex-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors order-1 sm:order-2"
+              disabled={submitting}
+              className="flex-1 bg-purple-600 text-white py-3 min-h-[44px] rounded-lg hover:bg-purple-700 transition-colors order-1 sm:order-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {formStep === 3 ? 'Submit Request' : 'Continue'}
+              {submitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {isEditing ? 'Updating...' : 'Submitting...'}
+                </>
+              ) : (
+                formStep === 3 ? (isEditing ? 'Update Request' : 'Submit Request') : 'Continue'
+              )}
             </button>
-            {formStep === 3 && (
-              <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors order-3">
-                Save as Draft
-              </button>
-            )}
           </div>
         </div>
       </div>
     );
   }
-
-
+  // List view
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h2 className="text-xl sm:text-2xl">Procurement Requests</h2>
         <button 
-          onClick={() => setView('form')}
-          className="bg-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 self-start"
+          onClick={() => {
+            setView('form');
+            setEditingRequest(null);
+            setFormStep(1);
+          }}
+          className="bg-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 min-h-[44px] rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 self-start"
         >
           <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           New Request
@@ -403,156 +737,296 @@ export default function ProcurementPage() {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white rounded-lg p-3 sm:p-4 mb-6 border border-gray-200 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-            <option>All Statuses</option>
-            <option>Draft</option>
-            <option>Pending Quotes</option>
-            <option>Quotes Received</option>
-            <option>PO Approved</option>
-          </select>
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-            <option>All Isotopes</option>
-            <option>Tc-99m</option>
-            <option>F-18 FDG</option>
-            <option>I-131</option>
-          </select>
-          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-            <Filter className="w-4 h-4" />
-            More Filters
-          </button>
+      <div className="bg-white rounded-lg p-3 sm:p-4 mb-6 border border-gray-200">
+        <div className="flex flex-col gap-3">
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by request number, isotope, or location..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+            />
+          </div>
+          
+          {/* Filter dropdowns */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <select 
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as ProcurementStatus | '')}
+              className="flex-1 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+            >
+              <option value="">All Statuses</option>
+              <option value="Draft">Draft</option>
+              <option value="Pending Quotes">Pending Quotes</option>
+              <option value="Quotes Received">Quotes Received</option>
+              <option value="PO Approved">PO Approved</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            
+            <select 
+              value={filterIsotope}
+              onChange={(e) => setFilterIsotope(e.target.value)}
+              className="flex-1 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+            >
+              <option value="">All Isotopes</option>
+              {uniqueIsotopes.map((isotope) => (
+                <option key={isotope} value={isotope}>{isotope}</option>
+              ))}
+            </select>
+            
+            {(filterStatus || filterIsotope || searchQuery) && (
+              <button
+                onClick={() => {
+                  setFilterStatus('');
+                  setFilterIsotope('');
+                  setSearchQuery('');
+                }}
+                className="px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+              >
+                <X className="w-4 h-4" />
+                Clear
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && requests.length === 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No Procurement Requests</h3>
+          <p className="text-gray-600 mb-4">
+            {filterStatus || filterIsotope || searchQuery
+              ? 'No requests match your filters. Try adjusting your search criteria.'
+              : 'Get started by creating your first procurement request.'}
+          </p>
+          {!filterStatus && !filterIsotope && !searchQuery && (
+            <button
+              onClick={() => setView('form')}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Create Request
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {/* Desktop Table View */}
-        <DesktopOnly>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px]">
-              <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Request ID</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quantity</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Delivery Date</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Manufacturers</th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {procurementRequests.map((request) => (
-                <tr key={request.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">{request.id}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.isotope}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.quantity}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                    {new Date(request.deliveryDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${request.statusColor}`}>
-                      {request.status}
-                    </span>
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{request.matchedManufacturers}</td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => request.status === 'Quotes Received' && setView('quotes')}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                        title="View"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-red-600" title="Cancel">
-                        <X className="w-4 h-4" />
-                      </button>
+      {!loading && requests.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          {/* Desktop Table View */}
+          <DesktopOnly>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[800px]">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Request ID</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Isotope</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quantity</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Delivery Date</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Origin</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Destination</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quotes</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {requests.map((request) => {
+                    const quotesCount = getQuotesCount(request);
+                    const canView = canViewQuotes(request.status);
+                    
+                    return (
+                      <tr key={request.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono">
+                          {request.request_number}
+                        </td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                          {request.isotope}
+                        </td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                          {request.quantity} {request.unit}
+                        </td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                          {new Date(request.delivery_date).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                          {request.origin || '-'}
+                        </td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                          {request.destination || request.delivery_location}
+                        </td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                          <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${getStatusColor(request.status)}`}>
+                            {request.status}
+                          </span>
+                        </td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                          {canView ? (
+                            <button
+                              onClick={() => handleViewQuotes(request)}
+                              className="text-purple-600 hover:text-purple-700 underline"
+                            >
+                              {quotesCount} quote{quotesCount !== 1 ? 's' : ''}
+                            </button>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                          <div className="flex items-center gap-2">
+                            {canView && (
+                              <button 
+                                onClick={() => handleViewQuotes(request)}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                title="View Quotes"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                            )}
+                            {canEditRequest(request.status) && (
+                              <button 
+                                onClick={() => handleEditRequest(request)}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors" 
+                                title="Edit"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                            )}
+                            {canCancelRequest(request.status) && (
+                              <button 
+                                onClick={() => handleDeleteRequest(request.id)}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-red-600" 
+                                title="Cancel"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </DesktopOnly>
+
+          {/* Mobile Card View */}
+          <MobileOnly>
+            <div className="p-4 space-y-3">
+              {requests.map((request) => {
+                const quotesCount = getQuotesCount(request);
+                const canView = canViewQuotes(request.status);
+                
+                return (
+                  <MobileTableCard key={request.id}>
+                    <MobileTableCardRow 
+                      label="ID" 
+                      value={<span className="font-mono text-xs">{request.request_number}</span>} 
+                    />
+                    <MobileTableCardRow 
+                      label="Isotope" 
+                      value={request.isotope} 
+                    />
+                    <MobileTableCardRow 
+                      label="Quantity" 
+                      value={`${request.quantity} ${request.unit}`} 
+                    />
+                    <MobileTableCardRow 
+                      label="Delivery" 
+                      value={new Date(request.delivery_date).toLocaleDateString()} 
+                    />
+                    {request.origin && (
+                      <MobileTableCardRow 
+                        label="Origin" 
+                        value={request.origin} 
+                      />
+                    )}
+                    <MobileTableCardRow 
+                      label="Destination" 
+                      value={request.destination || request.delivery_location} 
+                    />
+                    <MobileTableCardRow 
+                      label="Status" 
+                      value={
+                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(request.status)}`}>
+                          {request.status}
+                        </span>
+                      } 
+                    />
+                    {canView && (
+                      <MobileTableCardRow 
+                        label="Quotes" 
+                        value={
+                          <button
+                            onClick={() => handleViewQuotes(request)}
+                            className="text-purple-600 hover:text-purple-700 underline text-sm"
+                          >
+                            {quotesCount} quote{quotesCount !== 1 ? 's' : ''}
+                          </button>
+                        } 
+                      />
+                    )}
+                    <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
+                      {canView && (
+                        <button 
+                          type="button"
+                          onClick={() => handleViewQuotes(request)}
+                          className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm min-h-[44px]"
+                        >
+                          <Eye className="w-4 h-4" />
+                          View Quotes
+                        </button>
+                      )}
+                      {canEditRequest(request.status) && (
+                        <button 
+                          type="button"
+                          onClick={() => handleEditRequest(request)}
+                          className={`${canView ? '' : 'flex-1'} px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm min-h-[44px]`}
+                        >
+                          <Edit className="w-4 h-4" />
+                          Edit
+                        </button>
+                      )}
+                      {canCancelRequest(request.status) && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteRequest(request.id)}
+                          className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center min-h-[44px]"
+                          aria-label="Cancel request"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-        </DesktopOnly>
+                  </MobileTableCard>
+                );
+              })}
+            </div>
+          </MobileOnly>
 
-        {/* Mobile Card View */}
-        <MobileOnly>
-          <div className="p-4 space-y-3">
-            {procurementRequests.map((request) => (
-              <MobileTableCard key={request.id}>
-                <MobileTableCardRow 
-                  label="ID" 
-                  value={<span className="font-mono text-xs">{request.id}</span>} 
-                />
-                <MobileTableCardRow 
-                  label="Isotope" 
-                  value={request.isotope} 
-                />
-                <MobileTableCardRow 
-                  label="Quantity" 
-                  value={request.quantity} 
-                />
-                <MobileTableCardRow 
-                  label="Delivery" 
-                  value={new Date(request.deliveryDate).toLocaleDateString()} 
-                />
-                <MobileTableCardRow 
-                  label="Status" 
-                  value={
-                    <span className={`px-2 py-1 rounded-full text-xs ${request.statusColor}`}>
-                      {request.status}
-                    </span>
-                  } 
-                />
-                <MobileTableCardRow 
-                  label="Manufacturers" 
-                  value={request.matchedManufacturers} 
-                />
-                <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
-                  <button 
-                    type="button"
-                    onClick={() => request.status === 'Quotes Received' && setView('quotes')}
-                    className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm min-h-[44px]"
-                  >
-                    <Eye className="w-4 h-4" />
-                    View
-                  </button>
-                  <button 
-                    type="button"
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm min-h-[44px]"
-                  >
-                    <Edit className="w-4 h-4" />
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center min-h-[44px]"
-                    aria-label="Delete request"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </MobileTableCard>
-            ))}
-          </div>
-        </MobileOnly>
-
-        {/* Pagination */}
-        <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="text-sm text-gray-600">Showing 1-4 of 4</div>
-          <div className="flex items-center gap-2">
-            <button type="button" className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm min-h-[44px]">Previous</button>
-            <button type="button" className="px-3 py-1 bg-purple-600 text-white rounded text-sm min-h-[44px]">1</button>
-            <button type="button" className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm min-h-[44px]">Next</button>
+          {/* Pagination */}
+          <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="text-sm text-gray-600">
+              Showing {requests.length} request{requests.length !== 1 ? 's' : ''}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
