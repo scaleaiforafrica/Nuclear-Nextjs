@@ -429,12 +429,16 @@ export default function ProcurementPage() {
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-1">
                         <MapPin className="w-3 h-3 text-blue-600" />
-                        <span className="font-medium text-blue-900">{quote.supplier.location.split(',')[0]}</span>
+                        <span className="font-medium text-blue-900">
+                          {quote.supplier.location.split(',')[0]?.trim() || quote.supplier.location}
+                        </span>
                       </div>
                       <ArrowRight className="w-4 h-4 text-blue-600" />
                       <div className="flex items-center gap-1">
                         <MapPin className="w-3 h-3 text-blue-600" />
-                        <span className="font-medium text-blue-900">{selectedRequest.destination.split(',')[0]}</span>
+                        <span className="font-medium text-blue-900">
+                          {selectedRequest.destination.split(',')[0]?.trim() || selectedRequest.destination}
+                        </span>
                       </div>
                     </div>
                   </div>

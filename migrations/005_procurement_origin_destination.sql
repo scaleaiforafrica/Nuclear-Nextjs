@@ -72,6 +72,8 @@ COMMENT ON TRIGGER trigger_auto_populate_origin ON public.procurement_requests I
 
 -- Update existing procurement requests to link them with suppliers based on origin
 -- This establishes the relationship retroactively for existing data
+-- Note: These updates are based on seed data and may need adjustment for production
+-- If supplier names change, these updates will silently fail (no error)
 
 -- PR-2847: Johannesburg supplier
 UPDATE public.procurement_requests pr

@@ -205,6 +205,9 @@ export function formatShippingRoute(origin?: string, destination?: string): stri
   if (!origin && !destination) return '-';
   
   const formatLocation = (loc: string) => {
+    // Validate input
+    if (!loc || !loc.trim()) return '';
+    
     // Split by comma and take last two parts (city, country)
     const parts = loc.split(',').map(p => p.trim()).filter(p => p);
     
@@ -212,15 +215,20 @@ export function formatShippingRoute(origin?: string, destination?: string): stri
       // Use last two parts: city and country
       const city = parts[parts.length - 2];
       const country = parts[parts.length - 1];
-      // Abbreviate country to 2 letters
+      // Abbreviate country to 2 letters (simple approach for display purposes)
+      // For production, consider using a library like country-list for ISO codes
       return `${city}, ${country.substring(0, 2)}`;
     }
     // If not in expected format, return as is
-    return loc;
+    return loc.trim();
   };
   
   if (origin && destination) {
-    return `${formatLocation(origin)} → ${formatLocation(destination)}`;
+    const formattedOrigin = formatLocation(origin);
+    const formattedDestination = formatLocation(destination);
+    if (formattedOrigin && formattedDestination) {
+      return `${formattedOrigin} → ${formattedDestination}`;
+    }
   }
   
   return origin || destination || '-';
