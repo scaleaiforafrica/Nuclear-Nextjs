@@ -17,7 +17,7 @@ interface ApiResponse<T = unknown> {
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { shipmentId: string } }
+  { params }: { params: Promise<{ shipmentId: string }> }
 ): Promise<NextResponse<ApiResponse<ChainVerificationResult>>> {
   try {
     const supabase = await createClient();
@@ -40,7 +40,7 @@ export async function POST(
       );
     }
 
-    const { shipmentId } = params;
+    const { shipmentId } = await params;
 
     // Verify shipment exists
     const { data: shipment, error: shipmentError } = await supabase

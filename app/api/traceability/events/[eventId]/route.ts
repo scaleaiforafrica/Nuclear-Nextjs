@@ -16,7 +16,7 @@ interface ApiResponse<T = unknown> {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ): Promise<NextResponse<ApiResponse>> {
   try {
     const supabase = await createClient();
@@ -39,7 +39,7 @@ export async function GET(
       );
     }
 
-    const { eventId } = params;
+    const { eventId } = await params;
 
     // Get event
     const event = await hyperledgerService.getEvent(eventId);
@@ -85,7 +85,7 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ): Promise<NextResponse<ApiResponse>> {
   try {
     const supabase = await createClient();
@@ -108,7 +108,7 @@ export async function POST(
       );
     }
 
-    const { eventId } = params;
+    const { eventId } = await params;
 
     // Verify event
     const verificationResult = await hyperledgerService.verifyEvent(eventId);

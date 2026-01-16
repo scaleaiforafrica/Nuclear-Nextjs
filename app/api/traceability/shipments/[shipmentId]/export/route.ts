@@ -17,7 +17,7 @@ interface ApiResponse<T = unknown> {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { shipmentId: string } }
+  { params }: { params: Promise<{ shipmentId: string }> }
 ): Promise<NextResponse> {
   try {
     const supabase = await createClient();
@@ -40,7 +40,7 @@ export async function GET(
       );
     }
 
-    const { shipmentId } = params;
+    const { shipmentId } = await params;
     const searchParams = request.nextUrl.searchParams;
     const format = searchParams.get('format') || 'json';
 
