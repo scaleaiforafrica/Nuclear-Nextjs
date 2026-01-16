@@ -143,7 +143,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
       filters.endDate = endDateObj;
     }
 
-    if (verified !== null) {
+    if (verified) {
       filters.verified = verified === 'true';
     }
 
