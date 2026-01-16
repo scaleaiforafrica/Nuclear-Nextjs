@@ -42,3 +42,9 @@ export {
   type StorageKey,
   type StorageError,
 } from './storage.service'
+
+// Blockchain Services
+export type { BlockchainService } from './blockchain'
+export { hashService, HashService } from './blockchain/hash.service'
+export { hyperledgerService, HyperledgerService } from './blockchain/hyperledger.service'
+export { eventRecorderService, EventRecorderService } from './blockchain/event-recorder.service'
