@@ -41,6 +41,18 @@ export function validatePasswordStrength(
   password: string,
   userInfo?: UserInfo
 ): PasswordStrength {
+  // Handle null/undefined
+  if (!password) {
+    return {
+      score: 0,
+      level: 'very-weak',
+      feedback: ['Password is required'],
+      passedRequirements: [],
+      failedRequirements: ['At least 12 characters', 'One uppercase letter', 'One lowercase letter', 'One number', 'One special character', 'Not a common password'],
+      isValid: false,
+    }
+  }
+
   const passedRequirements: string[] = []
   const failedRequirements: string[] = []
   const feedback: string[] = []

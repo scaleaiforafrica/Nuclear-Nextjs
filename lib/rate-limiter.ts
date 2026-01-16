@@ -60,16 +60,18 @@ export async function checkRateLimit(
     }
   }
   
+  // Increment attempts first
+  entry.attempts++
+  
   // Check if rate limit exceeded
-  const allowed = entry.attempts < RATE_LIMIT_CONFIG.maxAttempts
+  const allowed = entry.attempts <= RATE_LIMIT_CONFIG.maxAttempts
   const remaining = Math.max(0, RATE_LIMIT_CONFIG.maxAttempts - entry.attempts)
   const resetAt = new Date(entry.resetAt)
   
   // Calculate retry after in seconds
   const retryAfter = allowed ? undefined : Math.ceil((entry.resetAt - now) / 1000)
   
-  // Increment attempts
-  entry.attempts++
+  // Save updated entry
   rateLimitStore.set(key, entry)
   
   return {
