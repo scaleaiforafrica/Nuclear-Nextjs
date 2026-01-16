@@ -35,11 +35,19 @@ export function Hero({ onOpenLogin }: HeroProps) {
   }, [isMobileMenuOpen]);
 
   const navLinks = [
-    { href: '#', label: 'Platform' },
-    { href: '#', label: 'Solutions' },
-    { href: '#', label: 'Resources' },
-    { href: '#', label: 'Company' },
+    { href: '#platform', label: 'Platform' },
+    { href: '#solutions', label: 'Solutions' },
+    { href: '#resources', label: 'Resources' },
+    { href: '#company', label: 'Company' },
   ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
@@ -52,8 +60,9 @@ export function Hero({ onOpenLogin }: HeroProps) {
           {navLinks.map((link) => (
             <a 
               key={link.label}
-              href={link.href} 
-              className="text-foreground hover:text-primary transition-colors text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="text-foreground hover:text-primary hover:drop-shadow-md transition-all text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm active:drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
             >
               {link.label}
             </a>
@@ -121,8 +130,11 @@ export function Hero({ onOpenLogin }: HeroProps) {
                 <li key={link.label}>
                   <a 
                     href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors text-base font-medium touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={(e) => {
+                      handleNavClick(e, link.href);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex items-center px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors text-base font-medium touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
                   >
                     {link.label}
                   </a>
