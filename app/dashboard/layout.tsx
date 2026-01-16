@@ -16,11 +16,16 @@ import {
   X
 } from 'lucide-react'
 import type { NavigationItem, DashboardPage } from '@/models'
-import { useAuth } from '@/contexts'
+import { useAuth, NotificationProvider } from '@/contexts'
 import { ProtectedRoute } from '@/components/shared'
 import { AnimatedLogo } from '@/components'
 import { DemoBanner } from '@/components/demo/DemoBanner'
 import { isDemoAccount } from '@/lib/demo/utils'
+import { DashboardTopNav } from '@/components/dashboard/DashboardTopNav'
+import { AboutModal } from '@/components/dashboard/AboutModal'
+import { APP_CONFIG } from '@/lib/app-config'
+
+import { useDemoNotifications } from '@/hooks/useDemoNotifications'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -35,14 +40,16 @@ const navigationItems: NavigationItem[] = [
   { id: 'reports', label: 'Reports', icon: BarChart3, href: '/dashboard/reports' },
 ]
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+function DashboardContent({ children }: DashboardLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [notificationCount] = useState(3)
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const { user, logout, supabaseUser } = useAuth()
+
+  // Add demo notifications on mount
+  useDemoNotifications()
 
   // Check if current user is demo account
   const isDemo = supabaseUser ? isDemoAccount(supabaseUser) : false
@@ -103,10 +110,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const userRole = user?.role || 'Guest'
 
   return (
-    <ProtectedRoute>
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
-        {/* Demo Banner - Only shown for demo accounts */}
-        {isDemo && <DemoBanner />}
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      {/* Demo Banner - Only shown for demo accounts */}
+      {isDemo && <DemoBanner />}
         
         {/* Mobile Menu Overlay */}
         {mobileMenuOpen && (
@@ -229,7 +235,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           pageTitle={getPageTitle()}
           onMobileMenuToggle={openMobileMenu}
           mobileMenuOpen={mobileMenuOpen}
-          notificationCount={notificationCount}
           searchPlaceholder="Search..."
           userName={userName}
           userInitials={userInitials}
@@ -250,7 +255,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         onClose={() => setIsAboutModalOpen(false)}
         appInfo={APP_CONFIG}
       />
-      </div>
+    </div>
+  )
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  return (
+    <ProtectedRoute>
+      <NotificationProvider>
+        <DashboardContent>{children}</DashboardContent>
+      </NotificationProvider>
     </ProtectedRoute>
   )
 }

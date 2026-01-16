@@ -7,12 +7,14 @@
 'use client';
 
 import { Search, Bell, HelpCircle, Menu } from 'lucide-react';
+import { useState } from 'react';
+import { NotificationPanel } from './NotificationPanel';
+import { useNotifications } from '@/contexts';
 
 export interface DashboardTopNavProps {
   pageTitle: string;
   onMobileMenuToggle: () => void;
   mobileMenuOpen: boolean;
-  notificationCount?: number;
   onSearchChange?: (query: string) => void;
   searchPlaceholder?: string;
   userName: string;
@@ -24,13 +26,15 @@ export function DashboardTopNav({
   pageTitle,
   onMobileMenuToggle,
   mobileMenuOpen,
-  notificationCount = 0,
   onSearchChange,
   searchPlaceholder = 'Search...',
   userName,
   userInitials,
   onAboutClick,
 }: DashboardTopNavProps) {
+  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
+  const { unreadCount } = useNotifications();
+
   return (
     <header className="h-14 sm:h-16 bg-white border-b border-gray-200 flex items-center justify-between px-3 sm:px-4 lg:px-8 flex-shrink-0">
       {/* Mobile Menu Button & Page Title */}
@@ -77,20 +81,28 @@ export function DashboardTopNav({
         </button>
 
         {/* Notifications */}
-        <button
-          className="relative p-2 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={`Notifications${notificationCount > 0 ? `, ${notificationCount} unread` : ''}`}
-        >
-          <Bell className="w-5 h-5 text-gray-600" aria-hidden="true" />
-          {notificationCount > 0 && (
-            <span
-              className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center"
-              aria-hidden="true"
-            >
-              {notificationCount}
-            </span>
-          )}
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setIsNotificationPanelOpen(!isNotificationPanelOpen)}
+            className="relative p-2 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
+          >
+            <Bell className="w-5 h-5 text-gray-600" aria-hidden="true" />
+            {unreadCount > 0 && (
+              <span
+                className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center"
+                aria-hidden="true"
+              >
+                {unreadCount}
+              </span>
+            )}
+          </button>
+          
+          <NotificationPanel
+            isOpen={isNotificationPanelOpen}
+            onClose={() => setIsNotificationPanelOpen(false)}
+          />
+        </div>
 
         {/* Help/About button */}
         <button
