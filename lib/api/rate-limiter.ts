@@ -22,6 +22,7 @@ export interface RateLimitResult {
 interface RateLimitEntry {
   attempts: number
   resetAt: Date
+  maxAttempts: number
 }
 
 /**
@@ -64,7 +65,11 @@ export class RateLimiter {
     // No previous attempts or window has expired
     if (!entry || entry.resetAt <= now) {
       const resetAt = new Date(now.getTime() + config.windowMs)
-      this.store.set(identifier, { attempts: 1, resetAt })
+      this.store.set(identifier, { 
+        attempts: 1, 
+        resetAt,
+        maxAttempts: config.maxAttempts
+      })
 
       return {
         allowed: true,
@@ -74,13 +79,13 @@ export class RateLimiter {
     }
 
     // Within rate limit window
-    if (entry.attempts < config.maxAttempts) {
+    if (entry.attempts < entry.maxAttempts) {
       entry.attempts++
       this.store.set(identifier, entry)
 
       return {
         allowed: true,
-        remaining: config.maxAttempts - entry.attempts,
+        remaining: entry.maxAttempts - entry.attempts,
         resetAt: entry.resetAt,
       }
     }
@@ -137,17 +142,16 @@ export class RateLimiter {
       return null
     }
 
-    const retryAfter =
-      entry.attempts >= DEFAULT_RATE_LIMIT_CONFIG.maxAttempts
-        ? Math.ceil((entry.resetAt.getTime() - now.getTime()) / 1000)
-        : undefined
+    const isAllowed = entry.attempts < entry.maxAttempts
+    const remaining = Math.max(0, entry.maxAttempts - entry.attempts)
+    
+    const retryAfter = !isAllowed
+      ? Math.ceil((entry.resetAt.getTime() - now.getTime()) / 1000)
+      : undefined
 
     return {
-      allowed: entry.attempts < DEFAULT_RATE_LIMIT_CONFIG.maxAttempts,
-      remaining: Math.max(
-        0,
-        DEFAULT_RATE_LIMIT_CONFIG.maxAttempts - entry.attempts
-      ),
+      allowed: isAllowed,
+      remaining,
       resetAt: entry.resetAt,
       retryAfter,
     }
