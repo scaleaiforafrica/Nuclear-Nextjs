@@ -1,1 +1,11 @@
 export { VerifyShipmentDialog } from './VerifyShipmentDialog';
+export { EventTimeline } from './EventTimeline';
+export { EventCard } from './EventCard';
+export { EventDetailModal } from './EventDetailModal';
+export { ChainVerificationBadge } from './ChainVerificationBadge';
+export { ShipmentSearchBar } from './ShipmentSearchBar';
+export { EventFilters } from './EventFilters';
+export { BlockchainStats } from './BlockchainStats';
+export { HashVerifier } from './HashVerifier';
+export { ExportAuditTrail } from './ExportAuditTrail';
+export { RealTimeEventFeed } from './RealTimeEventFeed';

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts'
 import { Plus, Search, FileText } from 'lucide-react'
-import { TrackShipmentDialog } from '@/components/dashboard'
+import { TrackShipmentDialog, QuickActionCard } from '@/components/dashboard'
 
 function getTimeOfDayGreeting(): string {
   const hour = new Date().getHours()
@@ -68,35 +68,38 @@ export default function DashboardGreeting() {
   return (
     <>
       <div className="bg-gradient-to-r from-primary to-secondary rounded-xl p-4 sm:p-6 lg:p-8 text-white">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="flex flex-col gap-6">
+          {/* Greeting Section */}
           <div>
             <h2 className="text-xl sm:text-2xl lg:text-3xl mb-2">
               {greeting}, {userName}
             </h2>
             <p className="text-white/80 text-sm sm:text-base">{currentDate}</p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <button 
+
+          {/* Quick Actions Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <QuickActionCard
+              icon={Plus}
+              title="New Procurement"
+              description="Create new order"
               onClick={handleNewProcurement}
-              className="bg-white text-primary px-4 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-white/90 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base font-medium"
-            >
-              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">New Procurement</span>
-            </button>
-            <button 
+              variant="primary"
+            />
+            <QuickActionCard
+              icon={Search}
+              title="Check Shipment"
+              description="Track delivery status"
               onClick={handleTrackShipment}
-              className="bg-white/10 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-white/20 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base border border-white/20"
-            >
-              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">Track Shipment</span>
-            </button>
-            <button 
+              variant="secondary"
+            />
+            <QuickActionCard
+              icon={FileText}
+              title="Generate Reports"
+              description="View analytics"
               onClick={handleGenerateReport}
-              className="bg-white/10 backdrop-blur-sm text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-white/20 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base border border-white/20"
-            >
-              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">Generate Report</span>
-            </button>
+              variant="secondary"
+            />
           </div>
         </div>
       </div>

@@ -1,20 +1,84 @@
 'use client';
 
-import { Shield, AlertTriangle, CheckCircle, FileText, Download, Eye } from 'lucide-react';
-import { useState } from 'react';
+import { Shield, AlertTriangle, CheckCircle, FileText, Download, Eye, Upload } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { 
   RenewDocumentDialog, 
   ViewDocumentDialog, 
-  GenerateDocumentDialog 
+  GenerateDocumentDialog,
+  DocumentUploadDialog,
+  DocumentPreviewDialog
 } from '@/components/compliance';
 import { downloadDocumentPDF } from '@/lib/compliance-utils';
+import { 
+  fetchDocumentsForShipment, 
+  downloadDocument 
+} from '@/services/compliance-document.service';
+import type { ComplianceDocument, DocumentType } from '@/models/compliance-document.model';
+import { getStatusColor } from '@/models/compliance-document.model';
 
 export default function CompliancePage() {
   const [selectedShipment, setSelectedShipment] = useState('SH-2851');
   const [renewDialogOpen, setRenewDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [generateDialogOpen, setGenerateDialogOpen] = useState(false);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
+  const [selectedDocumentType, setSelectedDocumentType] = useState<DocumentType | null>(null);
+  const [uploadedDocuments, setUploadedDocuments] = useState<ComplianceDocument[]>([]);
+  const [loadingDocuments, setLoadingDocuments] = useState(false);
+
+  // Fetch uploaded documents for the selected shipment
+  useEffect(() => {
+    if (selectedShipment) {
+      loadDocuments();
+    }
+  }, [selectedShipment]);
+
+  const loadDocuments = async () => {
+    setLoadingDocuments(true);
+    try {
+      // For now, we'll use a mock shipment ID since we don't have real shipments in the system yet
+      // In production, this would use the actual shipment ID
+      const docs = await fetchDocumentsForShipment(selectedShipment);
+      setUploadedDocuments(docs);
+    } catch (error) {
+      console.error('Failed to load documents:', error);
+      // Silently fail for now as shipment might not exist in database
+      setUploadedDocuments([]);
+    } finally {
+      setLoadingDocuments(false);
+    }
+  };
+
+  const handleUploadClick = (docType: DocumentType) => {
+    setSelectedDocumentType(docType);
+    setUploadDialogOpen(true);
+  };
+
+  const handleUploadSuccess = () => {
+    loadDocuments(); // Reload documents after successful upload
+  };
+
+  const handleViewDocument = (doc: ComplianceDocument) => {
+    setSelectedDocument(doc);
+    setPreviewDialogOpen(true);
+  };
+
+  const handleDownloadDocument = async (doc: ComplianceDocument) => {
+    try {
+      await downloadDocument(doc.id, doc.file_name);
+    } catch (error) {
+      console.error('Failed to download document:', error);
+    }
+  };
+
+  // Check if a document type has been uploaded
+  const getDocumentStatus = (docType: string): { hasDocument: boolean; document?: ComplianceDocument } => {
+    const doc = uploadedDocuments.find(d => d.document_type === docType);
+    return { hasDocument: !!doc, document: doc };
+  };
 
   const documents = [
     { 
@@ -204,15 +268,31 @@ export default function CompliancePage() {
           <div className="space-y-4">
             {documents.map((doc, index) => {
               const Icon = doc.icon;
+              const docStatus = getDocumentStatus(doc.name as DocumentType);
+              const uploadedDoc = docStatus.document;
+              
+              // Determine display status based on whether document is uploaded
+              let displayStatus = doc.status;
+              let displayStatusBg = doc.statusBg;
+              let displayStatusColor = doc.statusColor;
+              
+              if (uploadedDoc) {
+                // Use the actual uploaded document status with dynamic colors
+                const statusColors = getStatusColor(uploadedDoc.status);
+                displayStatus = uploadedDoc.status;
+                displayStatusBg = statusColors.bg;
+                displayStatusColor = statusColors.text;
+              }
+              
               return (
                 <div 
                   key={index}
-                  className={`${doc.statusBg} border ${doc.statusColor.replace('text-', 'border-')} rounded-xl p-4 sm:p-6`}
+                  className={`${displayStatusBg} border ${displayStatusColor.replace('text-', 'border-')} rounded-xl p-4 sm:p-6`}
                 >
                   <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                     <div className="flex items-start gap-3 sm:gap-4 flex-1">
-                      <div className={`w-12 h-12 ${doc.statusBg} rounded-xl flex items-center justify-center flex-shrink-0`}>
-                        <Icon className={`w-6 h-6 ${doc.statusColor}`} />
+                      <div className={`w-12 h-12 ${displayStatusBg} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                        <Icon className={`w-6 h-6 ${displayStatusColor}`} />
                       </div>
                       <div className="flex-1">
                         <h4 className="text-sm sm:text-base font-medium mb-1">{doc.name}</h4>
@@ -229,29 +309,31 @@ export default function CompliancePage() {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2 ml-0 lg:ml-4">
-                      {doc.status === 'complete' && (
+                      {uploadedDoc ? (
+                        // Show View/Download buttons for uploaded documents
                         <>
                           <button 
-                            onClick={() => {
-                              setSelectedDocument(doc);
-                              setViewDialogOpen(true);
-                            }}
+                            onClick={() => handleViewDocument(uploadedDoc)}
                             className="p-2 hover:bg-white rounded-lg transition-colors" 
                             title="View"
                           >
                             <Eye className="w-4 h-4 text-gray-600" />
                           </button>
                           <button 
-                            onClick={() => downloadDocumentPDF(doc.name, selectedShipment, doc)}
+                            onClick={() => handleDownloadDocument(uploadedDoc)}
                             className="p-2 hover:bg-white rounded-lg transition-colors" 
                             title="Download"
                           >
                             <Download className="w-4 h-4 text-gray-600" />
                           </button>
                         </>
-                      )}
-                      {doc.status === 'in-progress' && (
-                        <button className="px-4 py-2 bg-white border border-amber-600 text-amber-700 rounded-lg hover:bg-amber-50 transition-colors text-sm">
+                      ) : (
+                        // Show Upload button for documents not yet uploaded
+                        <button 
+                          onClick={() => handleUploadClick(doc.name as DocumentType)}
+                          className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                        >
+                          <Upload className="w-4 h-4" />
                           Upload Document
                         </button>
                       )}
@@ -266,13 +348,13 @@ export default function CompliancePage() {
                           Renew Now
                         </button>
                       )}
-                      {doc.status === 'not-started' && (
+                      {doc.status === 'not-started' && !uploadedDoc && (
                         <button 
                           onClick={() => {
                             setSelectedDocument({ name: doc.name, shipmentId: selectedShipment });
                             setGenerateDialogOpen(true);
                           }}
-                          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                          className="px-4 py-2 bg-white border border-purple-600 text-purple-700 rounded-lg hover:bg-purple-50 transition-colors text-sm"
                         >
                           Generate
                         </button>
@@ -282,9 +364,14 @@ export default function CompliancePage() {
 
                   {/* Status Badge */}
                   <div className="mt-3 flex items-center gap-2">
-                    <span className={`text-xs ${doc.statusColor} capitalize`}>
-                      Status: {doc.status.replace('-', ' ')}
+                    <span className={`text-xs ${displayStatusColor} capitalize`}>
+                      Status: {displayStatus.replace('-', ' ')}
                     </span>
+                    {uploadedDoc && (
+                      <span className="text-xs text-gray-500">
+                        • Uploaded {new Date(uploadedDoc.created_at).toLocaleDateString()}
+                      </span>
+                    )}
                   </div>
                 </div>
               );
@@ -307,6 +394,26 @@ export default function CompliancePage() {
       <GenerateDocumentDialog
         isOpen={generateDialogOpen}
         onClose={() => setGenerateDialogOpen(false)}
+        document={selectedDocument}
+      />
+      {selectedDocumentType && (
+        <DocumentUploadDialog
+          isOpen={uploadDialogOpen}
+          onClose={() => {
+            setUploadDialogOpen(false);
+            setSelectedDocumentType(null);
+          }}
+          shipmentId={selectedShipment}
+          documentType={selectedDocumentType}
+          onUploadSuccess={handleUploadSuccess}
+        />
+      )}
+      <DocumentPreviewDialog
+        isOpen={previewDialogOpen}
+        onClose={() => {
+          setPreviewDialogOpen(false);
+          setSelectedDocument(null);
+        }}
         document={selectedDocument}
       />
     </div>
