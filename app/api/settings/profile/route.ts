@@ -55,7 +55,7 @@ export async function PATCH(request: NextRequest) {
   const body = await request.json()
   
   // Validate and sanitize input
-  const allowedFields = ['name', 'phone', 'job_title', 'department', 'avatar_url']
+  const allowedFields = ['name', 'phone', 'job_title', 'department', 'avatar_url', 'role']
   const updates: Record<string, any> = { updated_at: new Date().toISOString() }
   
   for (const field of allowedFields) {

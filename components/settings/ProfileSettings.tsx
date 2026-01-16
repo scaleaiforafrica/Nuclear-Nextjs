@@ -19,8 +19,10 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
     phone: profile?.phone || '',
     job_title: profile?.job_title || '',
     department: profile?.department || '',
+    role: profile?.role || '',
   })
   const [avatarPreview, setAvatarPreview] = useState<string>(profile?.avatar_url || '')
+  const [hasPhotoChanged, setHasPhotoChanged] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +39,7 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
       const reader = new FileReader()
       reader.onloadend = () => {
         setAvatarPreview(reader.result as string)
+        setHasPhotoChanged(true)
       }
       reader.readAsDataURL(file)
       
@@ -86,28 +89,30 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
             </div>
           )}
         </div>
-        <div className="text-center sm:text-left">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileChange}
-          />
-          <Button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            variant="outline"
-            className="mb-2"
-            size="sm"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            Change Photo
-          </Button>
-          <p className="text-xs sm:text-sm text-gray-500">
-            JPG, PNG or GIF (max. 5MB)
-          </p>
-        </div>
+        {!hasPhotoChanged && (
+          <div className="text-center sm:text-left">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <Button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              variant="outline"
+              className="mb-2"
+              size="sm"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Change Photo
+            </Button>
+            <p className="text-xs sm:text-sm text-gray-500">
+              JPG, PNG or GIF (max. 5MB)
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Basic Info */}
@@ -180,15 +185,24 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
           <Label htmlFor="role">Role</Label>
           <Input
             id="role"
+            name="role"
             type="text"
-            value={profile?.role || 'User'}
-            disabled
-            className="bg-gray-50"
+            value={formData.role}
+            onChange={handleInputChange}
+            placeholder="e.g., Hospital Administrator"
           />
-          <p className="text-xs text-gray-500">
-            Role is assigned by your administrator
-          </p>
         </div>
+      </div>
+
+      {/* Save Changes Button */}
+      <div className="flex justify-end pt-4">
+        <Button
+          onClick={handleSubmit}
+          disabled={isLoading}
+          className="w-full sm:w-auto"
+        >
+          {isLoading ? 'Saving...' : 'Save Changes'}
+        </Button>
       </div>
     </div>
   )
