@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth.context'
+import { AnimatedLogo } from '@/components'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -73,9 +74,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold font-heading flex items-center justify-center gap-2">
-            <img src="/images/nuclear-logo.png" alt="Nuclear logo" loading="eager" className="w-8 h-8" />
-            NUCLEAR
+          <CardTitle className="text-2xl font-bold font-heading flex items-center justify-center">
+            <AnimatedLogo size="sm" showIcon={true} />
           </CardTitle>
           <CardDescription>Nuclear Supply Chain Management</CardDescription>
         </CardHeader>

@@ -57,10 +57,15 @@ export function AnimatedLogo({ size = 'md', showIcon = true, className = '' }: A
           }}
         >
           <img
-            src="/images/nuclear-logo.png"
+            src="/images/nuclear-logo.svg"
             alt="Nuclear logo"
             loading="eager"
             className={`${iconSizeClasses[size]} object-contain`}
+            onError={(e) => {
+              // Fallback to PNG if SVG fails to load
+              const target = e.target as HTMLImageElement;
+              target.src = '/images/nuclear-logo.png';
+            }}
           />
         </span>
       )}

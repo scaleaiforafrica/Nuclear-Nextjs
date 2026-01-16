@@ -4,12 +4,12 @@ import { AnimatedLogo } from '../AnimatedLogo'
 
 describe('AnimatedLogo', () => {
   describe('with showIcon=true', () => {
-    it('should render an img element with nuclear-logo.png', () => {
+    it('should render an img element with nuclear-logo.svg', () => {
       render(<AnimatedLogo showIcon={true} />)
       
       const img = screen.getByRole('img')
       expect(img).toBeInTheDocument()
-      expect(img).toHaveAttribute('src', '/images/nuclear-logo.png')
+      expect(img).toHaveAttribute('src', '/images/nuclear-logo.svg')
       expect(img).toHaveAttribute('alt', 'Nuclear logo')
     })
 
