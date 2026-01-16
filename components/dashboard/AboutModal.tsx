@@ -1,6 +1,6 @@
 /**
  * AboutModal Component
- * Displays application and domain information
+ * Displays application information
  */
 
 'use client';
