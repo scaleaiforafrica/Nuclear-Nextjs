@@ -10,19 +10,15 @@
  * - SUPABASE_URL
  * - SUPABASE_SERVICE_ROLE_KEY (not anon key!)
  * 
- * NOTE: Demo account constants are defined in lib/demo/config.ts
- * Changes to demo credentials should be made there.
+ * NOTE: Demo account constants are defined in lib/demo/constants.js
+ * and lib/demo/config.ts. Keep them in sync when changing credentials.
  */
 
 const https = require('https');
+const { DEMO_ACCOUNT_EMAIL, DEMO_ACCOUNT_PASSWORD, DEMO_ACCOUNT_ID } = require('../lib/demo/constants');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-// Demo account details - keep in sync with lib/demo/config.ts
-const DEMO_ACCOUNT_EMAIL = 'demo@nuclearflow.com';
-const DEMO_ACCOUNT_PASSWORD = 'DemoNuclear2026!';
-const DEMO_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
 
 const DEMO_USER = {
   email: DEMO_ACCOUNT_EMAIL,

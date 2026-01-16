@@ -39,33 +39,42 @@
 --    Then replace the encrypted_password value below
 --
 -- The setup script is the recommended approach as it handles all edge cases.
-INSERT INTO auth.users (
-  id,
-  instance_id,
-  email,
-  encrypted_password,
-  email_confirmed_at,
-  created_at,
-  updated_at,
-  raw_app_meta_data,
-  raw_user_meta_data,
-  is_super_admin,
-  role,
-  aud
-) VALUES (
-  '00000000-0000-0000-0000-000000000001'::uuid,
-  '00000000-0000-0000-0000-000000000000'::uuid,
-  'demo@nuclearflow.com',
-  '$2a$10$2F7qZJXyDd5Z5h7qZJXyDd5Z5h7qZJXyDd5Z5h7qZJXyDd5Z5h7qZ', -- DemoNuclear2026!
-  NOW(),
-  NOW(),
-  NOW(),
-  '{"provider":"email","providers":["email"]}',
-  '{"full_name":"Demo User","role":"Hospital Administrator"}',
-  false,
-  'authenticated',
-  'authenticated'
-) ON CONFLICT (id) DO NOTHING;
+-- 
+-- ⚠️  IMPORTANT: The INSERT statement below is commented out because the password
+-- hash is a placeholder and will not work. YOU MUST use the setup script:
+-- 
+--     node scripts/setup-demo-account.js
+-- 
+-- This ensures proper password hashing and user creation via Supabase Admin API.
+-- Uncomment and use the INSERT only if you have a valid bcrypt hash.
+
+-- INSERT INTO auth.users (
+--   id,
+--   instance_id,
+--   email,
+--   encrypted_password,
+--   email_confirmed_at,
+--   created_at,
+--   updated_at,
+--   raw_app_meta_data,
+--   raw_user_meta_data,
+--   is_super_admin,
+--   role,
+--   aud
+-- ) VALUES (
+--   '00000000-0000-0000-0000-000000000001'::uuid,
+--   '00000000-0000-0000-0000-000000000000'::uuid,
+--   'demo@nuclearflow.com',
+--   '$2a$10$REPLACE_WITH_VALID_BCRYPT_HASH', -- Generate with: SELECT crypt('DemoNuclear2026!', gen_salt('bf', 10));
+--   NOW(),
+--   NOW(),
+--   NOW(),
+--   '{"provider":"email","providers":["email"]}',
+--   '{"full_name":"Demo User","role":"Hospital Administrator"}',
+--   false,
+--   'authenticated',
+--   'authenticated'
+-- ) ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================================
 -- TABLE MODIFICATIONS

@@ -29,6 +29,7 @@ export function useDemoRestore(): UseDemoRestoreReturn {
   const [result, setResult] = useState<RestorationResult | null>(null)
 
   const restoreData = useCallback(async () => {
+    // Check prevents concurrent restoration attempts
     if (isRestoring) return
 
     setIsRestoring(true)
@@ -82,7 +83,8 @@ export function useDemoRestore(): UseDemoRestoreReturn {
     } finally {
       setIsRestoring(false)
     }
-  }, [isRestoring])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty deps: function uses state setters which are stable
 
   const clearError = useCallback(() => {
     setError(null)

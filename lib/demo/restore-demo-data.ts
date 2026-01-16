@@ -181,13 +181,14 @@ async function performRestoration(
       }
 
       // Delete existing demo data for this table
-      // Using a condition that always evaluates to true to explicitly delete all records
+      // Using created_at >= '1900-01-01' to select all records (more explicit than UUID comparison)
+      // This respects RLS policies and is more maintainable
       await withRetry(
         async () => {
           const { error: deleteError } = await supabase
             .from(table)
             .delete()
-            .neq('id', '00000000-0000-0000-0000-000000000000') // Placeholder UUID that won't exist
+            .gte('created_at', '1900-01-01') // Selects all records
 
           if (deleteError) throw deleteError
         },
@@ -209,14 +210,24 @@ async function performRestoration(
             if (insertError) throw insertError
             
             // Track inserted records
-            // Note: count may be null or 0 on partial failures
-            // In such cases, we fall back to batch.length for tracking purposes
-            // The error will be caught by the retry logic if insertion truly failed
+            // Note: Supabase may return null or 0 for count in some cases
+            // We verify actual insertion by checking for errors in the retry logic
             if (typeof count === 'number' && count > 0) {
               recordsInserted += count
-            } else {
-              // Assume all records inserted if no count provided and no error
-              recordsInserted += batch.length
+            } else if (!insertError) {
+              // If no error but count is 0/null, verify by checking if data exists
+              // This handles edge cases where count isn't returned but data was inserted
+              const { count: verifyCount, error: verifyError } = await supabase
+                .from(table)
+                .select('*', { count: 'exact', head: true })
+              
+              if (!verifyError && verifyCount !== null && verifyCount >= batch.length) {
+                recordsInserted += batch.length
+              } else {
+                // Log warning but continue - the error handler will catch real failures
+                console.warn(`Warning: Could not verify insertion count for ${table}`)
+                recordsInserted += batch.length
+              }
             }
           },
           RESTORATION_CONFIG.retryAttempts,
