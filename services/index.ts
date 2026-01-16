@@ -42,3 +42,18 @@ export {
   type StorageKey,
   type StorageError,
 } from './storage.service'
+
+// Compliance Document Service
+export {
+  uploadDocument,
+  fetchDocuments,
+  fetchDocumentById,
+  updateDocument,
+  deleteDocument,
+  generatePreviewUrl,
+  downloadDocument,
+  fetchDocumentAudit,
+  fetchDocumentsForShipment,
+  checkShipmentDocumentCompliance,
+  validateFile,
+} from './compliance-document.service'
