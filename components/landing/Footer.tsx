@@ -10,30 +10,46 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-secondary text-white pt-20 pb-10">
-      <div className="container mx-auto px-6">
+    <footer className="bg-primary text-white pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10">
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Main Footer Content */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-12 mb-16">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-6 gap-8 sm:gap-10 lg:gap-12 mb-10 sm:mb-12 lg:mb-16">
           {/* Brand Column */}
-          <div className="lg:col-span-2">
-            <div className="mb-4">
+          <div className="col-span-2 sm:col-span-2 lg:col-span-2">
+            <div className="mb-3 sm:mb-4">
               <AnimatedLogo size="md" showIcon={true} className="text-white" />
             </div>
-            <p className="mb-6 text-white/70">
+            <p className="mb-4 sm:mb-6 text-white/70 text-sm sm:text-base max-w-xs">
               Enterprise platform for nuclear medicine supply chain management.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 bg-primary/20 rounded-md flex items-center justify-center hover:bg-primary transition-colors">
-                <Twitter className="w-5 h-5" />
+            <div className="flex gap-3 sm:gap-4">
+              <a 
+                href="#" 
+                className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                aria-label="Twitter"
+              >
+                <Twitter className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-primary/20 rounded-md flex items-center justify-center hover:bg-primary transition-colors">
-                <Linkedin className="w-5 h-5" />
+              <a 
+                href="#" 
+                className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-primary/20 rounded-md flex items-center justify-center hover:bg-primary transition-colors">
-                <Github className="w-5 h-5" />
+              <a 
+                href="#" 
+                className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                aria-label="GitHub"
+              >
+                <Github className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-primary/20 rounded-md flex items-center justify-center hover:bg-primary transition-colors">
-                <Mail className="w-5 h-5" />
+              <a 
+                href="#" 
+                className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                aria-label="Email"
+              >
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
             </div>
           </div>
@@ -41,11 +57,14 @@ export function Footer() {
           {/* Links Columns */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="text-white mb-4">{category}</h4>
-              <ul className="space-y-3">
+              <h4 className="text-white mb-3 sm:mb-4 text-sm sm:text-base font-medium">{category}</h4>
+              <ul className="space-y-2 sm:space-y-3">
                 {links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="hover:text-white transition-colors">
+                    <a 
+                      href="#" 
+                      className="hover:text-accent transition-colors text-white/70 text-xs sm:text-sm py-1 inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
+                    >
                       {link}
                     </a>
                   </li>
@@ -56,14 +75,14 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-500">
-            © 2026 ⚛ NUCLEAR. All rights reserved.
+        <div className="pt-6 sm:pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+          <p className="text-xs sm:text-sm text-white/50 text-center sm:text-left">
+            © {new Date().getFullYear()} ⚛ NUCLEAR. All rights reserved.
           </p>
-          <div className="flex gap-6 text-sm">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Cookies</a>
+          <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm">
+            <a href="#" className="hover:text-accent transition-colors text-white/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">Privacy</a>
+            <a href="#" className="hover:text-accent transition-colors text-white/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">Terms</a>
+            <a href="#" className="hover:text-accent transition-colors text-white/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded">Cookies</a>
           </div>
         </div>
       </div>

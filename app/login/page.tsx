@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DEMO_ACCOUNT_EMAIL, DEMO_CONFIG } from '@/lib/demo/config'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -69,13 +70,60 @@ export default function LoginPage() {
     setIsLoading(false)
   }
 
+  const handleTryDemo = async () => {
+    setError('')
+    setMessage('')
+    setIsLoading(true)
+    
+    const result = await login(DEMO_ACCOUNT_EMAIL, DEMO_CONFIG.account.password)
+    
+    if (result.success) {
+      router.push('/dashboard')
+    } else {
+      setError('Demo account unavailable. Please try again later.')
+    }
+    setIsLoading(false)
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">⚛ NUCLEAR</CardTitle>
+          <CardTitle className="text-2xl font-bold font-heading flex items-center justify-center gap-2">
+            <img src="/images/nuclear-logo.png" alt="Nuclear logo" loading="eager" className="w-8 h-8" />
+            NUCLEAR
+          </CardTitle>
           <CardDescription>Nuclear Supply Chain Management</CardDescription>
         </CardHeader>
+        
+        {/* Demo Mode Button */}
+        <div className="px-4 pb-4">
+          <Button
+            variant="outline"
+            className="w-full border-yellow-300 bg-yellow-50 hover:bg-yellow-100 text-yellow-800"
+            onClick={handleTryDemo}
+            disabled={isLoading}
+          >
+            <span className="mr-2">🚀</span>
+            Try Demo Account
+          </Button>
+          <p className="text-xs text-center text-muted-foreground mt-2">
+            Explore with sample data from African healthcare facilities
+          </p>
+        </div>
+
+        <div className="px-4 pb-4">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+        </div>
         
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mx-4" style={{ width: 'calc(100% - 2rem)' }}>
@@ -107,8 +155,8 @@ export default function LoginPage() {
                     required
                   />
                 </div>
-                {error && <p className="text-sm text-red-600">{error}</p>}
-                {message && <p className="text-sm text-green-600">{message}</p>}
+                {error && <p className="text-sm text-destructive">{error}</p>}
+                {message && <p className="text-sm text-secondary">{message}</p>}
               </CardContent>
               <CardFooter className="flex flex-col gap-2">
                 <Button type="submit" className="w-full" disabled={isLoading}>
@@ -153,8 +201,8 @@ export default function LoginPage() {
                     minLength={6}
                   />
                 </div>
-                {error && <p className="text-sm text-red-600">{error}</p>}
-                {message && <p className="text-sm text-green-600">{message}</p>}
+                {error && <p className="text-sm text-destructive">{error}</p>}
+                {message && <p className="text-sm text-secondary">{message}</p>}
               </CardContent>
               <CardFooter>
                 <Button type="submit" className="w-full" disabled={isLoading}>

@@ -37,107 +37,333 @@ To enable automated migrations, configure these secrets in your GitHub repositor
 
 ## Settings Page Migration
 
-This migration adds all required fields for the comprehensive settings page.
+## 🚀 Automatic Deployment
 
-### Migration File
-`migrations/add_settings_fields.sql`
+**Migrations are automatically deployed to production when merged to `main`!**
 
-### What This Migration Does
+A GitHub Actions workflow automatically:
+- Detects changes to migration files
+- Applies them to your Supabase database
+- Verifies the schema
+- Reports success/failure
 
-1. **Extends `profiles` table** with new columns:
-   - Basic profile: `phone`, `job_title`, `department`, `avatar_url`
-   - App preferences: `timezone`, `date_format`, `theme`
-   - Account settings: `two_factor_enabled`
-   - Notification preferences: `email_notifications`, `push_notifications`, `in_app_notifications`, `shipment_alerts`, `compliance_reminders`, `daily_digest`, `weekly_digest`
+**See [MIGRATION_MANAGEMENT.md](../MIGRATION_MANAGEMENT.md) for complete details on:**
+- Creating new migrations
+- Testing locally
+- Rollback procedures
+- Troubleshooting
 
-2. **Creates `login_history` table** to track:
-   - Login timestamps
-   - IP addresses
-   - User agents
-   - Device information
-   - Location data
+**Required Setup:**
+Configure these GitHub secrets (one-time setup):
+- `SUPABASE_ACCESS_TOKEN` - Your Supabase CLI token
+- `SUPABASE_PROJECT_ID` - Your project reference ID
+- `SUPABASE_DB_PASSWORD` - Database password
 
-3. **Creates `user_sessions` table** to manage:
-   - Active user sessions
-   - Session tokens
-   - Device and browser info
-   - Last active timestamps
+---
 
-4. **Sets up Row Level Security (RLS)** policies:
-   - Users can only view their own login history
-   - Users can only view and delete their own sessions
+## Available Migrations
 
-### How to Run This Migration
+### 1. Initial Schema (`001_initial_schema.sql`)
+**Primary migration for Vercel/Supabase deployment**
 
-#### Using Supabase CLI
+This comprehensive migration creates the complete database schema including:
+- 8 core tables (profiles, shipments, compliance_alerts, permits, activities, deliveries, login_history, user_sessions)
+- Row Level Security (RLS) policies for all tables
+- Database functions and triggers
+- Performance indexes
+- Optional seed data (commented out by default)
+
+### 2. Settings Fields Migration (`add_settings_fields.sql`)
+**Legacy migration - fields now included in 001_initial_schema.sql**
+
+This migration adds settings-related fields to the profiles table and creates login_history and user_sessions tables. Since these are now part of the initial schema, this file is kept only for reference.
+
+---
+
+## Manual Deployment (if needed)
+
+### Option 1: Vercel + Supabase Integration (Recommended)
+
+This is the recommended approach for production deployments.
+
+#### Step 1: Set Up Supabase Project
+1. Go to [Supabase Dashboard](https://app.supabase.com)
+2. Create a new project or select existing project
+3. Wait for project to be fully provisioned
+
+#### Step 2: Run the Migration in Supabase
+Choose one of these methods:
+
+**Method A: Supabase SQL Editor (Easiest)**
+1. In Supabase Dashboard, go to **SQL Editor**
+2. Click **New Query**
+3. Copy the contents of `migrations/001_initial_schema.sql`
+4. Paste into the SQL Editor
+5. Click **Run** to execute the migration
+6. Verify success in the output panel
+
+**Method B: Supabase CLI**
 ```bash
+# Install Supabase CLI if not already installed
+bun install -g supabase
+
+# Login to Supabase
+supabase login
+
+# Link your project (follow prompts)
+supabase link --project-ref your-project-ref
+
+# Apply migration
 supabase db push
+
+# Or run the migration file directly
+psql \
+  --host=db.your-project-ref.supabase.co \
+  --port=5432 \
+  --username=postgres \
+  --dbname=postgres \
+  --file=migrations/001_initial_schema.sql
 ```
 
-#### Using Supabase Dashboard
-1. Go to your Supabase project dashboard
-2. Navigate to SQL Editor
-3. Copy the contents of `migrations/add_settings_fields.sql`
-4. Paste and run the SQL
+#### Step 3: Connect Vercel to Supabase
+1. Go to your [Vercel Dashboard](https://vercel.com/dashboard)
+2. Select your project
+3. Go to **Settings** → **Integrations**
+4. Search for and add **Supabase**
+5. Follow the integration setup wizard
+6. Select your Supabase project
+7. The integration will automatically add these environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-#### Using Direct SQL Connection
+#### Step 4: Deploy to Vercel
 ```bash
-psql -h your-supabase-host -U postgres -d postgres -f migrations/add_settings_fields.sql
+# Deploy using Vercel CLI
+vercel --prod
+
+# Or push to your main branch (if auto-deploy is enabled)
+git push origin main
 ```
 
-### Important Notes
+### Option 2: Vercel Postgres (Alternative)
 
-- This migration uses `IF NOT EXISTS` clauses, so it's safe to run multiple times
-- All new columns have default values, so existing profiles won't break
-- RLS policies are automatically enabled for security
-- Indexes are created for performance on user_id lookups
+If you prefer to use Vercel's native Postgres offering:
 
-### Testing the Migration
+#### Step 1: Create Vercel Postgres Database
+1. Go to your project in Vercel Dashboard
+2. Go to **Storage** tab
+3. Click **Create Database**
+4. Select **Postgres**
+5. Follow the setup wizard
 
-After running the migration, verify:
+#### Step 2: Connect to Database
+```bash
+# Install Vercel CLI if not already installed
+bun install -g vercel
 
+# Pull environment variables
+vercel env pull .env.local
+
+# Install PostgreSQL client (if not already installed)
+# For macOS: brew install postgresql
+# For Ubuntu: sudo apt-get install postgresql-client
+
+# Connect to Vercel Postgres
+psql "$(grep POSTGRES_URL .env.local | cut -d '=' -f2-)"
+```
+
+#### Step 3: Run Migration
+```bash
+# Option A: Run from file
+psql "$(grep POSTGRES_URL .env.local | cut -d '=' -f2-)" -f migrations/001_initial_schema.sql
+
+# Option B: Copy and paste in psql interactive mode
+psql "$(grep POSTGRES_URL .env.local | cut -d '=' -f2-)"
+# Then copy-paste the contents of 001_initial_schema.sql
+```
+
+**Note:** Vercel Postgres doesn't have `auth.users` table by default. You'll need to:
+
+1. **Remove auth.users references** in the migration file:
+   - Lines 6, 104, 111, 120: Remove `REFERENCES auth.users(id)` from foreign keys
+   - Lines 202-214: Remove or modify the `handle_new_user()` function
+   - Lines 221-224: Remove the trigger `on_auth_user_created`
+   
+2. **Implement your own authentication**:
+   - Create a `users` table in public schema
+   - Update profile creation logic
+   - Implement your own auth system
+   
+3. **Or use Supabase for auth** and Vercel Postgres for data (requires custom setup)
+
+### Option 3: Local Development with Supabase
+
+For local development and testing:
+
+```bash
+# Install Supabase CLI
+bun install -g supabase
+
+# Initialize Supabase in your project
+supabase init
+
+# Start local Supabase
+supabase start
+
+# Apply migration
+supabase db push
+
+# Or manually run the migration
+psql -h localhost -p 54322 -U postgres -d postgres -f migrations/001_initial_schema.sql
+
+# Get local credentials
+supabase status
+# Use the provided API URL and anon key in your .env.local
+```
+
+---
+
+## Verification Steps
+
+After running the migration, verify it was successful:
+
+### Check Tables
 ```sql
--- Check new columns were added
-SELECT column_name, data_type, column_default 
-FROM information_schema.columns 
-WHERE table_name = 'profiles' 
-AND column_name IN ('phone', 'timezone', 'theme', 'two_factor_enabled');
-
--- Check new tables were created
-SELECT tablename FROM pg_tables 
+SELECT tablename 
+FROM pg_tables 
 WHERE schemaname = 'public' 
-AND tablename IN ('login_history', 'user_sessions');
-
--- Check RLS policies
-SELECT tablename, policyname 
-FROM pg_policies 
-WHERE schemaname = 'public';
+ORDER BY tablename;
 ```
 
-### Rollback (if needed)
+Expected tables:
+- activities
+- compliance_alerts
+- deliveries
+- login_history
+- permits
+- profiles
+- shipments
+- user_sessions
 
-If you need to rollback this migration:
+### Check RLS Policies
+```sql
+SELECT schemaname, tablename, policyname, cmd 
+FROM pg_policies 
+WHERE schemaname = 'public'
+ORDER BY tablename, policyname;
+```
+
+### Check Indexes
+```sql
+SELECT schemaname, tablename, indexname 
+FROM pg_indexes 
+WHERE schemaname = 'public'
+ORDER BY tablename, indexname;
+```
+
+### Check Functions and Triggers
+```sql
+-- Check functions
+SELECT proname, prosrc 
+FROM pg_proc 
+WHERE pronamespace = 'public'::regnamespace;
+
+-- Check triggers
+SELECT tgname, tgrelid::regclass, tgtype 
+FROM pg_trigger 
+WHERE tgrelid IN (
+  SELECT oid 
+  FROM pg_class 
+  WHERE relnamespace = 'public'::regnamespace
+);
+```
+
+---
+
+## Seed Data (Optional)
+
+The migration file includes commented seed data. To populate your database with sample data:
+
+1. Open `migrations/001_initial_schema.sql`
+2. Locate the "SEED DATA" section (near the end)
+3. Uncomment the INSERT statements
+4. Run the migration again (or just run the seed section)
+
+Alternatively, use the standalone seed file:
+```bash
+psql <connection-string> -f seed.sql
+```
+
+---
+
+## Environment Variables
+
+Ensure these variables are set in your Vercel project:
+
+### Required for Supabase
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### For Vercel Postgres (Alternative)
+```bash
+POSTGRES_URL=postgres://...
+POSTGRES_PRISMA_URL=postgres://...
+POSTGRES_URL_NON_POOLING=postgres://...
+```
+
+---
+
+## Troubleshooting
+
+### "relation auth.users does not exist"
+- You're using Vercel Postgres without Supabase Auth
+- Solution: Use Supabase (recommended) or modify migration to remove auth dependencies
+
+### "permission denied for schema public"
+- Insufficient database permissions
+- Solution: Ensure you're connecting as a superuser or database owner
+
+### "extension uuid-ossp does not exist"
+- Extension not enabled
+- Solution: Run as superuser or enable extensions in dashboard
+
+### RLS Policies Not Working
+- Check if RLS is enabled: `SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';`
+- Ensure you're authenticated when querying (RLS policies check `auth.uid()`)
+
+### Connection Issues from Vercel
+- Verify environment variables are set in Vercel project settings
+- Check if database allows connections from Vercel IPs
+- For Supabase: Ensure "Pooler" connection string is used for serverless functions
+
+---
+
+## Rollback (If Needed)
+
+To rollback this migration:
 
 ```sql
--- Drop new tables
-DROP TABLE IF EXISTS public.user_sessions;
-DROP TABLE IF EXISTS public.login_history;
+-- Drop all tables (will cascade to related objects)
+DROP TABLE IF EXISTS public.user_sessions CASCADE;
+DROP TABLE IF EXISTS public.login_history CASCADE;
+DROP TABLE IF EXISTS public.deliveries CASCADE;
+DROP TABLE IF EXISTS public.activities CASCADE;
+DROP TABLE IF EXISTS public.permits CASCADE;
+DROP TABLE IF EXISTS public.compliance_alerts CASCADE;
+DROP TABLE IF EXISTS public.shipments CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
 
--- Remove new columns (optional, only if you want to completely revert)
-ALTER TABLE public.profiles 
-DROP COLUMN IF EXISTS phone,
-DROP COLUMN IF EXISTS job_title,
-DROP COLUMN IF EXISTS department,
-DROP COLUMN IF EXISTS avatar_url,
-DROP COLUMN IF EXISTS timezone,
-DROP COLUMN IF EXISTS date_format,
-DROP COLUMN IF EXISTS theme,
-DROP COLUMN IF EXISTS two_factor_enabled,
-DROP COLUMN IF EXISTS email_notifications,
-DROP COLUMN IF EXISTS push_notifications,
-DROP COLUMN IF EXISTS in_app_notifications,
-DROP COLUMN IF EXISTS shipment_alerts,
-DROP COLUMN IF EXISTS compliance_reminders,
-DROP COLUMN IF EXISTS daily_digest,
-DROP COLUMN IF EXISTS weekly_digest;
+-- Drop function
+DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 ```
+
+---
+
+## Additional Resources
+
+- [Supabase Documentation](https://supabase.com/docs)
+- [Vercel Postgres Documentation](https://vercel.com/docs/storage/vercel-postgres)
+- [Vercel + Supabase Integration](https://vercel.com/integrations/supabase)
+- [Next.js + Supabase Guide](https://supabase.com/docs/guides/getting-started/quickstarts/nextjs)

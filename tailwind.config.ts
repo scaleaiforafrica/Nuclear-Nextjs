@@ -11,6 +11,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: [
+          '"Inter"',
           'system-ui',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -26,7 +27,7 @@ const config: Config = {
           '"Noto Color Emoji"',
         ],
         heading: [
-          '"Erotique Regular"',
+          '"Playfair Display"',
           'Georgia',
           '"Times New Roman"',
           'serif',
