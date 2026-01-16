@@ -43,17 +43,8 @@ export {
   type StorageError,
 } from './storage.service'
 
-// Compliance Document Service
-export {
-  uploadDocument,
-  fetchDocuments,
-  fetchDocumentById,
-  updateDocument,
-  deleteDocument,
-  generatePreviewUrl,
-  downloadDocument,
-  fetchDocumentAudit,
-  fetchDocumentsForShipment,
-  checkShipmentDocumentCompliance,
-  validateFile,
-} from './compliance-document.service'
+// Blockchain Services
+export type { BlockchainService } from './blockchain'
+export { hashService, HashService } from './blockchain/hash.service'
+export { hyperledgerService, HyperledgerService } from './blockchain/hyperledger.service'
+export { eventRecorderService, EventRecorderService } from './blockchain/event-recorder.service'
