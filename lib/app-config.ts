@@ -18,7 +18,7 @@ export const APP_CONFIG: AppConfig = {
   version: '1.0.0',
   domain: 'nuclear-nextjs.vercel.app', // Update after domain purchase
   description: 'Secure medical isotope procurement and logistics platform',
-  supportEmail: 'support@example.com',
+  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@nuclear-supply.example',
   documentationUrl: '/docs',
   lastUpdated: '2026-01-16',
 };

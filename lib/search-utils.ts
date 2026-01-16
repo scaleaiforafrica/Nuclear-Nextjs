@@ -109,11 +109,11 @@ export function searchItems<T extends SearchableItem>(
 
 /**
  * Highlight search query matches in text
- * Returns text with <mark> tags around matches
+ * Returns an object with parts for safe rendering
  */
-export function highlightMatch(text: string, query: string): string {
+export function highlightMatch(text: string, query: string): { text: string; highlighted: boolean }[] {
   if (!query.trim()) {
-    return text;
+    return [{ text, highlighted: false }];
   }
 
   const normalizedQuery = normalizeString(query);
@@ -121,14 +121,19 @@ export function highlightMatch(text: string, query: string): string {
   const index = normalizedText.indexOf(normalizedQuery);
 
   if (index === -1) {
-    return text;
+    return [{ text, highlighted: false }];
   }
 
-  const start = text.substring(0, index);
+  const before = text.substring(0, index);
   const match = text.substring(index, index + query.length);
-  const end = text.substring(index + query.length);
+  const after = text.substring(index + query.length);
 
-  return `${start}<mark class="bg-yellow-200">${match}</mark>${end}`;
+  const parts: { text: string; highlighted: boolean }[] = [];
+  if (before) parts.push({ text: before, highlighted: false });
+  if (match) parts.push({ text: match, highlighted: true });
+  if (after) parts.push({ text: after, highlighted: false });
+
+  return parts;
 }
 
 /**

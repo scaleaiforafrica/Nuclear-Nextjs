@@ -62,18 +62,19 @@ describe('search-utils', () => {
 
   describe('highlightMatch', () => {
     it('returns original text when query is empty', () => {
-      expect(highlightMatch('test string', '')).toBe('test string');
+      const result = highlightMatch('test string', '');
+      expect(result).toEqual([{ text: 'test string', highlighted: false }]);
     });
 
-    it('wraps matched text in mark tag', () => {
+    it('returns parts with highlighted match', () => {
       const result = highlightMatch('test string', 'test');
-      expect(result).toContain('<mark');
-      expect(result).toContain('test');
-      expect(result).toContain('</mark>');
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.some(part => part.highlighted)).toBe(true);
     });
 
     it('returns original text when no match', () => {
-      expect(highlightMatch('test string', 'xyz')).toBe('test string');
+      const result = highlightMatch('test string', 'xyz');
+      expect(result).toEqual([{ text: 'test string', highlighted: false }]);
     });
   });
 

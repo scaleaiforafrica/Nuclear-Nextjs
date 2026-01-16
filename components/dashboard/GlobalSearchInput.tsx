@@ -63,7 +63,7 @@ export function GlobalSearchInput({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
-          className={`w-full pl-10 pr-${value || isLoading ? '20' : '4'} py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent min-h-[44px] transition-all`}
+          className={`w-full pl-10 ${value || isLoading ? 'pr-20' : 'pr-4'} py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent min-h-[44px] transition-all`}
           aria-label="Search dashboard"
           aria-describedby={resultCount !== undefined ? 'search-result-count' : undefined}
         />
