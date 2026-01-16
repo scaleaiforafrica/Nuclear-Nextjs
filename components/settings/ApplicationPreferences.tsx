@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useEffect } from 'react'
 import { Monitor, Sun, Moon, Globe, Calendar } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -45,6 +46,7 @@ export function ApplicationPreferences({
   onUpdate,
   isLoading,
 }: ApplicationPreferencesProps) {
+  const { theme, setTheme } = useTheme()
   const [preferences, setPreferences] = useState({
     theme: profile?.theme || 'system',
     timezone: profile?.timezone || 'UTC',
@@ -54,9 +56,18 @@ export function ApplicationPreferences({
     in_app_notifications: profile?.in_app_notifications ?? true,
   })
 
-  const handleThemeChange = (theme: string) => {
-    const updated = { ...preferences, theme: theme as 'light' | 'dark' | 'system' }
+  // Sync with next-themes on mount
+  useEffect(() => {
+    if (profile?.theme && theme !== profile.theme) {
+      setTheme(profile.theme)
+    }
+  }, [profile?.theme, theme, setTheme])
+
+  const handleThemeChange = (newTheme: string) => {
+    const themeValue = newTheme as 'light' | 'dark' | 'system'
+    const updated = { ...preferences, theme: themeValue }
     setPreferences(updated)
+    setTheme(themeValue) // Apply theme immediately
     onUpdate(updated)
   }
 
@@ -84,7 +95,7 @@ export function ApplicationPreferences({
         <h3 className="text-lg sm:text-xl font-semibold mb-2">
           Application Preferences
         </h3>
-        <p className="text-sm sm:text-base text-gray-600">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
           Customize your application experience
         </p>
       </div>
@@ -98,36 +109,36 @@ export function ApplicationPreferences({
               onClick={() => handleThemeChange('light')}
               disabled={isLoading}
               className={`p-4 rounded-lg border-2 transition-all ${
-                preferences.theme === 'light'
-                  ? 'border-purple-600 bg-purple-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                theme === 'light'
+                  ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
-              <Sun className="w-6 h-6 mx-auto mb-2 text-gray-700" />
+              <Sun className="w-6 h-6 mx-auto mb-2 text-gray-700 dark:text-gray-300" />
               <div className="text-sm font-medium">Light</div>
             </button>
             <button
               onClick={() => handleThemeChange('dark')}
               disabled={isLoading}
               className={`p-4 rounded-lg border-2 transition-all ${
-                preferences.theme === 'dark'
-                  ? 'border-purple-600 bg-purple-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                theme === 'dark'
+                  ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
-              <Moon className="w-6 h-6 mx-auto mb-2 text-gray-700" />
+              <Moon className="w-6 h-6 mx-auto mb-2 text-gray-700 dark:text-gray-300" />
               <div className="text-sm font-medium">Dark</div>
             </button>
             <button
               onClick={() => handleThemeChange('system')}
               disabled={isLoading}
               className={`p-4 rounded-lg border-2 transition-all ${
-                preferences.theme === 'system'
-                  ? 'border-purple-600 bg-purple-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                theme === 'system'
+                  ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
-              <Monitor className="w-6 h-6 mx-auto mb-2 text-gray-700" />
+              <Monitor className="w-6 h-6 mx-auto mb-2 text-gray-700 dark:text-gray-300" />
               <div className="text-sm font-medium">System</div>
             </button>
           </div>
@@ -189,7 +200,7 @@ export function ApplicationPreferences({
         <div className="flex items-center justify-between py-3">
           <div>
             <div className="font-medium text-sm">Email Notifications</div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-gray-600 dark:text-gray-400">
               Receive notifications via email
             </div>
           </div>
@@ -203,7 +214,7 @@ export function ApplicationPreferences({
         <div className="flex items-center justify-between py-3">
           <div>
             <div className="font-medium text-sm">Push Notifications</div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-gray-600 dark:text-gray-400">
               Receive push notifications on your device
             </div>
           </div>
@@ -217,7 +228,7 @@ export function ApplicationPreferences({
         <div className="flex items-center justify-between py-3">
           <div>
             <div className="font-medium text-sm">In-App Notifications</div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-gray-600 dark:text-gray-400">
               Show notifications within the application
             </div>
           </div>
