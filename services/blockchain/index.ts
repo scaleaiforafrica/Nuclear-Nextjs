@@ -50,3 +50,9 @@ export interface BlockchainService {
    */
   getChainStats(): Promise<ChainStatistics>;
 }
+
+// Export service implementations
+export { hyperledgerService } from './hyperledger.service';
+export { hashService } from './hash.service';
+export { eventRecorderService } from './event-recorder.service';
+
