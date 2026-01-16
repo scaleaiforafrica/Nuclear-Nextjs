@@ -1,0 +1,110 @@
+/**
+ * Renova Brand Fonts
+ * Font imports and configurations for Playfair Display (headings) and Roboto (body)
+ */
+
+/* === Self-Hosted Font Templates === */
+/* Uncomment and populate these @font-face blocks if self-hosting fonts.
+ * Place font files in /public/fonts/ directory.
+ * 
+ * Example structure:
+ * /public/fonts/playfair-display/
+ * /public/fonts/roboto/
+ */
+
+/*
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/playfair-display/playfair-display-regular.woff2') format('woff2'),
+       url('/fonts/playfair-display/playfair-display-regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/playfair-display/playfair-display-medium.woff2') format('woff2'),
+       url('/fonts/playfair-display/playfair-display-medium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/playfair-display/playfair-display-semibold.woff2') format('woff2'),
+       url('/fonts/playfair-display/playfair-display-semibold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/playfair-display/playfair-display-bold.woff2') format('woff2'),
+       url('/fonts/playfair-display/playfair-display-bold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/roboto/roboto-light.woff2') format('woff2'),
+       url('/fonts/roboto/roboto-light.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/roboto/roboto-regular.woff2') format('woff2'),
+       url('/fonts/roboto/roboto-regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/roboto/roboto-medium.woff2') format('woff2'),
+       url('/fonts/roboto/roboto-medium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/roboto/roboto-bold.woff2') format('woff2'),
+       url('/fonts/roboto/roboto-bold.woff') format('woff');
+}
+*/
+
+/* === Font Family Application === */
+/* Apply fonts using CSS variables from theme.css */
+
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6,
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* === Google Fonts Fallback === */
+/* 
+ * When using Google Fonts (as fallback or primary source):
+ * - Add preconnect links in app/layout.tsx
+ * - Import fonts in layout.tsx <head> section:
+ * 
+ * <link rel="preconnect" href="https://fonts.googleapis.com" />
+ * <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+ * <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+ */

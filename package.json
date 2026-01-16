@@ -11,7 +11,10 @@
     "type-check": "tsc --noEmit",
     "test": "vitest --run",
     "test:watch": "vitest",
-    "test:properties": "vitest --run __tests__/properties"
+    "test:properties": "vitest --run __tests__/properties",
+    "test:visual": "playwright test tests/visual",
+    "test:visual:ui": "playwright test tests/visual --ui",
+    "test:visual:debug": "playwright test tests/visual --debug"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.3",
@@ -67,6 +70,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
+    "@playwright/test": "^1.48.2",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
