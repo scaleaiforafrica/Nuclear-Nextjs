@@ -2,7 +2,7 @@
 
 import { Eye, Download, Trash2, FileText } from 'lucide-react';
 import type { ComplianceDocument } from '@/models/compliance-document.model';
-import { getStatusColor, formatFileSize } from '@/models/compliance-document.model';
+import { getDocumentStatusColor, formatFileSize } from '@/models/compliance-document.model';
 
 interface DocumentCardProps {
   document: ComplianceDocument;
@@ -17,7 +17,7 @@ export function DocumentCard({
   onDownload,
   onDelete,
 }: DocumentCardProps) {
-  const statusColor = getStatusColor(document.status);
+  const statusColor = getDocumentStatusColor(document.status);
 
   return (
     <div className={`${statusColor.bg} border ${statusColor.border} rounded-xl p-4`}>

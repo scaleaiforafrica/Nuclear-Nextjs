@@ -15,7 +15,7 @@ import {
   downloadDocument 
 } from '@/services/compliance-document.service';
 import type { ComplianceDocument, DocumentType } from '@/models/compliance-document.model';
-import { getStatusColor } from '@/models/compliance-document.model';
+import { getDocumentStatusColor } from '@/models/compliance-document.model';
 
 export default function CompliancePage() {
   const [selectedShipment, setSelectedShipment] = useState('SH-2851');
@@ -278,7 +278,7 @@ export default function CompliancePage() {
               
               if (uploadedDoc) {
                 // Use the actual uploaded document status with dynamic colors
-                const statusColors = getStatusColor(uploadedDoc.status);
+                const statusColors = getDocumentStatusColor(uploadedDoc.status);
                 displayStatus = uploadedDoc.status;
                 displayStatusBg = statusColors.bg;
                 displayStatusColor = statusColors.text;
