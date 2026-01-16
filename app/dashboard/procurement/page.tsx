@@ -4,7 +4,7 @@ import { Plus, Filter, Eye, Edit, X, ChevronDown, Search, Loader2, AlertCircle, 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/components/responsive';
-import { RouteDisplay } from '@/components/procurement';
+import { RouteDisplay, ProcurementShipmentLink } from '@/components/procurement';
 import { toast } from 'sonner';
 import type { ProcurementRequest, ProcurementQuote, Supplier, ProcurementStatus, ActivityUnit, DeliveryTimeWindow } from '@/models/procurement.model';
 import { getStatusColor, canViewQuotes, canEditRequest, canCancelRequest, formatShippingRoute } from '@/models/procurement.model';
@@ -928,6 +928,7 @@ export default function ProcurementPage() {
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Route</th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Status</th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Quotes</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Shipment</th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
@@ -969,6 +970,13 @@ export default function ProcurementPage() {
                           ) : (
                             <span className="text-gray-400">-</span>
                           )}
+                        </td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                          <ProcurementShipmentLink
+                            procurementRequestId={request.id}
+                            procurementStatus={request.status}
+                            onShipmentCreated={fetchRequests}
+                          />
                         </td>
                         <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
                           <div className="flex items-center gap-2">
@@ -1067,6 +1075,16 @@ export default function ProcurementPage() {
                         } 
                       />
                     )}
+                    <MobileTableCardRow 
+                      label="Shipment" 
+                      value={
+                        <ProcurementShipmentLink
+                          procurementRequestId={request.id}
+                          procurementStatus={request.status}
+                          onShipmentCreated={fetchRequests}
+                        />
+                      } 
+                    />
                     <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
                       {canView && (
                         <button 
