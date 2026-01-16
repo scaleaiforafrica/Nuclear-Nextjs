@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: 'Validation failed',
           message: 'Invalid input data',
-          validationErrors: error.errors.map(e => e.message)
+          validationErrors: error.issues.map((issue) => issue.message)
         } as PasswordChangeResponse, 
         { status: 400 }
       )
