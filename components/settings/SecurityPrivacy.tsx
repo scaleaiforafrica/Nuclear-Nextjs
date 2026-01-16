@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Monitor, Download, LogOut, MapPin } from 'lucide-react'
+import { Monitor, LogOut, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import {
@@ -22,7 +22,6 @@ interface SecurityPrivacyProps {
   sessions: UserSession[]
   loginHistory: LoginHistoryEntry[]
   onSignOutOtherDevices: () => Promise<void>
-  onExportData: () => Promise<void>
   isLoading: boolean
 }
 
@@ -31,7 +30,6 @@ export function SecurityPrivacy({
   sessions,
   loginHistory,
   onSignOutOtherDevices,
-  onExportData,
   isLoading,
 }: SecurityPrivacyProps) {
   const formatDate = (dateString: string) => {
@@ -188,25 +186,6 @@ export function SecurityPrivacy({
         </div>
       </div>
 
-      {/* Data Export */}
-      <div className="border-t pt-6">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium mb-2">Export Your Data</h4>
-          <p className="text-sm text-gray-600 mb-3">
-            Download a copy of your data including profile information, settings,
-            and activity history.
-          </p>
-          <Button
-            onClick={onExportData}
-            disabled={isLoading}
-            variant="outline"
-            size="sm"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export Data
-          </Button>
-        </div>
-      </div>
     </div>
   )
 }

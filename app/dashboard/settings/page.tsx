@@ -161,18 +161,6 @@ export default function SettingsPage() {
     }
   }
 
-  const handleExportData = async () => {
-    setIsLoading(true)
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Data export will be sent to your email')
-    } catch (error) {
-      toast.error('Failed to export data')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   const handleSaveChanges = async () => {
     if (!hasChanges) return
 
@@ -259,15 +247,8 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6">
         <h2 className="text-xl sm:text-2xl font-semibold">Settings</h2>
-        <Button
-          onClick={handleSaveChanges}
-          disabled={!hasChanges || isLoading}
-          className="hidden sm:inline-flex"
-        >
-          {isLoading ? 'Saving...' : 'Save Changes'}
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
@@ -331,7 +312,6 @@ export default function SettingsPage() {
               sessions={sessions}
               loginHistory={loginHistory}
               onSignOutOtherDevices={handleSignOutOtherDevices}
-              onExportData={handleExportData}
               isLoading={isLoading}
             />
           )}
@@ -343,17 +323,6 @@ export default function SettingsPage() {
               isLoading={isLoading}
             />
           )}
-
-          {/* Mobile Save Button */}
-          <div className="mt-6 sm:hidden">
-            <Button
-              onClick={handleSaveChanges}
-              disabled={!hasChanges || isLoading}
-              className="w-full"
-            >
-              {isLoading ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </div>
         </div>
       </div>
     </div>
