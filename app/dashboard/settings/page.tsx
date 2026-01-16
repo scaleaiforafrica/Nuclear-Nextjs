@@ -113,8 +113,14 @@ export default function SettingsPage() {
       }
 
       const result = await response.json()
-      setProfile((prev: any) => ({ ...prev, ...result.profile }))
-      toast.success('Preferences updated successfully')
+      
+      // Validate response structure
+      if (result && result.profile) {
+        setProfile((prev: any) => ({ ...prev, ...result.profile }))
+        toast.success('Preferences updated successfully')
+      } else {
+        throw new Error('Invalid response structure')
+      }
     } catch (error) {
       toast.error('Failed to update preferences')
     } finally {
