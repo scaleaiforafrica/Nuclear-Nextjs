@@ -168,7 +168,6 @@ export default function SettingsPage() {
       // Only support json and csv formats
       if (format !== 'json' && format !== 'csv') {
         toast.error(`Export format '${format}' is not supported`);
-        setIsLoading(false);
         return;
       }
 
