@@ -3,7 +3,7 @@ import { AnimatedLogo } from '@/components';
 
 export function Footer() {
   return (
-    <footer id="company" style={{ backgroundColor: 'var(--header-footer-bg)' }} className="text-foreground pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10 scroll-mt-20">
+    <footer id="company" className="bg-header-footer text-foreground pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10 scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6">
         {/* Main Footer Content */}
         <div className="flex flex-col items-center mb-10 sm:mb-12 lg:mb-16">

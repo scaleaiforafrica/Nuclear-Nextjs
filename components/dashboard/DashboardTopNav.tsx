@@ -32,7 +32,7 @@ export function DashboardTopNav({
   onAboutClick,
 }: DashboardTopNavProps) {
   return (
-    <header style={{ backgroundColor: 'var(--header-footer-bg)' }} className="h-14 sm:h-16 border-b border-gray-200 flex items-center justify-between px-3 sm:px-4 lg:px-8 flex-shrink-0">
+    <header className="bg-header-footer h-14 sm:h-16 border-b border-gray-200 flex items-center justify-between px-3 sm:px-4 lg:px-8 flex-shrink-0">
       {/* Mobile Menu Button & Page Title */}
       <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 lg:flex-initial">
         <button

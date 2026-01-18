@@ -250,6 +250,11 @@ html {
   .btn-homepage:active {
     background-color: var(--button-primary-active);
   }
+  
+  /* Header/Footer background style */
+  .bg-header-footer {
+    background-color: var(--header-footer-bg);
+  }
 }
 
 /* Mobile-optimized animations */
