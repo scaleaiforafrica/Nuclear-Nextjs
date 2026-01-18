@@ -40,21 +40,21 @@ describe('AnimatedLogo', () => {
       const { container } = render(<AnimatedLogo size="sm" showIcon={true} />)
       
       const img = screen.getByRole('img')
-      expect(img).toHaveClass('w-5', 'h-5')
+      expect(img).toHaveClass('w-[60px]', 'h-[60px]')
     })
 
     it('should apply medium size classes', () => {
       const { container } = render(<AnimatedLogo size="md" showIcon={true} />)
       
       const img = screen.getByRole('img')
-      expect(img).toHaveClass('w-6', 'h-6')
+      expect(img).toHaveClass('w-[72px]', 'h-[72px]')
     })
 
     it('should apply large size classes', () => {
       const { container } = render(<AnimatedLogo size="lg" showIcon={true} />)
       
       const img = screen.getByRole('img')
-      expect(img).toHaveClass('w-8', 'h-8')
+      expect(img).toHaveClass('w-[96px]', 'h-[96px]')
     })
   })
 })

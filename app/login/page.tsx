@@ -90,7 +90,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold font-heading flex items-center justify-center gap-2">
-            <img src="/images/nuclear-logo.png" alt="Nuclear logo" loading="eager" className="w-8 h-8" />
+            <img src="/images/nuclear-logo.png" alt="Nuclear logo" loading="eager" className="w-[96px] h-[96px]" />
             NUCLEAR
           </CardTitle>
           <CardDescription>Nuclear Supply Chain Management</CardDescription>
