@@ -4,7 +4,7 @@ import { TrendingUp, Activity, Package } from 'lucide-react';
 
 export function Analytics() {
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-background">
+    <section id="solutions" className="py-16 sm:py-20 lg:py-24 bg-background scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-10 sm:mb-12 lg:mb-16">
           <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 sm:mb-4 text-foreground font-semibold">Analytics & Reporting</h2>

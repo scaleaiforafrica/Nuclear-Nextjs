@@ -1,6 +1,6 @@
 /**
  * AboutModal Component
- * Displays application and domain information
+ * Displays application information
  */
 
 'use client';
@@ -40,15 +40,9 @@ export function AboutModal({ isOpen, onClose, appInfo }: AboutModalProps) {
         <div className="space-y-4 py-4">
           {/* Version Information */}
           <div className="border-t border-gray-200 pt-4">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-gray-500">Version</p>
-                <p className="font-medium">{appInfo.version}</p>
-              </div>
-              <div>
-                <p className="text-gray-500">Domain</p>
-                <p className="font-medium break-all">{appInfo.domain}</p>
-              </div>
+            <div className="text-sm">
+              <p className="text-gray-500">Version</p>
+              <p className="font-medium">{appInfo.version}</p>
             </div>
           </div>
 
