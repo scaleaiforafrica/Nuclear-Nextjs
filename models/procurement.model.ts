@@ -172,7 +172,7 @@ export const STATUS_COLORS: Record<ProcurementStatus, string> = {
 /**
  * Get status color for a given status
  */
-export function getStatusColor(status: ProcurementStatus): string {
+export function getProcurementStatusColor(status: ProcurementStatus): string {
   return STATUS_COLORS[status] || 'bg-gray-100 text-gray-700';
 }
 
