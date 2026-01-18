@@ -95,7 +95,7 @@ export function ApplicationPreferences({
         <h3 className="text-lg sm:text-xl font-semibold mb-2">
           Application Preferences
         </h3>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+        <p className="text-sm sm:text-base text-gray-600">
           Customize your application experience
         </p>
       </div>
@@ -114,7 +114,7 @@ export function ApplicationPreferences({
                   : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
-              <Sun className="w-6 h-6 mx-auto mb-2 text-gray-700 dark:text-gray-300" />
+              <Sun className="w-6 h-6 mx-auto mb-2 text-gray-700" />
               <div className="text-sm font-medium">Light</div>
             </button>
             <button
@@ -126,7 +126,7 @@ export function ApplicationPreferences({
                   : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
-              <Moon className="w-6 h-6 mx-auto mb-2 text-gray-700 dark:text-gray-300" />
+              <Moon className="w-6 h-6 mx-auto mb-2 text-gray-700" />
               <div className="text-sm font-medium">Dark</div>
             </button>
             <button
@@ -138,7 +138,7 @@ export function ApplicationPreferences({
                   : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
-              <Monitor className="w-6 h-6 mx-auto mb-2 text-gray-700 dark:text-gray-300" />
+              <Monitor className="w-6 h-6 mx-auto mb-2 text-gray-700" />
               <div className="text-sm font-medium">System</div>
             </button>
           </div>
@@ -200,7 +200,7 @@ export function ApplicationPreferences({
         <div className="flex items-center justify-between py-3">
           <div>
             <div className="font-medium text-sm">Email Notifications</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="text-xs text-gray-600">
               Receive notifications via email
             </div>
           </div>
@@ -214,7 +214,7 @@ export function ApplicationPreferences({
         <div className="flex items-center justify-between py-3">
           <div>
             <div className="font-medium text-sm">Push Notifications</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="text-xs text-gray-600">
               Receive push notifications on your device
             </div>
           </div>
@@ -228,7 +228,7 @@ export function ApplicationPreferences({
         <div className="flex items-center justify-between py-3">
           <div>
             <div className="font-medium text-sm">In-App Notifications</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="text-xs text-gray-600">
               Show notifications within the application
             </div>
           </div>
