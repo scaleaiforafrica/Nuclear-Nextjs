@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, Share2, Mail, Loader2, FileText, FileSpreadsheet, FileJson, Cloud } from 'lucide-react';
+import { Download, Share2, Mail, Loader2, FileText, FileSpreadsheet, FileJson, Cloud, LucideIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,7 +30,7 @@ interface ExportMenuProps {
   showShareOptions?: boolean;
 }
 
-const formatIcons: Record<ExportFormat, any> = {
+const formatIcons: Record<ExportFormat, LucideIcon> = {
   pdf: FileText,
   csv: FileSpreadsheet,
   excel: FileSpreadsheet,
@@ -44,7 +44,7 @@ const formatLabels: Record<ExportFormat, string> = {
   json: 'Export as JSON',
 };
 
-const shareIcons: Record<ShareDestination, any> = {
+const shareIcons: Record<ShareDestination, LucideIcon> = {
   email: Mail,
   'google-drive': Cloud,
   dropbox: Cloud,
