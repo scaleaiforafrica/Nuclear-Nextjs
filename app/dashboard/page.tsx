@@ -234,17 +234,17 @@ export default async function DashboardPage() {
                 <div
                   key={alert.id}
                   className={`flex items-start gap-3 p-4 rounded-lg ${alert.severity === 'warning'
-                      ? 'bg-amber-50 border border-amber-200'
+                      ? 'bg-amber-900/20 border border-amber-700/30'
                       : alert.severity === 'error'
-                        ? 'bg-red-50 border border-red-200'
-                        : 'bg-blue-50 border border-blue-200'
+                        ? 'bg-red-900/20 border border-red-700/30'
+                        : 'bg-blue-900/20 border border-blue-700/30'
                     }`}
                 >
                   <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${alert.severity === 'warning'
-                      ? 'bg-amber-600'
+                      ? 'bg-amber-500'
                       : alert.severity === 'error'
-                        ? 'bg-red-600'
-                        : 'bg-blue-600'
+                        ? 'bg-red-500'
+                        : 'bg-blue-500'
                     }`}></div>
                   <div>
                     <p className="text-sm text-gray-200">{alert.title}</p>
