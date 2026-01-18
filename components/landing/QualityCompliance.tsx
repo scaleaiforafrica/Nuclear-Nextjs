@@ -42,7 +42,7 @@ export function QualityCompliance() {
               ))}
             </div>
 
-            <button className="w-full sm:w-auto bg-primary text-primary-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-primary/90 transition-colors font-medium text-sm sm:text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <button className="w-full sm:w-auto btn-homepage px-6 sm:px-8 py-3 rounded-md transition-colors font-medium text-sm sm:text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
               View Compliance Documentation
             </button>
           </div>
