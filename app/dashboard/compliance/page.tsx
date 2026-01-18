@@ -2,6 +2,7 @@
 
 import { Shield, AlertTriangle, CheckCircle, FileText, Download, Eye, Upload } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { 
   RenewDocumentDialog, 
   ViewDocumentDialog, 
@@ -88,11 +89,20 @@ export default function CompliancePage() {
       doc.status === 'not-started' || doc.status === 'expired' || doc.status === 'in-progress'
     );
     
-    if (missingDocs.length > 0) {
-      // Open generate dialog with the first missing document
-      setSelectedDocument({ name: missingDocs[0].name, shipmentId: selectedShipment });
-      setGenerateDialogOpen(true);
+    if (missingDocs.length === 0) {
+      toast.info('All documents are complete!');
+      return;
     }
+    
+    if (missingDocs.length > 1) {
+      toast.info(`Found ${missingDocs.length} missing documents. Starting with ${missingDocs[0].name}...`, {
+        description: 'You can generate the remaining documents after completing this one.'
+      });
+    }
+    
+    // Open generate dialog with the first missing document
+    setSelectedDocument({ name: missingDocs[0].name, shipmentId: selectedShipment });
+    setGenerateDialogOpen(true);
   };
 
   // Handle reviewing expiring permits
