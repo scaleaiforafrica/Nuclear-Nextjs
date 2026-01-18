@@ -35,7 +35,9 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Capture current form data to avoid stale closure
+      // Capture current form data at the time of file selection
+      // Note: Each field change is tracked separately via handleInputChange,
+      // so this captures the state at file selection time, which is correct.
       const currentFormData = { ...formData }
       
       // Preview the image
