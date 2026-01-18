@@ -15,12 +15,16 @@
   --accent: #FFA500;
   --accent-foreground: #FFF9F0;
   
-  /* Soft Support – Aqua (Clinical Cleanliness) */
-  --aqua: #C0D5D6;
+  /* Accent – Bright Orange (Highlights & Notifications) */
+  --accent: #FFA500;
+  --accent-foreground: #121212;
+  --accent-hover: #ff8c00;
+  --accent-glow: rgba(255, 165, 0, 0.3);
   
-  /* Secondary Support – Teal (Medical Calm) */
-  --secondary: #407E8C;
-  --secondary-foreground: #ffffff;
+  /* Accent Alternative – Electric Blue */
+  --accent-blue: #3498DB;
+  --accent-blue-hover: #2980b9;
+  --accent-blue-glow: rgba(52, 152, 219, 0.3);
   
   /* Base – Emerald Blue Background */
   --background: #046D56;
@@ -37,7 +41,7 @@
   
   /* Foreground & Text Colors */
   --foreground: #E5E5E5;
-  --muted-foreground: rgba(229, 229, 229, 0.7);
+  --muted-foreground: #B0B0B0;
   
   /* Card & Surface Colors */
   --card: #FFF9F0;
@@ -48,10 +52,11 @@
   --popover-foreground: #333333;
   
   /* Muted Backgrounds */
-  --muted: rgba(90, 122, 125, 0.2);
+  --muted: #2C2C2C;
+  --muted-hover: #333333;
   
   /* Destructive */
-  --destructive: #d4183d;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   
   /* Borders & Inputs */
@@ -69,8 +74,8 @@
   --chart-4: #E5E5E5;
   --chart-5: #FFF9F0;
   
-  /* Border Radius - More minimal (4-6px) */
-  --radius: 0.375rem;
+  /* Border Radius - Clean and modern */
+  --radius: 0.5rem;
   
   /* Sidebar Colors */
   --sidebar: #FFF9F0;
@@ -88,67 +93,88 @@
 }
 
 .dark {
-  /* Primary – Lighter Navy for contrast */
-  --primary: #4A90A4;
+  /* Dark Mode Theme - Same as root (consistent dark mode everywhere) */
+  
+  /* Primary – Vibrant Teal (CTAs & Primary Actions) */
+  --primary: #1ABC9C;
   --primary-foreground: #ffffff;
+  --primary-hover: #16a085;
+  --primary-glow: rgba(26, 188, 156, 0.3);
   
-  /* Accent – Brighter Gold */
-  --accent: #D4B896;
-  --accent-foreground: #1a1a1a;
-  
-  /* Soft Support – Darker Aqua */
-  --aqua: #5A7A7D;
-  
-  /* Secondary Support – Lighter Teal */
-  --secondary: #5A9EAC;
+  /* Secondary – Emerald (Alternative Primary) */
+  --secondary: #046D56;
   --secondary-foreground: #ffffff;
+  --secondary-hover: #035a46;
   
-  /* Base – Dark Background */
-  --background: #1F1F1F;
+  /* Accent – Bright Orange (Highlights & Notifications) */
+  --accent: #FFA500;
+  --accent-foreground: #121212;
+  --accent-hover: #ff8c00;
+  --accent-glow: rgba(255, 165, 0, 0.3);
+  
+  /* Accent Alternative – Electric Blue */
+  --accent-blue: #3498DB;
+  --accent-blue-hover: #2980b9;
+  --accent-blue-glow: rgba(52, 152, 219, 0.3);
+  
+  /* Base – Deep Charcoal / Black Background */
+  --background: #121212;
+  
+  /* Header & Footer – Slightly elevated from background */
+  --header-footer-bg: #1a1a1a;
+  
+  /* Buttons – Vibrant Teal Primary */
+  --button-primary: #1ABC9C;
+  --button-primary-hover: #16a085;
+  --button-primary-active: #149077;
   
   /* Foreground & Text Colors */
-  --foreground: #E5E1DD;
-  --muted-foreground: rgba(229, 225, 221, 0.7);
+  --foreground: #E5E5E5;
+  --muted-foreground: #B0B0B0;
   
   /* Card & Surface Colors */
-  --card: #262626;
-  --card-foreground: #E5E1DD;
+  --card: #1a1a1a;
+  --card-foreground: #E5E5E5;
+  --card-hover: #1f1f1f;
   
   /* Popover Colors */
-  --popover: #262626;
-  --popover-foreground: #E5E1DD;
+  --popover: #1a1a1a;
+  --popover-foreground: #E5E5E5;
   
   /* Muted Backgrounds */
-  --muted: rgba(90, 122, 125, 0.2);
+  --muted: #2C2C2C;
+  --muted-hover: #333333;
   
   /* Destructive */
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   
   /* Borders & Inputs */
-  --border: rgba(90, 158, 172, 0.3);
-  --input: #5A9EAC;
-  --input-background: #262626;
+  --border: #2C2C2C;
+  --input: #2C2C2C;
+  --input-background: #1a1a1a;
+  --input-foreground: #E5E5E5;
   
-  /* Focus Ring - Brighter Gold */
-  --ring: #D4B896;
+  /* Focus Ring - Vibrant Teal with glow */
+  --ring: #1ABC9C;
   
-  /* Chart Colors - Dark Mode Palette */
-  --chart-1: #4A90A4;
-  --chart-2: #5A9EAC;
-  --chart-3: #D4B896;
-  --chart-4: #5A7A7D;
-  --chart-5: #3a3a3a;
+  /* Chart Colors - Dark Mode Optimized */
+  --chart-1: #1ABC9C;
+  --chart-2: #3498DB;
+  --chart-3: #FFA500;
+  --chart-4: #9B59B6;
+  --chart-5: #046D56;
   
   /* Sidebar Colors */
-  --sidebar: #262626;
-  --sidebar-foreground: #E5E1DD;
-  --sidebar-primary: #4A90A4;
+  --sidebar: #1a1a1a;
+  --sidebar-foreground: #E5E5E5;
+  --sidebar-primary: #1ABC9C;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(90, 122, 125, 0.2);
-  --sidebar-accent-foreground: #E5E1DD;
-  --sidebar-border: rgba(90, 158, 172, 0.3);
-  --sidebar-ring: #D4B896;
+  --sidebar-accent: #2C2C2C;
+  --sidebar-accent-foreground: #E5E5E5;
+  --sidebar-accent-hover: #333333;
+  --sidebar-border: #2C2C2C;
+  --sidebar-ring: #1ABC9C;
 }
 
 @layer base {
@@ -311,16 +337,89 @@ html {
   
   .btn-homepage:hover {
     background-color: var(--button-primary-hover);
+    box-shadow: 0 0 20px var(--primary-glow);
+    transform: translateY(-2px);
   }
   
   .btn-homepage:active {
     background-color: var(--button-primary-active);
+    transform: translateY(0);
   }
   
   /* Header/Footer background style */
   .bg-header-footer {
     background-color: var(--header-footer-bg);
     color: var(--header-footer-text);
+  }
+  
+  /* Premium Card Styles */
+  .card-premium {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+  
+  .card-premium:hover {
+    background-color: var(--card-hover);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+  }
+  
+  /* Button Glow Effects */
+  .btn-glow-teal {
+    box-shadow: 0 4px 15px var(--primary-glow);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-glow-teal:hover {
+    box-shadow: 0 6px 25px var(--primary-glow);
+  }
+  
+  .btn-glow-orange {
+    box-shadow: 0 4px 15px var(--accent-glow);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-glow-orange:hover {
+    box-shadow: 0 6px 25px var(--accent-glow);
+  }
+  
+  .btn-glow-blue {
+    box-shadow: 0 4px 15px var(--accent-blue-glow);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-glow-blue:hover {
+    box-shadow: 0 6px 25px var(--accent-blue-glow);
+  }
+  
+  /* Interactive element hover states */
+  .interactive-hover {
+    transition: all 0.3s ease;
+  }
+  
+  .interactive-hover:hover {
+    background-color: var(--muted-hover);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Accent highlights for notifications and badges */
+  .accent-highlight {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+    box-shadow: 0 0 15px var(--accent-glow);
+  }
+  
+  .accent-highlight-blue {
+    background-color: var(--accent-blue);
+    color: #ffffff;
+    box-shadow: 0 0 15px var(--accent-blue-glow);
+  }
+  
+  /* Smooth transitions for all interactive elements */
+  .smooth-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
