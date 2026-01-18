@@ -165,6 +165,12 @@ export default function SettingsPage() {
   const handleExportData = async (format: ExportFormat) => {
     setIsLoading(true)
     try {
+      // Only support json and csv formats
+      if (format !== 'json' && format !== 'csv') {
+        toast.error(`Export format '${format}' is not supported`);
+        return;
+      }
+
       // Prepare user data for export
       const exportData = {
         profile: {
