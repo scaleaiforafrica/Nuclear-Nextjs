@@ -3,7 +3,6 @@ export type { HeroProps } from './Hero';
 export { Features } from './Features';
 export { Analytics } from './Analytics';
 export { ChainOfCustody } from './ChainOfCustody';
-export { QualityCompliance } from './QualityCompliance';
 export { FinalCTA } from './FinalCTA';
 export type { FinalCTAProps } from './FinalCTA';
 export { Footer } from './Footer';
