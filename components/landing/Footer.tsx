@@ -1,3 +1,5 @@
+'use client';
+
 import { Twitter, Linkedin, Github, Mail } from 'lucide-react';
 import { AnimatedLogo } from '@/components';
 

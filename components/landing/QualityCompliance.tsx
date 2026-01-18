@@ -1,3 +1,5 @@
+'use client';
+
 import { CheckCircle, FileText, Award, AlertTriangle } from 'lucide-react';
 
 export function QualityCompliance() {
