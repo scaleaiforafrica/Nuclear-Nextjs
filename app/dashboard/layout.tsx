@@ -21,6 +21,7 @@ import { ProtectedRoute } from '@/components/shared'
 import { AnimatedLogo } from '@/components'
 import { DemoBanner } from '@/components/demo/DemoBanner'
 import { ProfileSwitcher } from '@/components/profile'
+import { AccountSwitcher, AddAccountDialog } from '@/components/account'
 import { isDemoAccount } from '@/lib/demo/utils'
 import { DashboardTopNav, AboutModal } from '@/components/dashboard'
 import { APP_CONFIG } from '@/lib/app-config'
@@ -43,9 +44,20 @@ function DashboardContent({ children }: DashboardLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
+  const [isAddAccountOpen, setIsAddAccountOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
-  const { user, logout, supabaseUser, availableProfiles, switchProfile } = useAuth()
+  const { 
+    user, 
+    logout, 
+    supabaseUser, 
+    availableProfiles, 
+    switchProfile,
+    storedAccounts,
+    switchAccount,
+    addAccount,
+    removeStoredAccount,
+  } = useAuth()
 
   // Add demo notifications on mount
   useDemoNotifications()
@@ -196,6 +208,20 @@ function DashboardContent({ children }: DashboardLayoutProps) {
           </Link>
 
           <div className={`${sidebarCollapsed ? 'p-2' : 'p-3 sm:p-4'} border-t border-sidebar-border safe-area-inset-bottom`}>
+            {/* Account Switcher */}
+            {user && (
+              <div className="mb-3">
+                <AccountSwitcher
+                  currentUser={user}
+                  accounts={storedAccounts}
+                  onAccountSwitch={switchAccount}
+                  onAddAccount={() => setIsAddAccountOpen(true)}
+                  onRemoveAccount={removeStoredAccount}
+                  collapsed={sidebarCollapsed}
+                />
+              </div>
+            )}
+            {/* Profile Switcher */}
             <div className="mb-3">
               <ProfileSwitcher
                 currentProfile={{
@@ -256,6 +282,13 @@ function DashboardContent({ children }: DashboardLayoutProps) {
         isOpen={isAboutModalOpen}
         onClose={() => setIsAboutModalOpen(false)}
         appInfo={APP_CONFIG}
+      />
+
+      {/* Add Account Dialog */}
+      <AddAccountDialog
+        isOpen={isAddAccountOpen}
+        onClose={() => setIsAddAccountOpen(false)}
+        onAddAccount={addAccount}
       />
     </div>
   )
