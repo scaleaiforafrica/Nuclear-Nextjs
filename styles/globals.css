@@ -5,84 +5,176 @@
 :root {
   --font-size: 16px;
   
-  /* Pharmacy-Inspired Color Palette (Light Theme Only) */
+  /* Updated Color Palette for Homepage */
   
-  /* Primary – Navy (Trust & Authority) */
-  --primary: #083A4F;
-  --primary-foreground: #ffffff;
+  /* Primary – Emerald Blue (Main background) */
+  --primary: #046D56;
+  --primary-foreground: #E5E5E5;
   
-  /* Accent – Gold (Quality & Precision) */
-  --accent: #A58D66;
-  --accent-foreground: #083A4F;
+  /* Accent – Bright Orange (Buttons/CTAs) */
+  --accent: #FFA500;
+  --accent-foreground: #FFF9F0;
   
-  /* Soft Support – Aqua (Clinical Cleanliness) */
-  --aqua: #C0D5D6;
+  /* Accent – Bright Orange (Highlights & Notifications) */
+  --accent: #FFA500;
+  --accent-foreground: #121212;
+  --accent-hover: #ff8c00;
+  --accent-glow: rgba(255, 165, 0, 0.3);
   
-  /* Secondary Support – Teal (Medical Calm) */
-  --secondary: #407E8C;
-  --secondary-foreground: #ffffff;
+  /* Accent Alternative – Electric Blue */
+  --accent-blue: #3498DB;
+  --accent-blue-hover: #2980b9;
+  --accent-blue-glow: rgba(52, 152, 219, 0.3);
   
-  /* Base – Purplish-Grey Background */
-  --background: #8B8B9F;
+  /* Base – Emerald Blue Background */
+  --background: #046D56;
   
-  /* Header & Footer – Creamish-White */
-  --header-footer-bg: #FAF6F0;
+  /* Header & Footer – Cream White */
+  --header-footer-bg: #FFF9F0;
+  --header-footer-text: #333333;
   
-  /* Buttons – Light Blue */
-  --button-primary: #87CEEB;
-  --button-primary-hover: #4682B4;
-  --button-primary-active: #4169E1;
+  /* Buttons – Bright Orange */
+  --button-primary: #FFA500;
+  --button-primary-hover: #FF8C00;
+  --button-primary-active: #FF7F00;
+  --button-primary-text: #FFF9F0;
   
   /* Foreground & Text Colors */
-  --foreground: #083A4F;
-  --muted-foreground: rgba(8, 58, 79, 0.7);
+  --foreground: #E5E5E5;
+  --muted-foreground: #B0B0B0;
   
   /* Card & Surface Colors */
-  --card: #ffffff;
-  --card-foreground: #083A4F;
+  --card: #FFF9F0;
+  --card-foreground: #333333;
   
   /* Popover Colors */
-  --popover: #ffffff;
-  --popover-foreground: #083A4F;
+  --popover: #FFF9F0;
+  --popover-foreground: #333333;
   
   /* Muted Backgrounds */
-  --muted: rgba(192, 213, 214, 0.3);
+  --muted: #2C2C2C;
+  --muted-hover: #333333;
   
   /* Destructive */
-  --destructive: #d4183d;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   
   /* Borders & Inputs */
-  --border: rgba(64, 126, 140, 0.2);
-  --input: #407E8C;
-  --input-background: #ffffff;
+  --border: rgba(51, 51, 51, 0.2);
+  --input: #333333;
+  --input-background: #FFF9F0;
   
-  /* Focus Ring - Gold */
-  --ring: #A58D66;
+  /* Focus Ring - Orange */
+  --ring: #FFA500;
   
-  /* Chart Colors - Pharmacy Palette */
-  --chart-1: #083A4F;
-  --chart-2: #407E8C;
-  --chart-3: #A58D66;
-  --chart-4: #C0D5D6;
-  --chart-5: #E5E1DD;
+  /* Chart Colors - Updated Palette */
+  --chart-1: #046D56;
+  --chart-2: #FFA500;
+  --chart-3: #407E8C;
+  --chart-4: #E5E5E5;
+  --chart-5: #FFF9F0;
   
-  /* Border Radius - More minimal (4-6px) */
-  --radius: 0.375rem;
+  /* Border Radius - Clean and modern */
+  --radius: 0.5rem;
   
   /* Sidebar Colors */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #083A4F;
-  --sidebar-primary: #083A4F;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(192, 213, 214, 0.3);
-  --sidebar-accent-foreground: #083A4F;
-  --sidebar-border: rgba(64, 126, 140, 0.2);
-  --sidebar-ring: #A58D66;
+  --sidebar: #FFF9F0;
+  --sidebar-foreground: #333333;
+  --sidebar-primary: #046D56;
+  --sidebar-primary-foreground: #E5E5E5;
+  --sidebar-accent: rgba(255, 165, 0, 0.1);
+  --sidebar-accent-foreground: #333333;
+  --sidebar-border: rgba(51, 51, 51, 0.2);
+  --sidebar-ring: #FFA500;
   
   /* Font Weights */
   --font-weight-medium: 500;
   --font-weight-normal: 400;
+}
+
+.dark {
+  /* Dark Mode Theme - Same as root (consistent dark mode everywhere) */
+  
+  /* Primary – Vibrant Teal (CTAs & Primary Actions) */
+  --primary: #1ABC9C;
+  --primary-foreground: #ffffff;
+  --primary-hover: #16a085;
+  --primary-glow: rgba(26, 188, 156, 0.3);
+  
+  /* Secondary – Emerald (Alternative Primary) */
+  --secondary: #046D56;
+  --secondary-foreground: #ffffff;
+  --secondary-hover: #035a46;
+  
+  /* Accent – Bright Orange (Highlights & Notifications) */
+  --accent: #FFA500;
+  --accent-foreground: #121212;
+  --accent-hover: #ff8c00;
+  --accent-glow: rgba(255, 165, 0, 0.3);
+  
+  /* Accent Alternative – Electric Blue */
+  --accent-blue: #3498DB;
+  --accent-blue-hover: #2980b9;
+  --accent-blue-glow: rgba(52, 152, 219, 0.3);
+  
+  /* Base – Deep Charcoal / Black Background */
+  --background: #121212;
+  
+  /* Header & Footer – Slightly elevated from background */
+  --header-footer-bg: #1a1a1a;
+  
+  /* Buttons – Vibrant Teal Primary */
+  --button-primary: #1ABC9C;
+  --button-primary-hover: #16a085;
+  --button-primary-active: #149077;
+  
+  /* Foreground & Text Colors */
+  --foreground: #E5E5E5;
+  --muted-foreground: #B0B0B0;
+  
+  /* Card & Surface Colors */
+  --card: #1a1a1a;
+  --card-foreground: #E5E5E5;
+  --card-hover: #1f1f1f;
+  
+  /* Popover Colors */
+  --popover: #1a1a1a;
+  --popover-foreground: #E5E5E5;
+  
+  /* Muted Backgrounds */
+  --muted: #2C2C2C;
+  --muted-hover: #333333;
+  
+  /* Destructive */
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  
+  /* Borders & Inputs */
+  --border: #2C2C2C;
+  --input: #2C2C2C;
+  --input-background: #1a1a1a;
+  --input-foreground: #E5E5E5;
+  
+  /* Focus Ring - Vibrant Teal with glow */
+  --ring: #1ABC9C;
+  
+  /* Chart Colors - Dark Mode Optimized */
+  --chart-1: #1ABC9C;
+  --chart-2: #3498DB;
+  --chart-3: #FFA500;
+  --chart-4: #9B59B6;
+  --chart-5: #046D56;
+  
+  /* Sidebar Colors */
+  --sidebar: #1a1a1a;
+  --sidebar-foreground: #E5E5E5;
+  --sidebar-primary: #1ABC9C;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2C2C2C;
+  --sidebar-accent-foreground: #E5E5E5;
+  --sidebar-accent-hover: #333333;
+  --sidebar-border: #2C2C2C;
+  --sidebar-ring: #1ABC9C;
 }
 
 @layer base {

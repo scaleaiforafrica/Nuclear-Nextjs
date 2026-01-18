@@ -39,6 +39,7 @@ const config: Config = {
         card: {
           DEFAULT: 'var(--card)',
           foreground: 'var(--card-foreground)',
+          hover: 'var(--card-hover)',
         },
         popover: {
           DEFAULT: 'var(--popover)',
@@ -47,18 +48,27 @@ const config: Config = {
         primary: {
           DEFAULT: 'var(--primary)',
           foreground: 'var(--primary-foreground)',
+          hover: 'var(--primary-hover)',
+          glow: 'var(--primary-glow)',
         },
         secondary: {
           DEFAULT: 'var(--secondary)',
           foreground: 'var(--secondary-foreground)',
+          hover: 'var(--secondary-hover)',
         },
         muted: {
           DEFAULT: 'var(--muted)',
           foreground: 'var(--muted-foreground)',
+          hover: 'var(--muted-hover)',
         },
         accent: {
           DEFAULT: 'var(--accent)',
           foreground: 'var(--accent-foreground)',
+          hover: 'var(--accent-hover)',
+          glow: 'var(--accent-glow)',
+          blue: 'var(--accent-blue)',
+          'blue-hover': 'var(--accent-blue-hover)',
+          'blue-glow': 'var(--accent-blue-glow)',
         },
         destructive: {
           DEFAULT: 'var(--destructive)',
