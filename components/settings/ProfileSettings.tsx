@@ -35,6 +35,9 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      // Capture current form data to avoid stale closure
+      const currentFormData = { ...formData }
+      
       // Preview the image
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -43,7 +46,7 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
         // TODO: Upload to storage and get URL
         // For now, we'll use the preview URL
         void onUpdate({
-          ...formData,
+          ...currentFormData,
           avatar_url: preview
         })
       }
