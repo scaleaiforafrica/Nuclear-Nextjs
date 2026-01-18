@@ -12,9 +12,9 @@ export function Footer() {
           {/* Brand Column */}
           <div className="text-center">
             <div className="mb-3 sm:mb-4">
-              <AnimatedLogo size="md" showIcon={true} className="text-[#333333]" />
+              <AnimatedLogo size="md" showIcon={true} className="text-[var(--header-footer-text)]" />
             </div>
-            <p className="mb-4 sm:mb-6 text-[#333333]/70 text-sm sm:text-base max-w-xs mx-auto">
+            <p className="mb-4 sm:mb-6 text-[var(--header-footer-text)]/70 text-sm sm:text-base max-w-xs mx-auto">
               Enterprise platform for nuclear medicine supply chain management.
             </p>
             <div className="flex gap-3 sm:gap-4 justify-center">
@@ -23,42 +23,42 @@ export function Footer() {
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Twitter"
               >
-                <Twitter className="w-4 h-4 sm:w-5 sm:h-5 text-[#333333]" />
+                <Twitter className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--header-footer-text)]" />
               </a>
               <a 
                 href="#" 
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-[#333333]" />
+                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--header-footer-text)]" />
               </a>
               <a 
                 href="#" 
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="GitHub"
               >
-                <Github className="w-4 h-4 sm:w-5 sm:h-5 text-[#333333]" />
+                <Github className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--header-footer-text)]" />
               </a>
               <a 
                 href="#" 
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Email"
               >
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-[#333333]" />
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--header-footer-text)]" />
               </a>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 sm:pt-8 border-t border-[#333333]/20 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-          <p className="text-xs sm:text-sm text-[#333333]/70 text-center sm:text-left">
+        <div className="pt-6 sm:pt-8 border-t border-[var(--header-footer-text)]/20 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+          <p className="text-xs sm:text-sm text-[var(--header-footer-text)]/70 text-center sm:text-left">
             © {new Date().getFullYear()} ⚛ NUCLEAR. All rights reserved.
           </p>
           <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm">
-            <a href="#" className="hover:text-accent transition-colors text-[#333333]/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">Privacy</a>
-            <a href="#" className="hover:text-accent transition-colors text-[#333333]/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">Terms</a>
-            <a href="#" className="hover:text-accent transition-colors text-[#333333]/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">Cookies</a>
+            <a href="#" className="hover:text-accent transition-colors text-[var(--header-footer-text)]/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">Privacy</a>
+            <a href="#" className="hover:text-accent transition-colors text-[var(--header-footer-text)]/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">Terms</a>
+            <a href="#" className="hover:text-accent transition-colors text-[var(--header-footer-text)]/70 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">Cookies</a>
           </div>
         </div>
       </div>

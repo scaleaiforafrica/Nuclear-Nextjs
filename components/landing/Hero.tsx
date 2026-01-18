@@ -69,7 +69,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
               key={link.label}
               href={link.href}
               onClick={(e) => handleNavClick(e, link.href)}
-              className="text-[#333333] hover:text-primary hover:drop-shadow-md transition-all text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm active:drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
+              className="text-[var(--header-footer-text)] hover:text-primary hover:drop-shadow-md transition-all text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm active:drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
             >
               {link.label}
             </a>

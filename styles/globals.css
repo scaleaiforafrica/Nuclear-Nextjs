@@ -27,11 +27,13 @@
   
   /* Header & Footer – Cream White */
   --header-footer-bg: #FFF9F0;
+  --header-footer-text: #333333;
   
   /* Buttons – Bright Orange */
   --button-primary: #FFA500;
   --button-primary-hover: #FF8C00;
   --button-primary-active: #FF7F00;
+  --button-primary-text: #FFF9F0;
   
   /* Foreground & Text Colors */
   --foreground: #E5E5E5;
@@ -304,7 +306,7 @@ html {
   /* Homepage button styles */
   .btn-homepage {
     background-color: var(--button-primary);
-    color: #FFF9F0;
+    color: var(--button-primary-text);
   }
   
   .btn-homepage:hover {
@@ -318,7 +320,7 @@ html {
   /* Header/Footer background style */
   .bg-header-footer {
     background-color: var(--header-footer-bg);
-    color: #333333;
+    color: var(--header-footer-text);
   }
 }
 
