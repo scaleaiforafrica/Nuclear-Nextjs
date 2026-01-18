@@ -39,6 +39,7 @@ const config: Config = {
         card: {
           DEFAULT: 'var(--card)',
           foreground: 'var(--card-foreground)',
+          hover: 'var(--card-hover)',
         },
         popover: {
           DEFAULT: 'var(--popover)',
@@ -47,25 +48,38 @@ const config: Config = {
         primary: {
           DEFAULT: 'var(--primary)',
           foreground: 'var(--primary-foreground)',
+          hover: 'var(--primary-hover)',
+          glow: 'var(--primary-glow)',
         },
         secondary: {
           DEFAULT: 'var(--secondary)',
           foreground: 'var(--secondary-foreground)',
+          hover: 'var(--secondary-hover)',
         },
         muted: {
           DEFAULT: 'var(--muted)',
           foreground: 'var(--muted-foreground)',
+          hover: 'var(--muted-hover)',
         },
         accent: {
           DEFAULT: 'var(--accent)',
           foreground: 'var(--accent-foreground)',
+          hover: 'var(--accent-hover)',
+          glow: 'var(--accent-glow)',
+          blue: 'var(--accent-blue)',
+          'blue-hover': 'var(--accent-blue-hover)',
+          'blue-glow': 'var(--accent-blue-glow)',
         },
         destructive: {
           DEFAULT: 'var(--destructive)',
           foreground: 'var(--destructive-foreground)',
         },
         border: 'var(--border)',
-        input: 'var(--input)',
+        input: {
+          DEFAULT: 'var(--input)',
+          background: 'var(--input-background)',
+          foreground: 'var(--input-foreground)',
+        },
         ring: 'var(--ring)',
         chart: {
           '1': 'var(--chart-1)',
@@ -81,6 +95,7 @@ const config: Config = {
           'primary-foreground': 'var(--sidebar-primary-foreground)',
           accent: 'var(--sidebar-accent)',
           'accent-foreground': 'var(--sidebar-accent-foreground)',
+          'accent-hover': 'var(--sidebar-accent-hover)',
           border: 'var(--sidebar-border)',
           ring: 'var(--sidebar-ring)',
         },
