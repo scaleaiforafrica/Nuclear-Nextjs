@@ -40,9 +40,9 @@ export function AnimatedLogo({ size = 'md', showIcon = true, className = '' }: A
   };
 
   const iconSizeClasses = {
-    sm: 'w-5 h-5 sm:w-6 sm:h-6',
-    md: 'w-6 h-6 sm:w-8 sm:h-8',
-    lg: 'w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12',
+    sm: 'w-[60px] h-[60px] sm:w-[72px] sm:h-[72px]',
+    md: 'w-[72px] h-[72px] sm:w-[96px] sm:h-[96px]',
+    lg: 'w-[96px] h-[96px] sm:w-[120px] sm:h-[120px] md:w-[144px] md:h-[144px]',
   };
 
   return (
