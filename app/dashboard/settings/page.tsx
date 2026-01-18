@@ -161,12 +161,75 @@ export default function SettingsPage() {
     }
   }
 
-  const handleExportData = async () => {
+  const handleExportData = async (format: 'json' | 'csv') => {
     setIsLoading(true)
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Data export will be sent to your email')
+      // Prepare user data for export
+      const exportData = {
+        profile: {
+          name: profile.name,
+          email: profile.email,
+          phone: profile.phone,
+          job_title: profile.job_title,
+          department: profile.department,
+          role: profile.role,
+        },
+        preferences: {
+          timezone: profile.timezone,
+          date_format: profile.date_format,
+          theme: profile.theme,
+          language: profile.language,
+        },
+        notifications: {
+          email_notifications: profile.email_notifications,
+          push_notifications: profile.push_notifications,
+          in_app_notifications: profile.in_app_notifications,
+        },
+        exportedAt: new Date().toISOString(),
+      };
+
+      let blob: Blob;
+      let filename: string;
+
+      if (format === 'json') {
+        blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        filename = `user_data_${Date.now()}.json`;
+      } else {
+        // CSV format
+        const csvContent = [
+          'Field,Value',
+          `Name,${exportData.profile.name}`,
+          `Email,${exportData.profile.email}`,
+          `Phone,${exportData.profile.phone || 'N/A'}`,
+          `Job Title,${exportData.profile.job_title || 'N/A'}`,
+          `Department,${exportData.profile.department || 'N/A'}`,
+          `Role,${exportData.profile.role}`,
+          `Timezone,${exportData.preferences.timezone}`,
+          `Date Format,${exportData.preferences.date_format}`,
+          `Theme,${exportData.preferences.theme}`,
+          `Language,${exportData.preferences.language}`,
+          `Email Notifications,${exportData.notifications.email_notifications}`,
+          `Push Notifications,${exportData.notifications.push_notifications}`,
+          `In-App Notifications,${exportData.notifications.in_app_notifications}`,
+          `Exported At,${exportData.exportedAt}`,
+        ].join('\n');
+        blob = new Blob([csvContent], { type: 'text/csv' });
+        filename = `user_data_${Date.now()}.csv`;
+      }
+
+      // Download the file
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success(`Data exported as ${format.toUpperCase()}`);
     } catch (error) {
+      console.error('Export failed:', error);
       toast.error('Failed to export data')
     } finally {
       setIsLoading(false)

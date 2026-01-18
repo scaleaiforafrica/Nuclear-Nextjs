@@ -5,6 +5,17 @@ import { subDays, differenceInDays } from 'date-fns';
 import { TrendingUp, Download, Loader2 } from 'lucide-react';
 import { DatePicker } from '@/components/ui/date-picker';
 import { toast } from 'sonner';
+import { ExportMenu, ExportFormat, ShareDestination } from '@/components/ui/export-menu';
+import {
+  exportReportAsPDF,
+  exportReportAsCSV,
+  exportReportAsExcel,
+  exportReportAsJSON,
+  downloadBlob,
+  shareReportViaEmail,
+  shareReportToCloud,
+  ReportData,
+} from '@/lib/report-export-utils';
 
 const EXPORT_DELAY_MS = 1000;
 
@@ -44,7 +55,6 @@ export default function ReportsPage() {
   const [reportType, setReportType] = useState<keyof typeof MOCK_DATA>('Shipment Performance');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  const [isExporting, setIsExporting] = useState(false);
 
   // Calculate filtered statistics based on current filters
   const filteredStats = useMemo(() => {
@@ -111,20 +121,86 @@ export default function ReportsPage() {
 
 
 
-  // Handle export report
-  const handleExportReport = async () => {
+  // Handle export report with different formats
+  const handleExportReport = async (format: ExportFormat) => {
     if (!startDate || !endDate) {
       toast.error('Please select date range before exporting');
       return;
     }
-    
-    setIsExporting(true);
-    
-    // Mock export delay
-    await new Promise(resolve => setTimeout(resolve, EXPORT_DELAY_MS));
-    
-    setIsExporting(false);
-    toast.success('Report exported successfully!');
+
+    const reportData: ReportData = {
+      reportType,
+      startDate,
+      endDate,
+      totalShipments: filteredStats.totalShipments,
+      onTimeDelivery: filteredStats.onTimeDelivery,
+      avgTransitTime: filteredStats.avgTransitTime,
+      complianceRate: filteredStats.complianceRate,
+      changePercent: filteredStats.changePercent,
+    };
+
+    try {
+      let blob: Blob;
+      let extension: string;
+
+      switch (format) {
+        case 'pdf':
+          blob = await exportReportAsPDF(reportData);
+          extension = 'pdf';
+          break;
+        case 'csv':
+          blob = await exportReportAsCSV(reportData);
+          extension = 'csv';
+          break;
+        case 'excel':
+          blob = await exportReportAsExcel(reportData);
+          extension = 'xlsx';
+          break;
+        case 'json':
+          blob = await exportReportAsJSON(reportData);
+          extension = 'json';
+          break;
+        default:
+          throw new Error('Unsupported format');
+      }
+
+      const filename = `report_${reportType.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.${extension}`;
+      downloadBlob(blob, filename);
+      toast.success(`Report exported as ${format.toUpperCase()}`);
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('Failed to export report');
+    }
+  };
+
+  // Handle share report
+  const handleShareReport = async (destination: ShareDestination) => {
+    if (!startDate || !endDate) {
+      toast.error('Please select date range before sharing');
+      return;
+    }
+
+    const reportData: ReportData = {
+      reportType,
+      startDate,
+      endDate,
+      totalShipments: filteredStats.totalShipments,
+      onTimeDelivery: filteredStats.onTimeDelivery,
+      avgTransitTime: filteredStats.avgTransitTime,
+      complianceRate: filteredStats.complianceRate,
+      changePercent: filteredStats.changePercent,
+    };
+
+    try {
+      if (destination === 'email') {
+        await shareReportViaEmail(reportData);
+      } else {
+        await shareReportToCloud(destination, reportData);
+      }
+    } catch (error) {
+      console.error('Share failed:', error);
+      toast.error('Failed to share report');
+    }
   };
 
 
@@ -133,18 +209,16 @@ export default function ReportsPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h2 className="text-xl sm:text-2xl">Reports & Analytics</h2>
-        <button 
-          onClick={handleExportReport}
-          disabled={isExporting}
-          className="px-4 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 self-start text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isExporting ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Download className="w-4 h-4" />
-          )}
-          Export Report
-        </button>
+        <ExportMenu
+          onExport={handleExportReport}
+          onShare={handleShareReport}
+          formats={['pdf', 'csv', 'excel', 'json']}
+          shareDestinations={['email', 'google-drive', 'dropbox', 'onedrive']}
+          disabled={!startDate || !endDate}
+          buttonText="Export Report"
+          buttonVariant="default"
+          showShareOptions={true}
+        />
       </div>
 
       {/* Report Filters */}
