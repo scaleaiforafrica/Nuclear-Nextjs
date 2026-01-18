@@ -19,6 +19,7 @@ import type {
   UserSession,
   LoginHistoryEntry,
 } from '@/models'
+import type { ExportFormat } from '@/components/ui/export-menu'
 
 type TabId = 'profile' | 'account' | 'preferences' | 'security' | 'notifications'
 
@@ -161,7 +162,7 @@ export default function SettingsPage() {
     }
   }
 
-  const handleExportData = async (format: 'json' | 'csv') => {
+  const handleExportData = async (format: ExportFormat) => {
     setIsLoading(true)
     try {
       // Prepare user data for export
