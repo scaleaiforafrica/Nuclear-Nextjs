@@ -106,6 +106,3 @@ export function QualityCompliance() {
     </section>
   );
 }
-
-// Ensure compatibility with different module resolution strategies
-export default QualityCompliance;
