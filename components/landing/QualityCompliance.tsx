@@ -1,12 +1,14 @@
 'use client';
 
 import { CheckCircle, FileText, Award, AlertTriangle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 /**
  * QualityCompliance component displays regulatory compliance information
  * and quality assurance metrics for nuclear medicine logistics.
  */
 export function QualityCompliance() {
+  const router = useRouter();
   const certifications = [
     'ISO 9001:2015',
     'FDA 21 CFR Part 11',
@@ -48,7 +50,10 @@ export function QualityCompliance() {
               ))}
             </div>
 
-            <button className="w-full sm:w-auto btn-homepage px-6 sm:px-8 py-3 rounded-md transition-colors font-medium text-sm sm:text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <button 
+              onClick={() => router.push('/dashboard/compliance')}
+              className="w-full sm:w-auto btn-homepage px-6 sm:px-8 py-3 rounded-md transition-colors font-medium text-sm sm:text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
               View Compliance Documentation
             </button>
           </div>
