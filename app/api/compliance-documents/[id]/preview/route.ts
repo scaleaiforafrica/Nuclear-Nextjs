@@ -14,7 +14,7 @@ interface ApiResponse<T = unknown> {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<{ url: string; file_type: string; file_name: string }>>> {
   try {
     const supabase = await createClient();
@@ -36,7 +36,7 @@ export async function GET(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Fetch document
     const { data: document, error: fetchError } = await supabase

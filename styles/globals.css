@@ -113,6 +113,7 @@
 
 html {
   font-size: var(--font-size);
+  scroll-behavior: smooth;
 }
 
 /* Custom scrollbar for webkit browsers */
