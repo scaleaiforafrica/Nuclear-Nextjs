@@ -26,7 +26,7 @@ const updateDocumentSchema = z.object({
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<ComplianceDocument>>> {
   try {
     const supabase = await createClient();
@@ -48,7 +48,7 @@ export async function GET(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Fetch document
     const { data: document, error } = await supabase
@@ -107,7 +107,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<ComplianceDocument>>> {
   try {
     const supabase = await createClient();
@@ -129,7 +129,7 @@ export async function PATCH(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Parse and validate request body
     const body = await request.json();
@@ -235,7 +235,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<void>>> {
   try {
     const supabase = await createClient();
@@ -257,7 +257,7 @@ export async function DELETE(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Get document info before deletion
     const { data: document, error: fetchError } = await supabase
