@@ -24,10 +24,12 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
+    const updatedData = {
+      ...formData,
       [e.target.name]: e.target.value
-    }))
+    }
+    setFormData(updatedData)
+    onUpdate(updatedData)
   }
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -36,20 +38,17 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
       // Preview the image
       const reader = new FileReader()
       reader.onloadend = () => {
-        setAvatarPreview(reader.result as string)
+        const preview = reader.result as string
+        setAvatarPreview(preview)
+        // TODO: Upload to storage and get URL
+        // For now, we'll use the preview URL
+        onUpdate({
+          ...formData,
+          avatar_url: preview
+        })
       }
       reader.readAsDataURL(file)
-      
-      // TODO: Upload to storage and get URL
-      // For now, we'll use the preview URL
     }
-  }
-
-  const handleSubmit = async () => {
-    await onUpdate({
-      ...formData,
-      avatar_url: avatarPreview
-    })
   }
 
   const getInitials = () => {
