@@ -41,7 +41,7 @@ export function AnimatedLogo({ size = 'md', showIcon = true, className = '' }: A
 
   const iconSizeClasses = {
     sm: 'w-[60px] h-[60px] sm:w-[72px] sm:h-[72px]',
-    md: 'w-[72px] h-[72px] sm:w-[96px] sm:h-[96px]',
+    md: 'w-[72px] h-[72px] sm:w-[90px] sm:h-[90px]',
     lg: 'w-[96px] h-[96px] sm:w-[120px] sm:h-[120px] md:w-[144px] md:h-[144px]',
   };
 
