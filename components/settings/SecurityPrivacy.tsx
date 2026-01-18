@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { ExportMenu, ExportFormat } from '@/components/ui/export-menu'
 import type { UserSession, LoginHistoryEntry } from '@/models'
 
 interface SecurityPrivacyProps {
@@ -22,7 +23,7 @@ interface SecurityPrivacyProps {
   sessions: UserSession[]
   loginHistory: LoginHistoryEntry[]
   onSignOutOtherDevices: () => Promise<void>
-  onExportData: () => Promise<void>
+  onExportData: (format: ExportFormat) => Promise<void>
   isLoading: boolean
 }
 
@@ -196,15 +197,14 @@ export function SecurityPrivacy({
             Download a copy of your data including profile information, settings,
             and activity history.
           </p>
-          <Button
-            onClick={onExportData}
+          <ExportMenu
+            onExport={onExportData}
+            formats={['json', 'csv']}
             disabled={isLoading}
-            variant="outline"
-            size="sm"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export Data
-          </Button>
+            buttonText="Export Data"
+            buttonVariant="outline"
+            showShareOptions={false}
+          />
         </div>
       </div>
     </div>

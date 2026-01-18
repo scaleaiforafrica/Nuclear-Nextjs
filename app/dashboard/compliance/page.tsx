@@ -10,13 +10,14 @@ import {
   DocumentUploadDialog,
   DocumentPreviewDialog
 } from '@/components/compliance';
-import { downloadDocumentPDF } from '@/lib/compliance-utils';
+import { downloadDocumentPDF, downloadComplianceReport } from '@/lib/compliance-utils';
 import { 
   fetchDocumentsForShipment, 
   downloadDocument 
 } from '@/services/compliance-document.service';
 import type { ComplianceDocument, DocumentType } from '@/models/compliance-document.model';
 import { getStatusColor } from '@/models/compliance-document.model';
+import { ExportMenu, ExportFormat, ShareDestination } from '@/components/ui/export-menu';
 
 export default function CompliancePage() {
   const [selectedShipment, setSelectedShipment] = useState('SH-2851');
@@ -79,6 +80,96 @@ export default function CompliancePage() {
   const getDocumentStatus = (docType: string): { hasDocument: boolean; document?: ComplianceDocument } => {
     const doc = uploadedDocuments.find(d => d.document_type === docType);
     return { hasDocument: !!doc, document: doc };
+  };
+
+  // Handle exporting all documents
+  const handleExportAllDocuments = async (format: ExportFormat) => {
+    try {
+      if (format === 'pdf') {
+        // Create a combined report of all documents
+        await downloadComplianceReport(selectedShipment, documents);
+        toast.success('Compliance report downloaded successfully');
+      } else {
+        // For other formats, download as a structured file
+        const reportData = {
+          shipmentId: selectedShipment,
+          documents: documents.map(doc => ({
+            name: doc.name,
+            description: doc.description,
+            status: doc.status,
+            required: doc.required,
+          })),
+          generatedAt: new Date().toISOString(),
+        };
+
+        const blob = new Blob(
+          [format === 'json' ? JSON.stringify(reportData, null, 2) : convertToCSV(reportData)],
+          { type: format === 'json' ? 'application/json' : 'text/csv' }
+        );
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `compliance_${selectedShipment}_${Date.now()}.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        toast.success(`Compliance documents exported as ${format.toUpperCase()}`);
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('Failed to export documents');
+    }
+  };
+
+  // Handle sharing documents
+  const handleShareDocuments = async (destination: ShareDestination) => {
+    try {
+      if (destination === 'email') {
+        const subject = encodeURIComponent(`Compliance Documents - Shipment ${selectedShipment}`);
+        const body = encodeURIComponent(
+          `Compliance Documents Summary\n\n` +
+          `Shipment ID: ${selectedShipment}\n` +
+          `Documents: ${documents.length}\n` +
+          `Complete: ${documents.filter(d => d.status === 'complete').length}\n\n` +
+          `Please find the attached compliance documents.`
+        );
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        toast.success('Opening email client...');
+      } else {
+        // Simulate cloud upload
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        const destinations = {
+          'google-drive': 'Google Drive',
+          'dropbox': 'Dropbox',
+          'onedrive': 'OneDrive',
+          'sharepoint': 'SharePoint',
+        };
+        toast.success(`Documents would be shared to ${destinations[destination as keyof typeof destinations]}`, {
+          description: 'Cloud integration not yet configured. Export instead.',
+        });
+      }
+    } catch (error) {
+      console.error('Share failed:', error);
+      toast.error('Failed to share documents');
+    }
+  };
+
+  // Convert data to CSV format
+  const convertToCSV = (data: any): string => {
+    const headers = ['Document Name', 'Description', 'Status', 'Required For'];
+    const rows = data.documents.map((doc: any) => [
+      doc.name,
+      doc.description,
+      doc.status,
+      doc.required.join('; '),
+    ]);
+    return [
+      headers.join(','),
+      ...rows.map((row: string[]) => row.map(cell => `"${cell}"`).join(',')),
+    ].join('\n');
   };
 
   // Handle generating all missing documents
@@ -294,6 +385,15 @@ export default function CompliancePage() {
               <option value="SH-2850">SH-2850</option>
               <option value="SH-2849">SH-2849</option>
             </select>
+            <ExportMenu
+              onExport={handleExportAllDocuments}
+              onShare={handleShareDocuments}
+              formats={['pdf', 'csv', 'json']}
+              shareDestinations={['email', 'sharepoint', 'google-drive']}
+              buttonText="Export All"
+              buttonVariant="outline"
+              showShareOptions={true}
+            />
             <button 
               onClick={handleGenerateAllMissing}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2"
