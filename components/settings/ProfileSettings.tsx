@@ -29,7 +29,7 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
       [e.target.name]: e.target.value
     }
     setFormData(updatedData)
-    onUpdate(updatedData)
+    void onUpdate(updatedData)
   }
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +42,7 @@ export function ProfileSettings({ profile, onUpdate, isLoading }: ProfileSetting
         setAvatarPreview(preview)
         // TODO: Upload to storage and get URL
         // For now, we'll use the preview URL
-        onUpdate({
+        void onUpdate({
           ...formData,
           avatar_url: preview
         })
