@@ -1,3 +1,5 @@
+'use client';
+
 import { MapPin, Clock, FileCheck, Bell, Shield, Zap } from 'lucide-react';
 
 export function Features() {
