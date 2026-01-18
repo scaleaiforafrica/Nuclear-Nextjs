@@ -58,7 +58,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
       {/* Navigation */}
-      <div style={{ backgroundColor: 'var(--header-footer-bg)' }}>
+      <div className="bg-header-footer">
       <nav className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between relative z-50">
         <AnimatedLogo size="sm" showIcon={true} />
         

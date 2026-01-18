@@ -4,3 +4,4 @@ export { DashboardTopNav } from './DashboardTopNav';
 export { GlobalSearchInput } from './GlobalSearchInput';
 export { AboutModal } from './AboutModal';
 export { QuickActionCard } from './QuickActionCard';
+export { NotificationPanel } from './NotificationPanel';

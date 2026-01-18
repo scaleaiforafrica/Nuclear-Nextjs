@@ -1,3 +1,5 @@
+'use client';
+
 import { Database, Zap, Shield } from 'lucide-react';
 
 export function ChainOfCustody() {

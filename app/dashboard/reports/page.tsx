@@ -2,11 +2,10 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { subDays, differenceInDays } from 'date-fns';
-import { TrendingUp, Download, FileText, Loader2 } from 'lucide-react';
+import { TrendingUp, Download, Loader2 } from 'lucide-react';
 import { DatePicker } from '@/components/ui/date-picker';
 import { toast } from 'sonner';
 
-const REPORT_GENERATION_DELAY_MS = 1500;
 const EXPORT_DELAY_MS = 1000;
 
 // Mock data structure for different report types
@@ -43,10 +42,8 @@ const MOCK_DATA = {
 
 export default function ReportsPage() {
   const [reportType, setReportType] = useState<keyof typeof MOCK_DATA>('Shipment Performance');
-  const [timePeriod, setTimePeriod] = useState('Last 7 Days');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
   // Calculate filtered statistics based on current filters
@@ -90,27 +87,7 @@ export default function ReportsPage() {
     setEndDate(today);
   }, []);
 
-  // Handle time period change
-  const handleTimePeriodChange = (value: string) => {
-    setTimePeriod(value);
-    
-    const today = new Date();
-    
-    if (value === 'Last 7 Days') {
-      setStartDate(subDays(today, 7));
-      setEndDate(today);
-    } else if (value === 'Last 30 Days') {
-      setStartDate(subDays(today, 30));
-      setEndDate(today);
-    } else if (value === 'Last 90 Days') {
-      setStartDate(subDays(today, 90));
-      setEndDate(today);
-    } else if (value === 'Custom Range') {
-      // Don't auto-set dates for custom range
-      setStartDate(undefined);
-      setEndDate(undefined);
-    }
-  };
+
 
   // Handle start date change with validation
   const handleStartDateChange = (date: Date | undefined) => {
@@ -132,21 +109,7 @@ export default function ReportsPage() {
     setEndDate(date);
   };
 
-  // Check if generate button should be disabled
-  const isGenerateDisabled = !reportType || !timePeriod || !startDate || !endDate;
 
-  // Handle generate report
-  const handleGenerateReport = async () => {
-    if (isGenerateDisabled) return;
-    
-    setIsLoading(true);
-    
-    // Mock delay for report generation
-    await new Promise(resolve => setTimeout(resolve, REPORT_GENERATION_DELAY_MS));
-    
-    setIsLoading(false);
-    toast.success('Report generated successfully!');
-  };
 
   // Handle export report
   const handleExportReport = async () => {
@@ -164,8 +127,7 @@ export default function ReportsPage() {
     toast.success('Report exported successfully!');
   };
 
-  // Check if date pickers should be enabled
-  const isDatePickerEnabled = timePeriod === 'Custom Range';
+
 
   return (
     <div>
@@ -187,7 +149,7 @@ export default function ReportsPage() {
 
       {/* Report Filters */}
       <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm mb-2">Report Type</label>
             <select 
@@ -200,24 +162,10 @@ export default function ReportsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm mb-2">Time Period</label>
-            <select 
-              value={timePeriod}
-              onChange={(e) => handleTimePeriodChange(e.target.value)}
-              className="w-full px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
-            >
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-              <option>Last 90 Days</option>
-              <option>Custom Range</option>
-            </select>
-          </div>
-          <div>
             <label className="block text-sm mb-2">Start Date</label>
             <DatePicker 
               date={startDate}
               onDateChange={handleStartDateChange}
-              disabled={!isDatePickerEnabled}
               placeholder="Pick a date"
             />
           </div>
@@ -226,31 +174,9 @@ export default function ReportsPage() {
             <DatePicker 
               date={endDate}
               onDateChange={handleEndDateChange}
-              disabled={!isDatePickerEnabled}
               placeholder="Pick a date"
             />
           </div>
-        </div>
-        
-        {/* Generate Report Button */}
-        <div className="mt-4 flex justify-end">
-          <button
-            onClick={handleGenerateReport}
-            disabled={isGenerateDisabled || isLoading}
-            className="px-6 py-2 min-h-[44px] bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <FileText className="w-4 h-4" />
-                Generate Report
-              </>
-            )}
-          </button>
         </div>
       </div>
 
