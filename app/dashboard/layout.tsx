@@ -137,7 +137,7 @@ function DashboardContent({ children }: DashboardLayoutProps) {
         {/* Logo */}
         <div className="h-16 flex items-center px-4 sm:px-6 border-b border-gray-200">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <AnimatedLogo size="sm" showIcon={true} />
+            <AnimatedLogo size="md" showIcon={true} />
           </div>
           {/* Close button for mobile - only visible when menu is open */}
           <button

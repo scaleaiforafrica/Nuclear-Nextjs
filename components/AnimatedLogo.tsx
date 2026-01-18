@@ -60,7 +60,7 @@ export function AnimatedLogo({ size = 'md', showIcon = true, className = '' }: A
             src="/images/nuclear-logo.svg"
             alt="Nuclear logo"
             loading="eager"
-            className={`${iconSizeClasses[size]} object-contain`}
+            className={`${iconSizeClasses[size]} object-contain opacity-90`}
           />
         </span>
       )}
