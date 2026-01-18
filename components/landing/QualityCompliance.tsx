@@ -11,7 +11,7 @@ export function QualityCompliance() {
   ];
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-card">
+    <section id="resources" className="py-16 sm:py-20 lg:py-24 bg-card scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* Left Content */}

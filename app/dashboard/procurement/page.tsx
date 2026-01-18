@@ -7,7 +7,7 @@ import { MobileOnly, DesktopOnly, MobileTableCard, MobileTableCardRow } from '@/
 import { RouteDisplay, ProcurementShipmentLink } from '@/components/procurement';
 import { toast } from 'sonner';
 import type { ProcurementRequest, ProcurementQuote, Supplier, ProcurementStatus, ActivityUnit, DeliveryTimeWindow } from '@/models/procurement.model';
-import { getStatusColor, canViewQuotes, canEditRequest, canCancelRequest, formatShippingRoute } from '@/models/procurement.model';
+import { getProcurementStatusColor, canViewQuotes, canEditRequest, canCancelRequest, formatShippingRoute } from '@/models/procurement.model';
 
 export default function ProcurementPage() {
   const router = useRouter();
@@ -347,7 +347,7 @@ export default function ProcurementPage() {
             </div>
             <div>
               <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Status</span>
-              <span className={`inline-block px-2 py-1 rounded-full text-xs ${getStatusColor(selectedRequest.status)}`}>
+              <span className={`inline-block px-2 py-1 rounded-full text-xs ${getProcurementStatusColor(selectedRequest.status)}`}>
                 {selectedRequest.status}
               </span>
             </div>
@@ -955,7 +955,7 @@ export default function ProcurementPage() {
                           <RouteDisplay origin={request.origin} destination={request.destination} />
                         </td>
                         <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                          <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${getStatusColor(request.status)}`}>
+                          <span className={`px-2 sm:px-3 py-1 rounded-full text-xs ${getProcurementStatusColor(request.status)}`}>
                             {request.status}
                           </span>
                         </td>
@@ -1057,7 +1057,7 @@ export default function ProcurementPage() {
                     <MobileTableCardRow 
                       label="Status" 
                       value={
-                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(request.status)}`}>
+                        <span className={`px-2 py-1 rounded-full text-xs ${getProcurementStatusColor(request.status)}`}>
                           {request.status}
                         </span>
                       } 
