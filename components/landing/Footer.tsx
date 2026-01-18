@@ -23,28 +23,28 @@ export function Footer() {
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 aria-label="Twitter"
               >
-                <Twitter className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Twitter className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </a>
               <a 
                 href="#" 
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </a>
               <a 
                 href="#" 
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 aria-label="GitHub"
               >
-                <Github className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Github className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </a>
               <a 
                 href="#" 
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-white/10 rounded-md flex items-center justify-center hover:bg-accent transition-colors touch-manipulation min-w-[44px] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 aria-label="Email"
               >
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </a>
             </div>
           </div>
