@@ -95,7 +95,10 @@ export default function ThemeTestPage() {
                 placeholder="Test input" 
                 className="w-full p-2 border border-input bg-input-background rounded mb-2"
               />
-              <button className="bg-primary text-primary-foreground px-4 py-2 rounded hover:opacity-90">
+              <button 
+                onClick={() => alert('Test button clicked! Theme is working correctly.')}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
                 Test Button
               </button>
             </div>

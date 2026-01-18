@@ -5,6 +5,7 @@ import {
   TrendingUp,
   ArrowRight
 } from 'lucide-react'
+import Link from 'next/link'
 import {
   getDashboardStats,
   getRecentActivity,
@@ -133,9 +134,12 @@ export default async function DashboardPage() {
               </div>
             ))}
             {/* Show more button on mobile */}
-            <button type="button" className="md:hidden w-full text-center text-sm text-purple-600 hover:text-purple-700 py-2">
+            <Link 
+              href="/dashboard/reports" 
+              className="md:hidden w-full text-center text-sm text-purple-600 hover:text-purple-700 py-2 block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 rounded-sm"
+            >
               View All Activity
-            </button>
+            </Link>
           </div>
         </div>
       </div>

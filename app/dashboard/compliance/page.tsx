@@ -28,6 +28,7 @@ export default function CompliancePage() {
   const [selectedDocumentType, setSelectedDocumentType] = useState<DocumentType | null>(null);
   const [uploadedDocuments, setUploadedDocuments] = useState<ComplianceDocument[]>([]);
   const [loadingDocuments, setLoadingDocuments] = useState(false);
+  const [showExpiringPermits, setShowExpiringPermits] = useState(false);
 
   // Fetch uploaded documents for the selected shipment
   useEffect(() => {
@@ -78,6 +79,30 @@ export default function CompliancePage() {
   const getDocumentStatus = (docType: string): { hasDocument: boolean; document?: ComplianceDocument } => {
     const doc = uploadedDocuments.find(d => d.document_type === docType);
     return { hasDocument: !!doc, document: doc };
+  };
+
+  // Handle generating all missing documents
+  const handleGenerateAllMissing = () => {
+    // Find all documents that are not complete or expired/not-started
+    const missingDocs = documents.filter(doc => 
+      doc.status === 'not-started' || doc.status === 'expired' || doc.status === 'in-progress'
+    );
+    
+    if (missingDocs.length > 0) {
+      // Open generate dialog with the first missing document
+      setSelectedDocument({ name: missingDocs[0].name, shipmentId: selectedShipment });
+      setGenerateDialogOpen(true);
+    }
+  };
+
+  // Handle reviewing expiring permits
+  const handleReviewPermits = () => {
+    setShowExpiringPermits(true);
+    // Scroll to document checklist section
+    const checklistSection = document.getElementById('document-checklist');
+    if (checklistSection) {
+      checklistSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const documents = [
@@ -232,7 +257,10 @@ export default function CompliancePage() {
             <div className="flex-1">
               <div className="font-medium text-amber-900 mb-1">3 Transport Permits Expiring in 7 Days</div>
               <p className="text-sm text-amber-700">Review and renew transport permits for continued operations</p>
-              <button className="text-sm text-amber-600 hover:text-amber-700 mt-2 underline">
+              <button 
+                onClick={handleReviewPermits}
+                className="text-sm text-amber-600 hover:text-amber-700 mt-2 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 rounded-sm"
+              >
                 Review Permits
               </button>
             </div>
@@ -242,7 +270,7 @@ export default function CompliancePage() {
 
 
       {/* Document Checklist */}
-      <div className="bg-white rounded-xl border border-gray-200">
+      <div id="document-checklist" className="bg-white rounded-xl border border-gray-200">
         <div className="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-lg sm:text-xl mb-1">Document Checklist</h3>
@@ -258,7 +286,10 @@ export default function CompliancePage() {
               <option value="SH-2850">SH-2850</option>
               <option value="SH-2849">SH-2849</option>
             </select>
-            <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm">
+            <button 
+              onClick={handleGenerateAllMissing}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2"
+            >
               Generate All Missing
             </button>
           </div>
