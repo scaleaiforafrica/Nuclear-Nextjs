@@ -161,7 +161,7 @@ export default function SettingsPage() {
     }
   }
 
-  const handleExportData = async (format: 'json' | 'csv') => {
+  const handleExportData = async (format: 'json' | 'csv' | 'pdf' | 'excel') => {
     setIsLoading(true)
     try {
       // Prepare user data for export
@@ -194,8 +194,8 @@ export default function SettingsPage() {
       if (format === 'json') {
         blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         filename = `user_data_${Date.now()}.json`;
-      } else {
-        // CSV format
+      } else if (format === 'csv' || format === 'excel') {
+        // CSV/Excel format
         const csvContent = [
           'Field,Value',
           `Name,${exportData.profile.name}`,
@@ -213,8 +213,18 @@ export default function SettingsPage() {
           `In-App Notifications,${exportData.notifications.in_app_notifications}`,
           `Exported At,${exportData.exportedAt}`,
         ].join('\n');
-        blob = new Blob([csvContent], { type: 'text/csv' });
-        filename = `user_data_${Date.now()}.csv`;
+        
+        if (format === 'excel') {
+          blob = new Blob([csvContent], { type: 'application/vnd.ms-excel' });
+          filename = `user_data_${Date.now()}.xlsx`;
+        } else {
+          blob = new Blob([csvContent], { type: 'text/csv' });
+          filename = `user_data_${Date.now()}.csv`;
+        }
+      } else {
+        // PDF format - not supported for user data export
+        toast.error('PDF export is not available for user data');
+        return;
       }
 
       // Download the file

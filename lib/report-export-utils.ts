@@ -4,6 +4,7 @@
  */
 
 import { toast } from 'sonner';
+import jsPDF from 'jspdf';
 
 export interface ReportData {
   reportType: string;
@@ -20,34 +21,96 @@ export interface ReportData {
  * Export report as PDF
  */
 export async function exportReportAsPDF(data: ReportData): Promise<Blob> {
-  const content = generatePDFContent(data);
+  const doc = new jsPDF();
   
-  // Create a text-based PDF representation (in production, use a proper PDF library like jsPDF)
-  const pdfContent = `
-NUCLEAR MATERIAL SHIPMENT REPORT
-=====================================
+  // Set document properties
+  doc.setProperties({
+    title: `${data.reportType} Report`,
+    subject: 'Nuclear Material Shipment Report',
+    author: 'NUCLEAR System',
+    keywords: 'nuclear, shipment, report, compliance',
+    creator: 'NUCLEAR Supply Chain Management'
+  });
 
-Report Type: ${data.reportType}
-Date Range: ${data.startDate.toLocaleDateString()} - ${data.endDate.toLocaleDateString()}
-
-KEY METRICS
------------
-Total Shipments: ${data.totalShipments}
-On-Time Delivery Rate: ${data.onTimeDelivery}%
-Average Transit Time: ${data.avgTransitTime} hours
-Compliance Rate: ${data.complianceRate}%
-Change from Previous Period: ${data.changePercent > 0 ? '+' : ''}${data.changePercent}%
-
-SUMMARY
--------
-This report provides an overview of nuclear material shipment performance
-for the selected time period. All shipments comply with international
-regulations and safety standards.
-
-Generated: ${new Date().toLocaleString()}
-  `.trim();
-
-  return new Blob([pdfContent], { type: 'application/pdf' });
+  // Title
+  doc.setFontSize(20);
+  doc.setFont('helvetica', 'bold');
+  doc.text('NUCLEAR MATERIAL SHIPMENT REPORT', 105, 20, { align: 'center' });
+  
+  // Line separator
+  doc.setLineWidth(0.5);
+  doc.line(20, 25, 190, 25);
+  
+  // Report Type
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Report Type:', 20, 35);
+  doc.setFont('helvetica', 'normal');
+  doc.text(data.reportType, 60, 35);
+  
+  // Date Range
+  doc.setFont('helvetica', 'bold');
+  doc.text('Date Range:', 20, 45);
+  doc.setFont('helvetica', 'normal');
+  const dateRange = `${data.startDate.toLocaleDateString()} - ${data.endDate.toLocaleDateString()}`;
+  doc.text(dateRange, 60, 45);
+  
+  // Key Metrics Section
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('KEY METRICS', 20, 60);
+  doc.setLineWidth(0.3);
+  doc.line(20, 62, 80, 62);
+  
+  doc.setFontSize(12);
+  let yPos = 72;
+  
+  // Metrics
+  const metrics = [
+    { label: 'Total Shipments:', value: data.totalShipments.toString() },
+    { label: 'On-Time Delivery Rate:', value: `${data.onTimeDelivery}%` },
+    { label: 'Average Transit Time:', value: `${data.avgTransitTime} hours` },
+    { label: 'Compliance Rate:', value: `${data.complianceRate}%` },
+    { 
+      label: 'Change from Previous Period:', 
+      value: `${data.changePercent > 0 ? '+' : ''}${data.changePercent}%` 
+    }
+  ];
+  
+  metrics.forEach(metric => {
+    doc.setFont('helvetica', 'bold');
+    doc.text(metric.label, 25, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(metric.value, 90, yPos);
+    yPos += 10;
+  });
+  
+  // Summary Section
+  yPos += 10;
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('SUMMARY', 20, yPos);
+  doc.setLineWidth(0.3);
+  doc.line(20, yPos + 2, 70, yPos + 2);
+  
+  yPos += 12;
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  const summaryText = 'This report provides an overview of nuclear material shipment performance for the selected time period. All shipments comply with international regulations and safety standards.';
+  const splitSummary = doc.splitTextToSize(summaryText, 170);
+  doc.text(splitSummary, 20, yPos);
+  
+  // Footer
+  yPos = 270;
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'italic');
+  doc.setTextColor(100, 100, 100);
+  doc.text(`Generated: ${new Date().toLocaleString()}`, 20, yPos);
+  doc.text('NUCLEAR Supply Chain Management System', 105, yPos + 5, { align: 'center' });
+  
+  // Convert to blob
+  const pdfBlob = doc.output('blob');
+  return pdfBlob;
 }
 
 /**
@@ -111,13 +174,6 @@ export async function exportReportAsJSON(data: ReportData): Promise<Blob> {
 
   const jsonContent = JSON.stringify(jsonData, null, 2);
   return new Blob([jsonContent], { type: 'application/json' });
-}
-
-/**
- * Generate PDF content (helper function)
- */
-function generatePDFContent(data: ReportData): string {
-  return `Report: ${data.reportType}\nPeriod: ${data.startDate.toLocaleDateString()} - ${data.endDate.toLocaleDateString()}`;
 }
 
 /**
