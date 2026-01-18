@@ -29,7 +29,6 @@ export default function CompliancePage() {
   const [selectedDocumentType, setSelectedDocumentType] = useState<DocumentType | null>(null);
   const [uploadedDocuments, setUploadedDocuments] = useState<ComplianceDocument[]>([]);
   const [loadingDocuments, setLoadingDocuments] = useState(false);
-  const [showExpiringPermits, setShowExpiringPermits] = useState(false);
 
   // Fetch uploaded documents for the selected shipment
   useEffect(() => {
@@ -107,7 +106,6 @@ export default function CompliancePage() {
 
   // Handle reviewing expiring permits
   const handleReviewPermits = () => {
-    setShowExpiringPermits(true);
     // Scroll to document checklist section
     const checklistSection = document.getElementById('document-checklist');
     if (checklistSection) {
