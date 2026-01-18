@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Check } from 'lucide-react';
+import { getContactSalesMailtoLink } from '@/lib/contact-utils';
 
 export interface FinalCTAProps {
   onOpenLogin: () => void;
@@ -27,9 +28,8 @@ export function FinalCTA({ onOpenLogin }: FinalCTAProps) {
           </p>
 
           {/* Features List */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-10 lg:mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-10 lg:mb-12">
             {[
-              '30-day trial period',
               'Enterprise support',
               'Regulatory compliance included'
             ].map((feature, index) => (
@@ -49,9 +49,12 @@ export function FinalCTA({ onOpenLogin }: FinalCTAProps) {
               Request Demo
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-            <button className="bg-transparent text-white px-8 sm:px-10 py-3 sm:py-4 rounded-md border-2 border-white hover:bg-white/10 transition-colors text-sm sm:text-base font-medium touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary">
+            <a 
+              href={getContactSalesMailtoLink()}
+              className="bg-transparent text-white px-8 sm:px-10 py-3 sm:py-4 rounded-md border-2 border-white hover:bg-white/10 transition-colors text-sm sm:text-base font-medium touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary inline-flex items-center justify-center"
+            >
               Contact Sales
-            </button>
+            </a>
           </div>
 
           {/* Trust Badge */}

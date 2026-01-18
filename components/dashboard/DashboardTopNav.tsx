@@ -36,7 +36,7 @@ export function DashboardTopNav({
   const { unreadCount } = useNotifications();
 
   return (
-    <header className="h-14 sm:h-16 bg-white border-b border-gray-200 flex items-center justify-between px-3 sm:px-4 lg:px-8 flex-shrink-0">
+    <header className="bg-header-footer h-14 sm:h-16 border-b border-gray-200 flex items-center justify-between px-3 sm:px-4 lg:px-8 flex-shrink-0">
       {/* Mobile Menu Button & Page Title */}
       <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 lg:flex-initial">
         <button
@@ -107,7 +107,7 @@ export function DashboardTopNav({
         {/* Help/About button */}
         <button
           onClick={onAboutClick}
-          className="hidden sm:flex p-2 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors touch-manipulation min-w-[44px] min-h-[44px] items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="hidden sm:flex p-2 bg-white hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors touch-manipulation min-w-[44px] min-h-[44px] items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Help and about"
         >
           <HelpCircle className="w-5 h-5 text-gray-600" aria-hidden="true" />

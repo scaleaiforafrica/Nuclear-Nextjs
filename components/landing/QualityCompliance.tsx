@@ -1,5 +1,11 @@
+'use client';
+
 import { CheckCircle, FileText, Award, AlertTriangle } from 'lucide-react';
 
+/**
+ * QualityCompliance component displays regulatory compliance information
+ * and quality assurance metrics for nuclear medicine logistics.
+ */
 export function QualityCompliance() {
   const certifications = [
     'ISO 9001:2015',
@@ -11,7 +17,7 @@ export function QualityCompliance() {
   ];
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-card">
+    <section id="resources" className="py-16 sm:py-20 lg:py-24 bg-card scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* Left Content */}
@@ -42,7 +48,7 @@ export function QualityCompliance() {
               ))}
             </div>
 
-            <button className="w-full sm:w-auto bg-primary text-primary-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-primary/90 transition-colors font-medium text-sm sm:text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <button className="w-full sm:w-auto btn-homepage px-6 sm:px-8 py-3 rounded-md transition-colors font-medium text-sm sm:text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
               View Compliance Documentation
             </button>
           </div>

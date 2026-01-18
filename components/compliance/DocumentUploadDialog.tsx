@@ -206,7 +206,7 @@ export function DocumentUploadDialog({
               value={expiryDate}
               onChange={(e) => setExpiryDate(e.target.value)}
               disabled={uploading}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 

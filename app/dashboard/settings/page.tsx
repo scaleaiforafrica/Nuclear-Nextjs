@@ -259,17 +259,14 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl sm:text-2xl font-semibold">Settings</h2>
-        {activeTab !== 'notifications' && (
-          <Button
-            onClick={handleSaveChanges}
-            disabled={!hasChanges || isLoading}
-            className="hidden sm:inline-flex"
-          >
-            {isLoading ? 'Saving...' : 'Save Changes'}
-          </Button>
-        )}
+      <div className="flex items-center justify-end mb-6">
+        <Button
+          onClick={handleSaveChanges}
+          disabled={!hasChanges || isLoading}
+          className="hidden sm:inline-flex"
+        >
+          {isLoading ? 'Saving...' : 'Save Changes'}
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">

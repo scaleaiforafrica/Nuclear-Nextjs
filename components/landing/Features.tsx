@@ -1,3 +1,5 @@
+'use client';
+
 import { MapPin, Clock, FileCheck, Bell, Shield, Zap } from 'lucide-react';
 
 export function Features() {
@@ -35,7 +37,7 @@ export function Features() {
   ];
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-card">
+    <section id="platform" className="py-16 sm:py-20 lg:py-24 bg-card scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-10 sm:mb-12 lg:mb-16">
           <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-primary/10 rounded-md mb-3 sm:mb-4 border border-primary/20">

@@ -8,6 +8,7 @@ import {
   Analytics,
   ChainOfCustody,
   QualityCompliance,
+  FinalCTA,
   Footer,
 } from '@/components/landing';
 import { LoginModal } from '@/components/shared';
@@ -52,6 +53,7 @@ export default function LandingPage() {
       <Analytics />
       <ChainOfCustody />
       <QualityCompliance />
+      <FinalCTA onOpenLogin={handleOpenLogin} />
       <Footer />
       
       <LoginModal

@@ -20,12 +20,10 @@ import { useAuth, NotificationProvider } from '@/contexts'
 import { ProtectedRoute } from '@/components/shared'
 import { AnimatedLogo } from '@/components'
 import { DemoBanner } from '@/components/demo/DemoBanner'
+import { ProfileSwitcher } from '@/components/profile'
 import { isDemoAccount } from '@/lib/demo/utils'
-import { DashboardTopNav } from '@/components/dashboard/DashboardTopNav'
-import { AboutModal } from '@/components/dashboard/AboutModal'
+import { DashboardTopNav, AboutModal } from '@/components/dashboard'
 import { APP_CONFIG } from '@/lib/app-config'
-
-import { useDemoNotifications } from '@/hooks/useDemoNotifications'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -46,7 +44,7 @@ function DashboardContent({ children }: DashboardLayoutProps) {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
-  const { user, logout, supabaseUser } = useAuth()
+  const { user, logout, supabaseUser, availableProfiles, switchProfile } = useAuth()
 
   // Add demo notifications on mount
   useDemoNotifications()
@@ -107,7 +105,7 @@ function DashboardContent({ children }: DashboardLayoutProps) {
   // Get user display info
   const userInitials = user?.initials || 'U'
   const userName = user?.name || 'User'
-  const userRole = user?.role || 'Guest'
+  const userRole = user?.role || 'Hospital Administrator'
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -196,17 +194,20 @@ function DashboardContent({ children }: DashboardLayoutProps) {
             {!sidebarCollapsed && <span>Settings</span>}
           </Link>
 
-          {!sidebarCollapsed && (
-            <div className="p-3 sm:p-4 border-t border-gray-200 safe-area-inset-bottom">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
-                  {userInitials}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm truncate font-medium">{userName}</div>
-                  <div className="text-xs text-gray-500 truncate">{userRole}</div>
-                </div>
-              </div>
+          <div className={`${sidebarCollapsed ? 'p-2' : 'p-3 sm:p-4'} border-t border-gray-200 safe-area-inset-bottom`}>
+            <div className="mb-3">
+              <ProfileSwitcher
+                currentProfile={{
+                  name: userName,
+                  role: userRole,
+                  initials: userInitials
+                }}
+                availableProfiles={availableProfiles}
+                onProfileSwitch={switchProfile}
+                collapsed={sidebarCollapsed}
+              />
+            </div>
+            {!sidebarCollapsed && (
               <button 
                 onClick={handleLogout}
                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -214,8 +215,8 @@ function DashboardContent({ children }: DashboardLayoutProps) {
                 <LogOut className="w-4 h-4" aria-hidden="true" />
                 <span>Logout</span>
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Collapse Toggle - Hidden on mobile */}

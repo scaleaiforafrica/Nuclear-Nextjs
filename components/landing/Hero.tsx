@@ -35,15 +35,30 @@ export function Hero({ onOpenLogin }: HeroProps) {
   }, [isMobileMenuOpen]);
 
   const navLinks = [
-    { href: '#', label: 'Platform' },
-    { href: '#', label: 'Solutions' },
-    { href: '#', label: 'Resources' },
-    { href: '#', label: 'Company' },
+    { href: '#platform', label: 'Platform' },
+    { href: '#solutions', label: 'Solutions' },
+    { href: '#resources', label: 'Resources' },
+    { href: '#company', label: 'Company' },
   ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    if (!href || !href.startsWith('#')) return;
+    
+    try {
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } catch (error) {
+      console.error('Error scrolling to section:', error);
+    }
+  };
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
       {/* Navigation */}
+      <div className="bg-header-footer">
       <nav className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between relative z-50">
         <AnimatedLogo size="sm" showIcon={true} />
         
@@ -52,8 +67,9 @@ export function Hero({ onOpenLogin }: HeroProps) {
           {navLinks.map((link) => (
             <a 
               key={link.label}
-              href={link.href} 
-              className="text-foreground hover:text-primary transition-colors text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="text-foreground hover:text-primary hover:drop-shadow-md transition-all text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm active:drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
             >
               {link.label}
             </a>
@@ -63,7 +79,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
         {/* Desktop Sign In Button */}
         <button 
           onClick={onOpenLogin}
-          className="hidden md:block bg-primary text-primary-foreground px-4 lg:px-6 py-2 rounded-md hover:bg-primary/90 transition-colors font-medium text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="hidden md:block btn-homepage px-4 lg:px-6 py-2 rounded-md transition-colors font-medium text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           Sign In
         </button>
@@ -82,6 +98,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
           )}
         </button>
       </nav>
+      </div>
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
@@ -121,8 +138,11 @@ export function Hero({ onOpenLogin }: HeroProps) {
                 <li key={link.label}>
                   <a 
                     href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors text-base font-medium touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={(e) => {
+                      handleNavClick(e, link.href);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex items-center px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors text-base font-medium touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
                   >
                     {link.label}
                   </a>
@@ -138,7 +158,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
                 setIsMobileMenuOpen(false);
                 onOpenLogin();
               }}
-              className="w-full bg-primary text-primary-foreground px-6 py-3 rounded-md hover:bg-primary/90 transition-colors font-medium text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="w-full btn-homepage px-6 py-3 rounded-md transition-colors font-medium text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Sign In
             </button>
@@ -167,13 +187,10 @@ export function Hero({ onOpenLogin }: HeroProps) {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0">
             <button 
               onClick={onOpenLogin}
-              className="bg-primary text-primary-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 font-medium text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="btn-homepage px-6 sm:px-8 py-3 rounded-md transition-colors flex items-center justify-center gap-2 font-medium text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Get Started
               <ArrowRight className="w-5 h-5" />
-            </button>
-            <button className="bg-card text-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-muted transition-colors border border-secondary text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-              Schedule Demo
             </button>
           </div>
         </div>
