@@ -211,6 +211,16 @@ BEGIN
   FROM public.profiles
   WHERE id = p_user_id;
   
+  -- Check if user profile exists, if not use defaults
+  IF v_shipment_alerts IS NULL THEN
+    -- User profile not found, use safe defaults
+    v_shipment_alerts := 'all';
+    v_email_notifications := true;
+    v_push_notifications := true;
+    v_in_app_notifications := true;
+    v_compliance_reminders := true;
+  END IF;
+  
   -- Check shipment-related notifications
   IF p_notification_type IN ('shipment_created', 'shipment_updated', 'shipment_delivered', 'shipment_delayed') THEN
     IF v_shipment_alerts = 'none' THEN

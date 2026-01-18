@@ -144,20 +144,20 @@ export async function updateNotificationLog(
 export async function sendNotification(
   request: CreateNotificationLogRequest
 ): Promise<string | null> {
-  // First, log the notification attempt
+  // Check if we should send based on user preferences FIRST
+  const checkResult = await shouldSendNotification(
+    request.user_id,
+    request.notification_type,
+    request.is_critical || false
+  );
+
+  // Now log the notification attempt with the preference check result
   const notificationId = await logNotification(request);
 
   if (!notificationId) {
     console.error('Failed to log notification attempt');
     return null;
   }
-
-  // Check if we should send based on user preferences
-  const checkResult = await shouldSendNotification(
-    request.user_id,
-    request.notification_type,
-    request.is_critical || false
-  );
 
   if (!checkResult.should_send) {
     console.log(
@@ -168,8 +168,16 @@ export async function sendNotification(
 
   try {
     // TODO: Implement actual notification sending logic
-    // This is where you would integrate with email services (SendGrid, AWS SES, etc.)
-    // or push notification services (Firebase, OneSignal, etc.)
+    // Expected integrations:
+    // - Email: SendGrid API (sendgrid/mail), AWS SES, or similar
+    //   - Requires: API key, from address, template system
+    //   - Call: sendgrid.send({ to, from, subject, html })
+    // - Push: Firebase Cloud Messaging, OneSignal
+    //   - Requires: Device tokens, service credentials
+    //   - Call: fcm.send({ token, notification: { title, body } })
+    // - SMS: Twilio, AWS SNS
+    //   - Requires: Phone number validation, account SID/token
+    //   - Call: twilio.messages.create({ to, from, body })
 
     switch (request.channel) {
       case 'email':

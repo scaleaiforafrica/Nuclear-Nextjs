@@ -373,13 +373,6 @@ export async function POST(
       );
     }
 
-    // Get user's email for notification
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('name')
-      .eq('id', user.id)
-      .single();
-
     // Send notification about shipment creation (async, don't block response)
     notifyShipmentCreated(
       user.id,

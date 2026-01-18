@@ -85,26 +85,39 @@ export async function PATCH(request: NextRequest) {
       'weekly_digest'
     ]
     
-    for (const field of notificationFields) {
-      if (field in body && currentProfile[field] !== body[field]) {
-        // Log preference change (async, don't block response)
-        supabase
-          .from('notification_preference_history')
-          .insert({
-            user_id: user.id,
-            field_name: field,
-            old_value: String(currentProfile[field]),
-            new_value: String(body[field]),
-            changed_by: user.id,
-            changed_at: new Date().toISOString(),
-          })
-          .then(({ error: logError }) => {
-            if (logError) {
-              console.error('Failed to log preference change:', logError)
-            }
-          })
+    // Log changes asynchronously with proper error handling
+    const logPreferenceChanges = async () => {
+      try {
+        const changes = []
+        for (const field of notificationFields) {
+          if (field in body && currentProfile[field] !== body[field]) {
+            changes.push({
+              user_id: user.id,
+              field_name: field,
+              old_value: String(currentProfile[field]),
+              new_value: String(body[field]),
+              changed_by: user.id,
+              changed_at: new Date().toISOString(),
+            })
+          }
+        }
+
+        if (changes.length > 0) {
+          const { error: logError } = await supabase
+            .from('notification_preference_history')
+            .insert(changes)
+
+          if (logError) {
+            console.error('Failed to log preference changes:', logError)
+          }
+        }
+      } catch (error) {
+        console.error('Error in preference change logging:', error)
       }
     }
+
+    // Execute async without blocking response
+    logPreferenceChanges()
   }
   
   return NextResponse.json({ profile: data })
