@@ -25,8 +25,8 @@
   /* Base – Purplish-Grey Background */
   --background: #8B8B9F;
   
-  /* Header & Footer – Creamish-White */
-  --header-footer-bg: #FAF6F0;
+  /* Header & Footer – Creamish-White (Darkened for contrast) */
+  --header-footer-bg: #E8E0D5;
   
   /* Buttons – Light Blue */
   --button-primary: #87CEEB;
