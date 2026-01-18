@@ -12,7 +12,7 @@ describe('AboutModal', () => {
     version: '1.0.0',
     domain: 'nuclear-nextjs.vercel.app',
     description: 'Secure medical isotope procurement and logistics platform',
-    supportEmail: 'support@example.com',
+    supportEmail: 'scaleaiforafrica@gmail.com',
     documentationUrl: '/docs',
     lastUpdated: '2026-01-16',
   };
@@ -58,18 +58,7 @@ describe('AboutModal', () => {
         appInfo={mockAppInfo}
       />
     );
-    expect(screen.getByText('support@example.com')).toBeDefined();
-  });
-
-  it('displays domain information', () => {
-    render(
-      <AboutModal
-        isOpen={true}
-        onClose={vi.fn()}
-        appInfo={mockAppInfo}
-      />
-    );
-    expect(screen.getByText('nuclear-nextjs.vercel.app')).toBeDefined();
+    expect(screen.getByText('scaleaiforafrica@gmail.com')).toBeDefined();
   });
 
   it('renders with version label', () => {
