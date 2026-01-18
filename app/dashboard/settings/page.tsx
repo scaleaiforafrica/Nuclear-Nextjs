@@ -19,6 +19,7 @@ import type {
   UserSession,
   LoginHistoryEntry,
 } from '@/models'
+import type { ExportFormat } from '@/components/ui/export-menu'
 
 type TabId = 'profile' | 'account' | 'preferences' | 'security' | 'notifications'
 
@@ -161,9 +162,16 @@ export default function SettingsPage() {
     }
   }
 
-  const handleExportData = async (format: 'json' | 'csv') => {
+  const handleExportData = async (format: ExportFormat) => {
     setIsLoading(true)
     try {
+      // Only support json and csv formats
+      if (format !== 'json' && format !== 'csv') {
+        toast.error(`Export format '${format}' is not supported`);
+        setIsLoading(false);
+        return;
+      }
+
       // Prepare user data for export
       const exportData = {
         profile: {
