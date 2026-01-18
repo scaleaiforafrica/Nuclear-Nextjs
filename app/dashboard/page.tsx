@@ -95,7 +95,7 @@ export default async function DashboardPage() {
         {stats.map((stat, index) => {
           const Icon = stat.icon
           return (
-            <div key={index} className="bg-[#2A2A2A] rounded-xl p-4 sm:p-6 border border-[#3A3A3A] hover:shadow-lg transition-shadow">
+            <div key={index} className="bg-card rounded-xl p-4 sm:p-6 border border-border hover:shadow-lg transition-shadow">
               <div className="flex items-start justify-between mb-4">
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center`}>
                   <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
       {/* Live Shipment Map + Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
         {/* Live Shipment Map */}
-        <div className="lg:col-span-3 bg-[#2A2A2A] rounded-xl p-4 sm:p-6 border border-[#3A3A3A]">
+        <div className="lg:col-span-3 bg-card rounded-xl p-4 sm:p-6 border border-border">
           <h3 className="text-lg sm:text-xl mb-4 text-gray-100">Live Shipment Tracking</h3>
           <div className="h-64 sm:h-80 lg:h-96">
             <LiveTrackingMap />
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Recent Activity Feed */}
-        <div className="lg:col-span-2 bg-[#2A2A2A] rounded-xl p-4 sm:p-6 border border-[#3A3A3A]">
+        <div className="lg:col-span-2 bg-card rounded-xl p-4 sm:p-6 border border-border">
           <h3 className="text-lg sm:text-xl mb-4 text-gray-100">Recent Activity</h3>
           <div className="space-y-4">
             {recentActivity.slice(0, 3).map((activity) => (
@@ -141,8 +141,8 @@ export default async function DashboardPage() {
       </div>
 
       {/* Active Shipments Table Preview */}
-      <div className="bg-[#2A2A2A] rounded-xl border border-[#3A3A3A]">
-        <div className="p-4 sm:p-6 border-b border-[#3A3A3A] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-card rounded-xl border border-border">
+        <div className="p-4 sm:p-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h3 className="text-lg sm:text-xl text-gray-100">Active Shipments</h3>
           <button className="text-purple-600 hover:text-purple-700 flex items-center gap-1 text-sm self-start sm:self-auto">
             View All Shipments
@@ -154,7 +154,7 @@ export default async function DashboardPage() {
         <DesktopOnly>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px]">
-              <thead className="bg-[#1F1F1F] border-b border-[#3A3A3A]">
+              <thead className="bg-background border-b border-border">
                 <tr>
                   <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-400 uppercase tracking-wider">ID</th>
                   <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-400 uppercase tracking-wider">Isotope</th>
@@ -163,9 +163,9 @@ export default async function DashboardPage() {
                   <th className="px-4 sm:px-6 py-3 text-left text-xs text-gray-400 uppercase tracking-wider">ETA</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#3A3A3A]">
+              <tbody className="divide-y divide-border">
                 {activeShipments.slice(0, 5).map((shipment) => (
-                  <tr key={shipment.id} className="hover:bg-[#333333] transition-colors">
+                  <tr key={shipment.id} className="hover:bg-muted transition-colors">
                     <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-mono text-gray-300">{shipment.id}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300">{shipment.isotope}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300">
@@ -226,7 +226,7 @@ export default async function DashboardPage() {
       {/* Compliance Alerts + Upcoming Deliveries */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Compliance Alerts */}
-        <div className="bg-[#2A2A2A] rounded-xl p-4 sm:p-6 border border-[#3A3A3A]">
+        <div className="bg-card rounded-xl p-4 sm:p-6 border border-border">
           <h3 className="text-lg sm:text-xl mb-4 text-gray-100">Compliance Alerts</h3>
           <div className="space-y-3">
             {complianceAlerts.length > 0 ? (
