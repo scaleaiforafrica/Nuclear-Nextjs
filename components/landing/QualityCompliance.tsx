@@ -2,6 +2,10 @@
 
 import { CheckCircle, FileText, Award, AlertTriangle } from 'lucide-react';
 
+/**
+ * QualityCompliance component displays regulatory compliance information
+ * and quality assurance metrics for nuclear medicine logistics.
+ */
 export function QualityCompliance() {
   const certifications = [
     'ISO 9001:2015',
