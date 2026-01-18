@@ -24,6 +24,7 @@ import { ProfileSwitcher } from '@/components/profile'
 import { isDemoAccount } from '@/lib/demo/utils'
 import { DashboardTopNav, AboutModal } from '@/components/dashboard'
 import { APP_CONFIG } from '@/lib/app-config'
+import { useDemoNotifications } from '@/hooks/useDemoNotifications'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
