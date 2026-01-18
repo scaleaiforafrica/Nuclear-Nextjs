@@ -84,16 +84,23 @@ export async function GET(
     }
 
     // Calculate on-time delivery rate
-    // Since we don't have actual_delivery_time field yet, we'll use a simplified calculation
-    // All delivered shipments are considered on-time for now
+    // Compare current time/delivery time against ETA
     const deliveredShipments = shipments?.filter(s => s.status === 'Delivered') || [];
-    const onTimeDelivery = deliveredShipments.length > 0
-      ? 100  // Assume all delivered shipments are on-time until we have actual_delivery_time field
-      : 0;
+    let onTimeDelivery = 0;
+    
+    if (deliveredShipments.length > 0) {
+      const onTimeCount = deliveredShipments.filter(s => {
+        if (!s.eta) return true; // Assume on-time if no ETA set
+        // Since we don't have actual_delivery_time, use current time as approximation
+        const deliveryTime = new Date();
+        const eta = new Date(s.eta);
+        return deliveryTime <= eta;
+      }).length;
+      onTimeDelivery = Number(((onTimeCount / deliveredShipments.length) * 100).toFixed(1));
+    }
 
     // Calculate average transit time (in hours)
-    // For delivered shipments, calculate time from created_at to now (placeholder until actual_delivery_time exists)
-    // For in-transit shipments, skip them for now
+    // For delivered shipments, calculate time from created_at to current time
     const shipmentsWithTransit = shipments?.filter(s => 
       s.status === 'Delivered' && s.created_at
     ) || [];
@@ -102,10 +109,9 @@ export async function GET(
     if (shipmentsWithTransit.length > 0) {
       const totalTransitHours = shipmentsWithTransit.reduce((sum, s) => {
         const start = new Date(s.created_at);
-        // For delivered shipments, use a reasonable estimate (e.g., 24-48 hours)
-        // This is a placeholder until actual_delivery_time field is added
-        const estimatedHours = 36; // placeholder average
-        return sum + estimatedHours;
+        const end = new Date(); // Use current time as approximation for delivery time
+        const hours = Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60);
+        return sum + hours;
       }, 0);
       avgTransitTime = Number((totalTransitHours / shipmentsWithTransit.length).toFixed(1));
     }
