@@ -19,6 +19,13 @@ import {
 
 const EXPORT_DELAY_MS = 1000;
 
+// Helper function to format change percentage
+const formatChangePercent = (value: number): string => {
+  if (value === 0) return '0%';
+  const sign = value > 0 ? '+' : '';
+  return `${sign}${value}%`;
+};
+
 // Mock data structure for different report types
 const MOCK_DATA = {
   'Shipment Performance': {
@@ -296,7 +303,7 @@ export default function ReportsPage() {
             { 
               label: 'Total Shipments', 
               value: filteredStats.totalShipments.toString(), 
-              change: filteredStats.changePercent !== 0 ? `${filteredStats.changePercent > 0 ? '+' : ''}${filteredStats.changePercent}%` : '0%', 
+              change: formatChangePercent(filteredStats.changePercent), 
               color: 'blue' 
             },
             { 

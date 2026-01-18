@@ -30,9 +30,23 @@ export function Analytics() {
               complianceRate: result.data.complianceRate,
             });
           }
+        } else if (response.status === 401) {
+          // User not authenticated - this is expected for landing page
+          // Keep default zeros
+          setStats({
+            totalShipments: 0,
+            onTimeDelivery: 0,
+            complianceRate: 0,
+          });
         }
       } catch (error) {
         console.error('Error fetching statistics:', error);
+        // On error, keep default zeros
+        setStats({
+          totalShipments: 0,
+          onTimeDelivery: 0,
+          complianceRate: 0,
+        });
       } finally {
         setLoading(false);
       }
