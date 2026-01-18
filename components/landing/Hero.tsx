@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Menu, X } from 'lucide-react';
 import { AnimatedLogo } from '@/components';
+import { getScheduleDemoMailtoLink } from '@/lib/contact-utils';
 
 export interface HeroProps {
   onOpenLogin: () => void;
@@ -69,7 +70,7 @@ export function Hero({ onOpenLogin }: HeroProps) {
               key={link.label}
               href={link.href}
               onClick={(e) => handleNavClick(e, link.href)}
-              className="text-[var(--header-footer-text)] hover:text-primary hover:drop-shadow-md transition-all text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm active:drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
+              className="text-foreground hover:text-primary hover:drop-shadow-md transition-all text-sm lg:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm active:drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]"
             >
               {link.label}
             </a>
@@ -192,6 +193,12 @@ export function Hero({ onOpenLogin }: HeroProps) {
               Get Started
               <ArrowRight className="w-5 h-5" />
             </button>
+            <a 
+              href={getScheduleDemoMailtoLink()}
+              className="bg-card text-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-muted transition-colors border border-secondary text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 inline-flex items-center justify-center"
+            >
+              Schedule Demo
+            </a>
           </div>
         </div>
       </div>
