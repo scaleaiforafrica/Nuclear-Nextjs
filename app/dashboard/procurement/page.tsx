@@ -647,7 +647,7 @@ export default function ProcurementPage() {
                   value={formData.delivery_date}
                   onChange={(e) => setFormData({ ...formData, delivery_date: e.target.value })}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent bg-white"
                 />
               </div>
 
