@@ -128,7 +128,7 @@ export default async function DashboardPage() {
                 <div className="flex-shrink-0 w-2 h-2 bg-purple-600 rounded-full mt-2"></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-gray-200">{activity.event}</p>
-                  <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                  <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
                 </div>
               </div>
             ))}
@@ -248,16 +248,16 @@ export default async function DashboardPage() {
                     }`}></div>
                   <div>
                     <p className="text-sm text-gray-200">{alert.title}</p>
-                    <p className="text-xs text-gray-500 mt-1">{alert.description}</p>
+                    <p className="text-xs text-gray-400 mt-1">{alert.description}</p>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
+              <div className="flex items-start gap-3 p-4 bg-green-900/20 border border-green-700/30 rounded-lg">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
                   <p className="text-sm text-gray-200">All Clear</p>
-                  <p className="text-xs text-gray-500 mt-1">No compliance issues at this time</p>
+                  <p className="text-xs text-gray-400 mt-1">No compliance issues at this time</p>
                 </div>
               </div>
             )}
