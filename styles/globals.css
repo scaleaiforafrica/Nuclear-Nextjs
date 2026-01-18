@@ -5,18 +5,15 @@
 :root {
   --font-size: 16px;
   
-  /* Dark Mode Theme - Nuclear Supply Chain Management */
+  /* Updated Color Palette for Homepage */
   
-  /* Primary – Vibrant Teal (CTAs & Primary Actions) */
-  --primary: #1ABC9C;
-  --primary-foreground: #ffffff;
-  --primary-hover: #16a085;
-  --primary-glow: rgba(26, 188, 156, 0.3);
+  /* Primary – Emerald Blue (Main background) */
+  --primary: #046D56;
+  --primary-foreground: #E5E5E5;
   
-  /* Secondary – Emerald (Alternative Primary) */
-  --secondary: #046D56;
-  --secondary-foreground: #ffffff;
-  --secondary-hover: #035a46;
+  /* Accent – Bright Orange (Buttons/CTAs) */
+  --accent: #FFA500;
+  --accent-foreground: #FFF9F0;
   
   /* Accent – Bright Orange (Highlights & Notifications) */
   --accent: #FFA500;
@@ -29,29 +26,30 @@
   --accent-blue-hover: #2980b9;
   --accent-blue-glow: rgba(52, 152, 219, 0.3);
   
-  /* Base – Deep Charcoal / Black Background */
-  --background: #121212;
+  /* Base – Emerald Blue Background */
+  --background: #046D56;
   
-  /* Header & Footer – Slightly elevated from background */
-  --header-footer-bg: #1a1a1a;
+  /* Header & Footer – Cream White */
+  --header-footer-bg: #FFF9F0;
+  --header-footer-text: #333333;
   
-  /* Buttons – Vibrant Teal Primary */
-  --button-primary: #1ABC9C;
-  --button-primary-hover: #16a085;
-  --button-primary-active: #149077;
+  /* Buttons – Bright Orange */
+  --button-primary: #FFA500;
+  --button-primary-hover: #FF8C00;
+  --button-primary-active: #FF7F00;
+  --button-primary-text: #FFF9F0;
   
   /* Foreground & Text Colors */
   --foreground: #E5E5E5;
   --muted-foreground: #B0B0B0;
   
   /* Card & Surface Colors */
-  --card: #1a1a1a;
-  --card-foreground: #E5E5E5;
-  --card-hover: #1f1f1f;
+  --card: #FFF9F0;
+  --card-foreground: #333333;
   
   /* Popover Colors */
-  --popover: #1a1a1a;
-  --popover-foreground: #E5E5E5;
+  --popover: #FFF9F0;
+  --popover-foreground: #333333;
   
   /* Muted Backgrounds */
   --muted: #2C2C2C;
@@ -62,34 +60,32 @@
   --destructive-foreground: #ffffff;
   
   /* Borders & Inputs */
-  --border: #2C2C2C;
-  --input: #2C2C2C;
-  --input-background: #1a1a1a;
-  --input-foreground: #E5E5E5;
+  --border: rgba(51, 51, 51, 0.2);
+  --input: #333333;
+  --input-background: #FFF9F0;
   
-  /* Focus Ring - Vibrant Teal with glow */
-  --ring: #1ABC9C;
+  /* Focus Ring - Orange */
+  --ring: #FFA500;
   
-  /* Chart Colors - Dark Mode Optimized */
-  --chart-1: #1ABC9C;
-  --chart-2: #3498DB;
-  --chart-3: #FFA500;
-  --chart-4: #9B59B6;
-  --chart-5: #046D56;
+  /* Chart Colors - Updated Palette */
+  --chart-1: #046D56;
+  --chart-2: #FFA500;
+  --chart-3: #407E8C;
+  --chart-4: #E5E5E5;
+  --chart-5: #FFF9F0;
   
   /* Border Radius - Clean and modern */
   --radius: 0.5rem;
   
   /* Sidebar Colors */
-  --sidebar: #1a1a1a;
-  --sidebar-foreground: #E5E5E5;
-  --sidebar-primary: #1ABC9C;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2C2C2C;
-  --sidebar-accent-foreground: #E5E5E5;
-  --sidebar-accent-hover: #333333;
-  --sidebar-border: #2C2C2C;
-  --sidebar-ring: #1ABC9C;
+  --sidebar: #FFF9F0;
+  --sidebar-foreground: #333333;
+  --sidebar-primary: #046D56;
+  --sidebar-primary-foreground: #E5E5E5;
+  --sidebar-accent: rgba(255, 165, 0, 0.1);
+  --sidebar-accent-foreground: #333333;
+  --sidebar-border: rgba(51, 51, 51, 0.2);
+  --sidebar-ring: #FFA500;
   
   /* Font Weights */
   --font-weight-medium: 500;
@@ -336,8 +332,7 @@ html {
   /* Homepage button styles */
   .btn-homepage {
     background-color: var(--button-primary);
-    color: var(--foreground);
-    transition: all 0.3s ease;
+    color: var(--button-primary-text);
   }
   
   .btn-homepage:hover {
@@ -354,6 +349,7 @@ html {
   /* Header/Footer background style */
   .bg-header-footer {
     background-color: var(--header-footer-bg);
+    color: var(--header-footer-text);
   }
   
   /* Premium Card Styles */
