@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Menu, X } from 'lucide-react';
 import { AnimatedLogo } from '@/components';
-import { getScheduleDemoMailtoLink } from '@/lib/contact-utils';
 
 export interface HeroProps {
   onOpenLogin: () => void;
@@ -193,12 +192,6 @@ export function Hero({ onOpenLogin }: HeroProps) {
               Get Started
               <ArrowRight className="w-5 h-5" />
             </button>
-            <a 
-              href={getScheduleDemoMailtoLink()}
-              className="bg-card text-foreground px-6 sm:px-8 py-3 rounded-md hover:bg-muted transition-colors border border-secondary text-base touch-manipulation min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 inline-flex items-center justify-center"
-            >
-              Schedule Demo
-            </a>
           </div>
         </div>
       </div>
