@@ -35,6 +35,31 @@ describe('AnimatedLogo', () => {
     })
   })
 
+  describe('with showText=false', () => {
+    it('should not render the NUCLEAR text', () => {
+      render(<AnimatedLogo showText={false} showIcon={true} />)
+      
+      const text = screen.queryByLabelText('NUCLEAR')
+      expect(text).not.toBeInTheDocument()
+    })
+
+    it('should still render the icon when showText=false', () => {
+      render(<AnimatedLogo showText={false} showIcon={true} />)
+      
+      const img = screen.getByRole('img')
+      expect(img).toBeInTheDocument()
+      expect(img).toHaveAttribute('src', '/images/nuclear-logo.svg')
+    })
+  })
+
+  describe('with showText=true', () => {
+    it('should render the NUCLEAR text', () => {
+      render(<AnimatedLogo showText={true} showIcon={true} />)
+      
+      expect(screen.getByLabelText('NUCLEAR')).toBeInTheDocument()
+    })
+  })
+
   describe('size variants', () => {
     it('should apply small size classes', () => {
       const { container } = render(<AnimatedLogo size="sm" showIcon={true} />)

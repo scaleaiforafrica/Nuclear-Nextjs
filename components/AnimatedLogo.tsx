@@ -15,12 +15,16 @@ export interface AnimatedLogoProps {
    */
   showIcon?: boolean;
   /**
+   * Whether to show the text "NUCLEAR"
+   */
+  showText?: boolean;
+  /**
    * Custom className for additional styling
    */
   className?: string;
 }
 
-export function AnimatedLogo({ size = 'md', showIcon = true, className = '' }: AnimatedLogoProps) {
+export function AnimatedLogo({ size = 'md', showIcon = true, showText = true, className = '' }: AnimatedLogoProps) {
   const [isAnimating, setIsAnimating] = useState(true);
   const text = 'NUCLEAR';
   const letters = text.split('');
@@ -64,22 +68,24 @@ export function AnimatedLogo({ size = 'md', showIcon = true, className = '' }: A
           />
         </span>
       )}
-      <span className="font-semibold flex" aria-label="NUCLEAR">
-        {letters.map((letter, index) => (
-          <span
-            key={index}
-            className={`inline-block ${
-              isAnimating ? 'animate-letter-reveal' : ''
-            }`}
-            style={{
-              // Right-to-left stagger: last letter animates first
-              animationDelay: `${(letters.length - 1 - index) * 100}ms`,
-            }}
-          >
-            {letter}
-          </span>
-        ))}
-      </span>
+      {showText && (
+        <span className="font-semibold flex" aria-label="NUCLEAR">
+          {letters.map((letter, index) => (
+            <span
+              key={index}
+              className={`inline-block ${
+                isAnimating ? 'animate-letter-reveal' : ''
+              }`}
+              style={{
+                // Right-to-left stagger: last letter animates first
+                animationDelay: `${(letters.length - 1 - index) * 100}ms`,
+              }}
+            >
+              {letter}
+            </span>
+          ))}
+        </span>
+      )}
 
       <style jsx>{`
         @keyframes letterReveal {
