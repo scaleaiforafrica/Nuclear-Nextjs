@@ -48,3 +48,15 @@ export type { BlockchainService } from './blockchain'
 export { hashService, HashService } from './blockchain/hash.service'
 export { hyperledgerService, HyperledgerService } from './blockchain/hyperledger.service'
 export { eventRecorderService, EventRecorderService } from './blockchain/event-recorder.service'
+
+// Notification Service
+export {
+  shouldSendNotification,
+  logNotification,
+  updateNotificationLog,
+  sendNotification,
+  notifyShipmentCreated,
+  notifyShipmentUpdated,
+  notifyShipmentDelivered,
+  notifyShipmentDelayed,
+} from './notification.service'
