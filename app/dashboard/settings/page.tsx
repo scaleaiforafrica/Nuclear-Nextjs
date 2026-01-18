@@ -344,15 +344,17 @@ export default function SettingsPage() {
           )}
 
           {/* Mobile Save Button */}
-          <div className="mt-6 sm:hidden">
-            <Button
-              onClick={handleSaveChanges}
-              disabled={!hasChanges || isLoading}
-              className="w-full"
-            >
-              {isLoading ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </div>
+          {activeTab !== 'notifications' && (
+            <div className="mt-6 sm:hidden">
+              <Button
+                onClick={handleSaveChanges}
+                disabled={!hasChanges || isLoading}
+                className="w-full"
+              >
+                {isLoading ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
