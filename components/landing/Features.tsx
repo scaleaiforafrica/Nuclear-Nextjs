@@ -37,14 +37,14 @@ export function Features() {
   ];
 
   return (
-    <section id="platform" className="py-16 sm:py-20 lg:py-24 bg-card scroll-mt-20">
+    <section id="platform" className="py-16 sm:py-20 lg:py-24 bg-background scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-10 sm:mb-12 lg:mb-16">
-          <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-primary/10 rounded-md mb-3 sm:mb-4 border border-primary/20">
-            <span className="text-primary font-medium text-sm sm:text-base">Features</span>
+          <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-accent/10 rounded-md mb-3 sm:mb-4 border border-accent/20">
+            <span className="text-accent font-medium text-sm sm:text-base">Features</span>
           </div>
           <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 sm:mb-4 text-foreground font-semibold">Comprehensive Platform Features</h2>
-          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4 sm:px-0">
+          <p className="text-base sm:text-lg lg:text-xl text-foreground/70 max-w-2xl mx-auto px-4 sm:px-0">
             Enterprise-grade tools for nuclear medicine logistics management
           </p>
         </div>
@@ -55,13 +55,13 @@ export function Features() {
             return (
               <div 
                 key={index}
-                className="bg-background rounded-md p-5 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow border border-border/50"
+                className="bg-card rounded-md p-5 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow border border-border/50"
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/5 rounded-md flex items-center justify-center mb-4 sm:mb-6 border border-primary/10">
-                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" strokeWidth={1.5} />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-accent/10 rounded-md flex items-center justify-center mb-4 sm:mb-6 border border-accent/20">
+                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-accent" strokeWidth={1.5} />
                 </div>
-                <h3 className="font-heading text-lg sm:text-xl mb-2 sm:mb-3 text-foreground font-medium">{feature.title}</h3>
-                <p className="text-muted-foreground text-sm sm:text-base">{feature.description}</p>
+                <h3 className="font-heading text-lg sm:text-xl mb-2 sm:mb-3 text-card-foreground font-medium">{feature.title}</h3>
+                <p className="text-card-foreground/70 text-sm sm:text-base">{feature.description}</p>
               </div>
             );
           })}
