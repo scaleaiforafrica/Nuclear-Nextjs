@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthProvider } from '@/contexts'
+import { AuthProvider, ThemeProvider } from '@/contexts'
 import { Toaster } from 'sonner'
 
 interface ProvidersProps {
@@ -9,9 +9,16 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <AuthProvider>
-      {children}
-      <Toaster position="top-right" richColors />
-    </AuthProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <AuthProvider>
+        {children}
+        <Toaster position="top-right" richColors />
+      </AuthProvider>
+    </ThemeProvider>
   )
 }

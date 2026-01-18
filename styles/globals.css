@@ -85,6 +85,70 @@
   --font-weight-normal: 400;
 }
 
+.dark {
+  /* Primary – Lighter Navy for contrast */
+  --primary: #4A90A4;
+  --primary-foreground: #ffffff;
+  
+  /* Accent – Brighter Gold */
+  --accent: #D4B896;
+  --accent-foreground: #1a1a1a;
+  
+  /* Soft Support – Darker Aqua */
+  --aqua: #5A7A7D;
+  
+  /* Secondary Support – Lighter Teal */
+  --secondary: #5A9EAC;
+  --secondary-foreground: #ffffff;
+  
+  /* Base – Dark Background */
+  --background: #1a1a1a;
+  
+  /* Foreground & Text Colors */
+  --foreground: #E5E1DD;
+  --muted-foreground: rgba(229, 225, 221, 0.7);
+  
+  /* Card & Surface Colors */
+  --card: #262626;
+  --card-foreground: #E5E1DD;
+  
+  /* Popover Colors */
+  --popover: #262626;
+  --popover-foreground: #E5E1DD;
+  
+  /* Muted Backgrounds */
+  --muted: rgba(90, 122, 125, 0.2);
+  
+  /* Destructive */
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  
+  /* Borders & Inputs */
+  --border: rgba(90, 158, 172, 0.3);
+  --input: #5A9EAC;
+  --input-background: #262626;
+  
+  /* Focus Ring - Brighter Gold */
+  --ring: #D4B896;
+  
+  /* Chart Colors - Dark Mode Palette */
+  --chart-1: #4A90A4;
+  --chart-2: #5A9EAC;
+  --chart-3: #D4B896;
+  --chart-4: #5A7A7D;
+  --chart-5: #3a3a3a;
+  
+  /* Sidebar Colors */
+  --sidebar: #262626;
+  --sidebar-foreground: #E5E1DD;
+  --sidebar-primary: #4A90A4;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(90, 122, 125, 0.2);
+  --sidebar-accent-foreground: #E5E1DD;
+  --sidebar-border: rgba(90, 158, 172, 0.3);
+  --sidebar-ring: #D4B896;
+}
+
 @layer base {
   * {
     @apply border-border;
