@@ -15,6 +15,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+      # Using --legacy-peer-deps due to existing pdfjs-dist peer dependency conflict in the project
       - run: npm ci --legacy-peer-deps
       - run: npm run build
       - name: Start app

@@ -16,7 +16,7 @@ export const BrandButton = forwardRef<HTMLButtonElement, BrandButtonProps>(funct
   const classes = [ 'btn', `btn--${variant}`, `btn--${size}`, className ].filter(Boolean).join(' ');
   const isDisabled = disabled || loading;
   return (
-    <button ref={ref} className={classes} disabled={isDisabled} aria-disabled={isDisabled} aria-busy={loading || undefined} {...rest}>
+    <button ref={ref} className={classes} disabled={isDisabled} aria-disabled={isDisabled ? 'true' : 'false'} aria-busy={loading ? 'true' : undefined} {...rest}>
       {children}
     </button>
   );
