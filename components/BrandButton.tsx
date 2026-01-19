@@ -3,13 +3,13 @@ import React, { forwardRef } from 'react';
 type ButtonVariant = 'primary' | 'secondary';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface BrandButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+export const BrandButton = forwardRef<HTMLButtonElement, BrandButtonProps>(function BrandButton(
   { variant = 'primary', size = 'md', loading = false, className = '', children, disabled, ...rest },
   ref
 ) {
@@ -22,4 +22,4 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   );
 });
 
-export default Button;
+export default BrandButton;

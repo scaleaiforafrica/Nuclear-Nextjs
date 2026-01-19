@@ -5,7 +5,7 @@ This guide shows how to adopt the brand system across the app with accessibility
 ## Included
 - `styles/design-tokens.json` — Source of truth for colors, spacing, typography, radii, shadows, breakpoints.
 - `styles/theme.css` — Global CSS variables, base styles, components (buttons, cards, forms), and a11y patterns.
-- `components/Button.tsx` — Typed React Button using the global theme classes.
+- `components/BrandButton.tsx` — Typed React Button component using the global theme classes (non-conflicting with existing UI components).
 
 ## Fonts
 - Headings: "The Seasons" (self-host recommended). Fallbacks provided.
@@ -36,8 +36,10 @@ import '@/styles/theme.css';
 ```
 
 ## Testing
-- Unit: Vitest + Testing Library for Button (render, aria-busy, disabled, variants).
+- Unit: Vitest + Testing Library for BrandButton (render, aria-busy, disabled, variants).
 - Accessibility: Playwright smoke with screenshots and basic navigation.
+
+**Note:** The BrandButton component is provided as a demonstration of the theme system and does not conflict with existing UI components in `components/ui/`.
 
 ## Design Guardrails
 - Use #F7F8FA as page background, white surfaces for cards.
