@@ -36,7 +36,7 @@ import '@/styles/theme.css';
 ```
 
 ## Testing
-- Unit: Jest + Testing Library for Button (render, aria-busy, disabled, variants).
+- Unit: Vitest + Testing Library for Button (render, aria-busy, disabled, variants).
 - Accessibility: Playwright smoke with screenshots and basic navigation.
 
 ## Design Guardrails
