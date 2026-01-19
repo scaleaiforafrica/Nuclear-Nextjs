@@ -8,3 +8,5 @@ dist/
 *.log
 *.tsbuildinfo
 package-lock.json
+test-results/
+public/fonts/TheSeasons-Regular.woff2
