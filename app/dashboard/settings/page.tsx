@@ -221,13 +221,9 @@ export default function SettingsPage() {
           `Exported At,${exportData.exportedAt}`,
         ].join('\n');
         
-        if (format === 'excel') {
-          blob = new Blob([csvContent], { type: 'application/vnd.ms-excel' });
-          filename = `user_data_${Date.now()}.xlsx`;
-        } else {
-          blob = new Blob([csvContent], { type: 'text/csv' });
-          filename = `user_data_${Date.now()}.csv`;
-        }
+        // CSV format
+        blob = new Blob([csvContent], { type: 'text/csv' });
+        filename = `user_data_${Date.now()}.csv`;
       } else {
         // PDF format - not supported for user data export
         toast.error('PDF export is not available for user data');

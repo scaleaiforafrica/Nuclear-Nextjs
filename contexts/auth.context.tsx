@@ -2,11 +2,21 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { User as SupabaseUser } from '@supabase/supabase-js'
+import type { User as SupabaseUser, Session } from '@supabase/supabase-js'
 import type { User, AuthResult, UserRole } from '@/models'
 import { isDemoAccount } from '@/lib/demo/utils'
 import { restoreDemoData } from '@/lib/demo/restore-demo-data'
 import { DEMO_CONFIG } from '@/lib/demo/config'
+import {
+  getStoredAccounts,
+  saveAccount,
+  setActiveAccount,
+  getActiveAccountId,
+  removeAccount,
+  clearAllAccounts,
+  updateAccountLastUsed,
+  type StoredAccount,
+} from '@/lib/account-manager'
 
 interface Profile {
   name: string
@@ -21,6 +31,10 @@ interface AuthContextValue {
   isLoading: boolean
   availableProfiles: Profile[]
   switchProfile: (profile: Profile) => void
+  storedAccounts: StoredAccount[]
+  switchAccount: (accountId: string) => Promise<void>
+  addAccount: (email: string, password: string) => Promise<AuthResult>
+  removeStoredAccount: (accountId: string) => void
   login: (email: string, password: string) => Promise<AuthResult>
   signUp: (email: string, password: string) => Promise<AuthResult>
   logout: () => Promise<void>
@@ -106,8 +120,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [availableProfiles, setAvailableProfiles] = useState<Profile[]>([])
   const [selectedRole, setSelectedRole] = useState<UserRole | undefined>(undefined)
+  const [storedAccounts, setStoredAccounts] = useState<StoredAccount[]>([])
   
   const supabase = createClient()
+
+  // Load stored accounts
+  useEffect(() => {
+    setStoredAccounts(getStoredAccounts())
+  }, [])
 
   useEffect(() => {
     const getSession = async () => {
@@ -120,6 +140,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const roleToUse = getStoredRole(profiles)
         setSelectedRole(roleToUse)
         setUser(mapSupabaseUser(session.user, roleToUse))
+
+        // Save/update account in storage
+        const accountName = getUserName(session.user)
+        const existingAccount: StoredAccount = {
+          id: session.user.id,
+          email: session.user.email || '',
+          name: accountName,
+          session: session,
+          lastUsed: Date.now(),
+        }
+        saveAccount(existingAccount)
+        setActiveAccount(session.user.id)
+        setStoredAccounts(getStoredAccounts())
       }
       setIsLoading(false)
     }
@@ -136,6 +169,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
           const roleToUse = getStoredRole(profiles)
           setSelectedRole(roleToUse)
           setUser(mapSupabaseUser(session.user, roleToUse))
+
+          // Save/update account in storage
+          const accountName = getUserName(session.user)
+          const existingAccount: StoredAccount = {
+            id: session.user.id,
+            email: session.user.email || '',
+            name: accountName,
+            session: session,
+            lastUsed: Date.now(),
+          }
+          saveAccount(existingAccount)
+          setActiveAccount(session.user.id)
+          setStoredAccounts(getStoredAccounts())
         } else {
           setSupabaseUser(null)
           setUser(null)
@@ -157,6 +203,68 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('selectedRole', profile.role)
     }
   }, [supabaseUser, user?.role])
+
+  const switchAccount = useCallback(async (accountId: string) => {
+    const account = getStoredAccounts().find(a => a.id === accountId)
+    if (!account) {
+      console.error('Account not found:', accountId)
+      return
+    }
+
+    // Set the session for the selected account
+    const { error } = await supabase.auth.setSession(account.session)
+    if (error) {
+      console.error('Failed to switch account:', error)
+      // If session is invalid, remove it
+      removeAccount(accountId)
+      setStoredAccounts(getStoredAccounts())
+      return
+    }
+
+    // Update last used timestamp
+    updateAccountLastUsed(accountId)
+    setActiveAccount(accountId)
+    setStoredAccounts(getStoredAccounts())
+  }, [supabase.auth])
+
+  const addAccount = useCallback(async (email: string, password: string): Promise<AuthResult> => {
+    // Sign out current user temporarily
+    const currentSession = await supabase.auth.getSession()
+    
+    // Sign in with new account
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    
+    if (error) {
+      // Restore previous session if login failed
+      if (currentSession.data.session) {
+        await supabase.auth.setSession(currentSession.data.session)
+      }
+      return { success: false, error: error.message }
+    }
+
+    if (data.user && data.session) {
+      // Save the new account
+      const accountName = getUserName(data.user)
+      const newAccount: StoredAccount = {
+        id: data.user.id,
+        email: data.user.email || '',
+        name: accountName,
+        session: data.session,
+        lastUsed: Date.now(),
+      }
+      saveAccount(newAccount)
+      setStoredAccounts(getStoredAccounts())
+
+      return { success: true, user: mapSupabaseUser(data.user) }
+    }
+    
+    return { success: false, error: 'Failed to add account' }
+  }, [supabase.auth])
+
+  const removeStoredAccount = useCallback((accountId: string) => {
+    removeAccount(accountId)
+    setStoredAccounts(getStoredAccounts())
+  }, [])
 
   const login = useCallback(async (email: string, password: string): Promise<AuthResult> => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -214,6 +322,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isLoading,
       availableProfiles,
       switchProfile,
+      storedAccounts,
+      switchAccount,
+      addAccount,
+      removeStoredAccount,
       login,
       signUp,
       logout,
