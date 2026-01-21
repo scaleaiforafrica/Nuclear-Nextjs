@@ -1,8 +1,60 @@
 'use client';
 
 import { TrendingUp, Activity, Package } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+interface ShipmentStats {
+  totalShipments: number;
+  onTimeDelivery: number;
+  complianceRate: number;
+}
 
 export function Analytics() {
+  const [stats, setStats] = useState<ShipmentStats>({
+    totalShipments: 0,
+    onTimeDelivery: 0,
+    complianceRate: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/shipments/stats');
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            setStats({
+              totalShipments: result.data.totalShipments,
+              onTimeDelivery: result.data.onTimeDelivery,
+              complianceRate: result.data.complianceRate,
+            });
+          }
+        } else if (response.status === 401) {
+          // User not authenticated - this is expected for landing page
+          // Keep default zeros
+          setStats({
+            totalShipments: 0,
+            onTimeDelivery: 0,
+            complianceRate: 0,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching statistics:', error);
+        // On error, keep default zeros
+        setStats({
+          totalShipments: 0,
+          onTimeDelivery: 0,
+          complianceRate: 0,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <section id="solutions" className="py-16 sm:py-20 lg:py-24 bg-background scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6">
@@ -89,23 +141,35 @@ export function Analytics() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="bg-card border border-secondary/20 rounded-md p-5 sm:p-6 lg:p-8 hover:shadow-md transition-shadow">
             <Package className="w-8 h-8 sm:w-10 sm:h-10 text-secondary mb-3 sm:mb-4" strokeWidth={1.5} />
-            <div className="text-3xl sm:text-4xl mb-1 sm:mb-2 text-foreground">1,247</div>
+            <div className="text-3xl sm:text-4xl mb-1 sm:mb-2 text-foreground">
+              {loading ? '...' : stats.totalShipments.toLocaleString()}
+            </div>
             <div className="text-muted-foreground text-sm sm:text-base">Active Shipments</div>
-            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-secondary">+12% from last month</div>
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-secondary">
+              {stats.totalShipments > 0 ? 'Operations active' : 'No operations yet'}
+            </div>
           </div>
           
           <div className="bg-card border border-secondary/20 rounded-md p-5 sm:p-6 lg:p-8 hover:shadow-md transition-shadow">
             <TrendingUp className="w-8 h-8 sm:w-10 sm:h-10 text-secondary mb-3 sm:mb-4" strokeWidth={1.5} />
-            <div className="text-3xl sm:text-4xl mb-1 sm:mb-2 text-foreground">98.7%</div>
+            <div className="text-3xl sm:text-4xl mb-1 sm:mb-2 text-foreground">
+              {loading ? '...' : `${stats.onTimeDelivery}%`}
+            </div>
             <div className="text-muted-foreground text-sm sm:text-base">On-Time Delivery</div>
-            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-secondary">+2.3% improvement</div>
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-secondary">
+              {stats.onTimeDelivery > 0 ? 'Performance tracking' : 'No data yet'}
+            </div>
           </div>
           
           <div className="bg-card border border-secondary/20 rounded-md p-5 sm:p-6 lg:p-8 hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1">
             <Activity className="w-8 h-8 sm:w-10 sm:h-10 text-secondary mb-3 sm:mb-4" strokeWidth={1.5} />
-            <div className="text-3xl sm:text-4xl mb-1 sm:mb-2 text-foreground">100%</div>
+            <div className="text-3xl sm:text-4xl mb-1 sm:mb-2 text-foreground">
+              {loading ? '...' : `${stats.complianceRate}%`}
+            </div>
             <div className="text-muted-foreground text-sm sm:text-base">Compliance Rate</div>
-            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-secondary">All shipments monitored</div>
+            <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-secondary">
+              {stats.complianceRate > 0 ? 'All shipments monitored' : 'No data yet'}
+            </div>
           </div>
         </div>
       </div>

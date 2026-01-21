@@ -19,6 +19,13 @@ import {
 
 const EXPORT_DELAY_MS = 1000;
 
+// Helper function to format change percentage
+const formatChangePercent = (value: number): string => {
+  if (value === 0) return '0%';
+  const sign = value > 0 ? '+' : '';
+  return `${sign}${value}%`;
+};
+
 // Mock data structure for different report types
 const MOCK_DATA = {
   'Shipment Performance': {
@@ -55,40 +62,71 @@ export default function ReportsPage() {
   const [reportType, setReportType] = useState<keyof typeof MOCK_DATA>('Shipment Performance');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [filteredStats, setFilteredStats] = useState({
+    totalShipments: 0,
+    onTimeDelivery: 0,
+    avgTransitTime: 0,
+    complianceRate: 0,
+    changePercent: 0,
+  });
 
-  // Calculate filtered statistics based on current filters
-  const filteredStats = useMemo(() => {
-    if (!startDate || !endDate) {
-      return {
-        totalShipments: 0,
-        onTimeDelivery: 0,
-        avgTransitTime: 0,
-        complianceRate: 0,
-        changePercent: 0,
-      };
-    }
+  // Fetch statistics from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!startDate || !endDate) {
+        setFilteredStats({
+          totalShipments: 0,
+          onTimeDelivery: 0,
+          avgTransitTime: 0,
+          complianceRate: 0,
+          changePercent: 0,
+        });
+        return;
+      }
 
-    const data = MOCK_DATA[reportType];
-    const daysDiff = Math.max(1, differenceInDays(endDate, startDate));
-    
-    // Calculate shipments based on date range (scaled by days)
-    const totalShipments = Math.floor(data.baseShipments * (daysDiff / 30));
-    
-    // Add some variance based on date range
-    const variance = (daysDiff % 7) * data.dailyVariance;
-    const adjustedShipments = totalShipments + variance;
-    
-    // Calculate change percentage (comparing to previous period)
-    const changePercent = 5 + (daysDiff % 10) * 1.5;
+      try {
+        setStatsLoading(true);
+        const params = new URLSearchParams({
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString(),
+        });
 
-    return {
-      totalShipments: Math.max(1, adjustedShipments),
-      onTimeDelivery: data.onTimeRate,
-      avgTransitTime: data.avgTransit,
-      complianceRate: data.complianceRate,
-      changePercent: Number(changePercent.toFixed(1)),
+        const response = await fetch(`/api/shipments/stats?${params}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            setFilteredStats(result.data);
+          } else {
+            // If no data, set to zeros
+            setFilteredStats({
+              totalShipments: 0,
+              onTimeDelivery: 0,
+              avgTransitTime: 0,
+              complianceRate: 0,
+              changePercent: 0,
+            });
+          }
+        } else {
+          toast.error('Failed to fetch statistics');
+        }
+      } catch (error) {
+        console.error('Error fetching statistics:', error);
+        toast.error('Error loading statistics');
+        setFilteredStats({
+          totalShipments: 0,
+          onTimeDelivery: 0,
+          avgTransitTime: 0,
+          complianceRate: 0,
+          changePercent: 0,
+        });
+      } finally {
+        setStatsLoading(false);
+      }
     };
-  }, [reportType, startDate, endDate]);
+
+    fetchStats();
+  }, [startDate, endDate]);
 
   // Initialize dates on mount
   useEffect(() => {
@@ -256,41 +294,47 @@ export default function ReportsPage() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
-        {[
-          { 
-            label: 'Total Shipments', 
-            value: filteredStats.totalShipments.toString(), 
-            change: `+${filteredStats.changePercent}%`, 
-            color: 'blue' 
-          },
-          { 
-            label: 'On-Time Delivery', 
-            value: `${filteredStats.onTimeDelivery}%`, 
-            change: '+2.3%', 
-            color: 'green' 
-          },
-          { 
-            label: 'Avg Transit Time', 
-            value: `${filteredStats.avgTransitTime}h`, 
-            change: '-1.2h', 
-            color: 'purple' 
-          },
-          { 
-            label: 'Compliance Rate', 
-            value: `${filteredStats.complianceRate}%`, 
-            change: '0%', 
-            color: 'green' 
-          },
-        ].map((metric, index) => (
-          <div key={index} className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
-            <div className="text-xs sm:text-sm text-gray-600 mb-2">{metric.label}</div>
-            <div className="text-2xl sm:text-3xl mb-2">{metric.value}</div>
-            <div className={`text-xs sm:text-sm ${metric.change.startsWith('+') ? 'text-green-600' : metric.change.startsWith('-') && metric.label === 'Avg Transit Time' ? 'text-green-600' : 'text-gray-600'} flex items-center gap-1`}>
-              <TrendingUp className="w-4 h-4" />
-              {metric.change} from last period
-            </div>
+        {statsLoading ? (
+          <div className="col-span-full flex justify-center items-center py-8">
+            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
           </div>
-        ))}
+        ) : (
+          [
+            { 
+              label: 'Total Shipments', 
+              value: filteredStats.totalShipments.toString(), 
+              change: formatChangePercent(filteredStats.changePercent), 
+              color: 'blue' 
+            },
+            { 
+              label: 'On-Time Delivery', 
+              value: `${filteredStats.onTimeDelivery}%`, 
+              change: '0%', 
+              color: 'green' 
+            },
+            { 
+              label: 'Avg Transit Time', 
+              value: `${filteredStats.avgTransitTime}h`, 
+              change: '0h', 
+              color: 'purple' 
+            },
+            { 
+              label: 'Compliance Rate', 
+              value: `${filteredStats.complianceRate}%`, 
+              change: '0%', 
+              color: 'green' 
+            },
+          ].map((metric, index) => (
+            <div key={index} className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <div className="text-xs sm:text-sm text-gray-600 mb-2">{metric.label}</div>
+              <div className="text-2xl sm:text-3xl mb-2">{metric.value}</div>
+              <div className={`text-xs sm:text-sm ${metric.change.startsWith('+') ? 'text-green-600' : metric.change.startsWith('-') && metric.label === 'Avg Transit Time' ? 'text-green-600' : 'text-gray-600'} flex items-center gap-1`}>
+                <TrendingUp className="w-4 h-4" />
+                {metric.change} from last period
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
 
