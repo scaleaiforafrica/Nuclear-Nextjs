@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import type { Shipment, CreateShipmentRequest } from '@/models/shipment.model';
 import { calculateCurrentActivity, calculateElapsedHours } from '@/lib/isotope-decay';
+import { notifyShipmentCreated } from '@/services/notification.service';
 
 // Validation schema for creating shipments
 const createShipmentSchema = z.object({
@@ -371,6 +372,17 @@ export async function POST(
         { status: 500 }
       );
     }
+
+    // Send notification about shipment creation (async, don't block response)
+    notifyShipmentCreated(
+      user.id,
+      shipment.id,
+      shipment.shipment_number,
+      user.email
+    ).catch((error) => {
+      console.error('Failed to send shipment creation notification:', error);
+      // Don't fail the request if notification fails
+    });
 
     return NextResponse.json(
       {

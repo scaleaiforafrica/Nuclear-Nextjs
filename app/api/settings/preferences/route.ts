@@ -26,6 +26,13 @@ export async function PATCH(request: NextRequest) {
     'weekly_digest'
   ]
   
+  // Get current profile to track changes
+  const { data: currentProfile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
+  
   const updates: Record<string, any> = { updated_at: new Date().toISOString() }
   
   for (const field of allowedFields) {
@@ -64,6 +71,53 @@ export async function PATCH(request: NextRequest) {
   
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+  
+  // Log notification preference changes for audit trail
+  if (currentProfile) {
+    const notificationFields = [
+      'email_notifications',
+      'push_notifications',
+      'in_app_notifications',
+      'shipment_alerts',
+      'compliance_reminders',
+      'daily_digest',
+      'weekly_digest'
+    ]
+    
+    // Log changes asynchronously with proper error handling
+    const logPreferenceChanges = async () => {
+      try {
+        const changes = []
+        for (const field of notificationFields) {
+          if (field in body && currentProfile[field] !== body[field]) {
+            changes.push({
+              user_id: user.id,
+              field_name: field,
+              old_value: String(currentProfile[field]),
+              new_value: String(body[field]),
+              changed_by: user.id,
+              changed_at: new Date().toISOString(),
+            })
+          }
+        }
+
+        if (changes.length > 0) {
+          const { error: logError } = await supabase
+            .from('notification_preference_history')
+            .insert(changes)
+
+          if (logError) {
+            console.error('Failed to log preference changes:', logError)
+          }
+        }
+      } catch (error) {
+        console.error('Error in preference change logging:', error)
+      }
+    }
+
+    // Execute async without blocking response
+    logPreferenceChanges()
   }
   
   return NextResponse.json({ profile: data })
