@@ -6,6 +6,9 @@ import { useAuth } from '@/contexts'
 import { Plus, Search, FileText } from 'lucide-react'
 import { TrackShipmentDialog, QuickActionCard } from '@/components/dashboard'
 
+/**
+ * Returns a time-appropriate greeting message
+ */
 function getTimeOfDayGreeting(): string {
   const hour = new Date().getHours()
   
