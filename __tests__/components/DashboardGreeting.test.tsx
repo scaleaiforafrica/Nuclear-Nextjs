@@ -86,19 +86,4 @@ describe('DashboardGreeting', () => {
     const dateElements = screen.getAllByText(/Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday/i);
     expect(dateElements.length).toBeGreaterThan(0);
   });
-
-  it('has fallback "Hello" greeting documented for error cases', () => {
-    // This test verifies that the component handles the greeting robustly
-    // The fallback "Hello" is used if Date.getHours() throws an error
-    // Testing this directly would require mocking Date in a way that affects
-    // the initial module load, so we verify the component renders correctly
-    render(<DashboardGreeting />, { wrapper: TestWrapper });
-    
-    // Component should render without errors and show a greeting
-    const greeting = screen.getByText(/Good morning|Good afternoon|Good evening|Good night/i);
-    expect(greeting).toBeDefined();
-    
-    // The fallback exists in the implementation as a safety measure
-    // It would return "Hello" if time determination fails
-  });
 });

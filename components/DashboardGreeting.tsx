@@ -8,24 +8,18 @@ import { TrackShipmentDialog, QuickActionCard } from '@/components/dashboard'
 
 /**
  * Returns a time-appropriate greeting message
- * Falls back to "Hello" if time cannot be determined
  */
 function getTimeOfDayGreeting(): string {
-  try {
-    const hour = new Date().getHours()
-    
-    if (hour >= 5 && hour < 12) {
-      return 'Good morning'
-    } else if (hour >= 12 && hour < 17) {
-      return 'Good afternoon'
-    } else if (hour >= 17 && hour < 24) {
-      return 'Good evening'
-    } else {
-      return 'Good night'
-    }
-  } catch (error) {
-    // Fallback to universal greeting if time determination fails
-    return 'Hello'
+  const hour = new Date().getHours()
+  
+  if (hour >= 5 && hour < 12) {
+    return 'Good morning'
+  } else if (hour >= 12 && hour < 17) {
+    return 'Good afternoon'
+  } else if (hour >= 17 && hour < 24) {
+    return 'Good evening'
+  } else {
+    return 'Good night'
   }
 }
 
