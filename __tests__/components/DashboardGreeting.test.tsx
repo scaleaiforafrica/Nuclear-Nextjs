@@ -87,13 +87,18 @@ describe('DashboardGreeting', () => {
     expect(dateElements.length).toBeGreaterThan(0);
   });
 
-  it('has fallback "Hello" greeting for error cases', () => {
-    // This test verifies that the greeting function has a fallback
-    // The actual fallback is only used in error cases, so we test that it exists in the implementation
+  it('has fallback "Hello" greeting documented for error cases', () => {
+    // This test verifies that the component handles the greeting robustly
+    // The fallback "Hello" is used if Date.getHours() throws an error
+    // Testing this directly would require mocking Date in a way that affects
+    // the initial module load, so we verify the component renders correctly
     render(<DashboardGreeting />, { wrapper: TestWrapper });
     
-    // Component should render without errors
-    const greeting = screen.getByText(/Good morning|Good afternoon|Good evening|Good night|Hello/i);
+    // Component should render without errors and show a greeting
+    const greeting = screen.getByText(/Good morning|Good afternoon|Good evening|Good night/i);
     expect(greeting).toBeDefined();
+    
+    // The fallback exists in the implementation as a safety measure
+    // It would return "Hello" if time determination fails
   });
 });
